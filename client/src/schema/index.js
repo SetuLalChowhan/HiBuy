@@ -16,7 +16,7 @@ export const signUpSchema = Yup.object({
   confirm_password: Yup.string()
     .required("Please confirm your password")
     .oneOf([Yup.ref("password"), null], "Passwords must be matched"),
-  image: Yup.mixed()
+  avatar: Yup.mixed()
     .required("An image file is required")
     .test("fileSize", "File size is too large", (value) => {
       return value && value.size <= 2 * 1024 * 1024; // 2 MB

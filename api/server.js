@@ -17,7 +17,6 @@ const app = express();
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 mul=path.join(__dirname, 'uploads')
-console.log(mul)
 app.use(cookieParser());
 app.use(cors({
     origin: 'http://localhost:5173',

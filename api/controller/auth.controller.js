@@ -12,9 +12,9 @@ const registerUser = async (req, res, next) => {
     return next(new AppError(req.fileValidationError, 400));
   }
 
-  const { name, email, password, confirmPassword } = req.body;
+  const { name, email, password, confirm_password } = req.body;
   const avatar = req.file ? req.file.path : null;
-
+   console.log(name,email,password,avatar,confirm_password)
   try {
     // Check if the user already exists
     let user = await User.findOne({ email });
@@ -26,7 +26,7 @@ const registerUser = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    if (password != confirmPassword) {
+    if (password != confirm_password) {
       return next(
         new AppError("Password and Confirm Password must be matched..", 400)
       );
