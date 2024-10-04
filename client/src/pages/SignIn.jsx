@@ -160,12 +160,12 @@ const SignIn = () => {
         {/* Sign Up Option */}
         <p className="mt-6 text-center text-gray-600">
           Don't have an account?{" "}
-          <utton
+          <button
             onClick={() => navigate("/sign-up")}
             className="text-blue-600 font-medium hover:underline cursor-pointer"
           >
             Sign Up
-          </utton>
+          </button>
         </p>
       </div>
 
