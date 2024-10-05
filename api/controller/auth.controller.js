@@ -21,6 +21,7 @@ const registerUser = async (req, res, next) => {
     if (user) {
       return next(new AppError("User Already Exists", 400));
     }
+    console.log(email,name,password,confirm_password)
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
@@ -57,9 +58,11 @@ const registerUser = async (req, res, next) => {
       html: htmlMessage,
       message: "Your verification code.", // Fallback message in case HTML is not supported
     });
+    const { password: pass, ...rest } = user._doc;
 
     res.status(201).json({
-      user: { email: user.email, isVerified: user.isVerified },
+      success:true,
+      rest,
       message: "Verification code sent to email.",
     });
   } catch (error) {
@@ -161,7 +164,7 @@ const editProfile = async (req, res, next) => {
 // Login User
 const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-  console.log(email);
+  
   try {
     // Check if the user exists
     const user = await User.findOne({ email });
@@ -184,7 +187,7 @@ const loginUser = async (req, res, next) => {
 
     res
       .status(201)
-      .json({ success: true, rest, token, message: "Login Successfully" });
+      .json({ success: true, rest, message: "Login Successfully" });
   } catch (error) {
     console.error(error);
     return next(new AppError("Server error", 500));

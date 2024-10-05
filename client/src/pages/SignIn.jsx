@@ -1,14 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { signInSchema } from "../schema";
 import { MdMailOutline } from "react-icons/md";
-import { Button, Modal } from "flowbite-react";
+import { Alert, Button, Modal, Spinner } from "flowbite-react";
 import { RiLockPasswordLine } from "react-icons/ri";
+import { useDispatch,useSelector } from "react-redux";
+import { clearError, login } from "../redux/user/userSlice";
+
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const {loading,error} = useSelector((state)=>state.user)
+  const dispatch =useDispatch()
+
+  useEffect(() => {
+    
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch])
 
   const initialValues = {
     email: "",
@@ -24,8 +36,8 @@ const SignIn = () => {
       initialValues,
       validationSchema: signInSchema,
       onSubmit: (values) => {
-        console.log(values);
-        // Handle your login logic here
+        console.log(values)
+        dispatch(login({values,navigate}))
       },
     });
 
@@ -40,8 +52,6 @@ const SignIn = () => {
     initialValues: initialValues1,
     validationSchema: signInSchema.pick(["email"]), // Only validate email for this form
     onSubmit: (values1) => {
-      console.log(values1);
-      // Handle your forgot password logic here
     },
   });
 
@@ -54,7 +64,7 @@ const SignIn = () => {
       <div className="bg-gray-200 shadow-2xl rounded-lg p-8 w-full max-w-md border border-gray-400">
         {/* Header Section */}
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Welcome 
+          Welcome
         </h1>
         <p className="text-center text-gray-600 mb-8">
           Please login to your account.
@@ -111,7 +121,7 @@ const SignIn = () => {
                 size={24}
               />
               <input
-              required
+                required
                 className={`w-full pl-12 text-lg rounded-lg border focus:ring focus:ring-blue-200 transition
                   ${
                     errors.password && touched.password
@@ -147,13 +157,20 @@ const SignIn = () => {
               Forgot Password?
             </div>
           </div>
+          {error ? (
+            <div className="flex justify-center items-center text-2xl">
+              <Alert color="failure">
+                <span className="text-lg font-semibold">{error}</span>
+              </Alert>
+            </div>
+          ) : null}
 
           {/* Login Button */}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
           >
-            Login
+            {loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Login"}
           </button>
         </form>
 
@@ -223,7 +240,11 @@ const SignIn = () => {
                 <Button color="blue" type="submit">
                   Submit
                 </Button>
-                <Button color="blue" outline onClick={() => setShowModal(false)}>
+                <Button
+                  color="blue"
+                  outline
+                  onClick={() => setShowModal(false)}
+                >
                   Cancel
                 </Button>
               </div>

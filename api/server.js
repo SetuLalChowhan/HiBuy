@@ -15,7 +15,7 @@ const app = express();
 // Middleware
 
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 mul=path.join(__dirname, 'uploads')
 app.use(cookieParser());
 app.use(cors({

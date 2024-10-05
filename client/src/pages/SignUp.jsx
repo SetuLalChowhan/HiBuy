@@ -1,17 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import { signUpSchema } from "../schema"; // adjust the path as necessary
 import { MdMailOutline } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
-import { Alert, Button } from "flowbite-react";
+import { Alert, Button, Spinner } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../redux/user/userSlice";
+import { clearError, register } from "../redux/user/userSlice";
 
 const SignUp = () => {
-  const { currentUser, loadin, error } = useSelector((state) => state.user);
-
-  console.log(error);
+  const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const formik = useFormik({
@@ -24,10 +22,16 @@ const SignUp = () => {
     },
     validationSchema: signUpSchema,
     onSubmit: (values) => {
-      dispatch(register({values,navigate}));
-      
+      dispatch(register({ values, navigate }));
     },
   });
+  useEffect(() => {
+    // Clear error when component unmounts (when navigating away)
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch])
+
 
   return (
     <div className="flex justify-center items-center mt-20 bg-gray-50">
@@ -205,17 +209,19 @@ const SignUp = () => {
               </p>
             )}
           </div>
-          {error ?(<div className="flex justify-center items-center text-2xl">
-            <Alert color="failure">
-              <span className="text-lg font-semibold">{error}</span>
-            </Alert>
-          </div>):null}
+          {error ? (
+            <div className="flex justify-center items-center text-2xl">
+              <Alert color="failure">
+                <span className="text-lg font-semibold">{error}</span>
+              </Alert>
+            </div>
+          ) : null}
           {/* Sign Up Button */}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
           >
-            Sign Up
+            {loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Sign Up"}
           </button>
         </form>
       </div>
