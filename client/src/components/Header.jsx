@@ -127,11 +127,7 @@ export default function Header() {
           Contact
         </NavbarLink>
 
-        {currentUser == null ? (
-          <Button outline className="text-lg" href="/login">
-            Login
-          </Button>
-        ) : null}
+        
       </NavbarCollapse>
     </Navbar>
   );
