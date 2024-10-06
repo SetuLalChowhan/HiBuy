@@ -7,6 +7,7 @@ import { Alert, Button, Modal, Spinner } from "flowbite-react";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useDispatch,useSelector } from "react-redux";
 import { clearError, login } from "../redux/user/userSlice";
+import { toast } from "react-hot-toast";
 
 
 const SignIn = () => {
@@ -37,7 +38,7 @@ const SignIn = () => {
       validationSchema: signInSchema,
       onSubmit: (values) => {
         console.log(values)
-        dispatch(login({values,navigate}))
+        dispatch(login({values,navigate,toast}))
       },
     });
 

@@ -7,6 +7,7 @@ import { Alert, Button, Spinner } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearError, register } from "../redux/user/userSlice";
+import { toast } from "react-hot-toast";
 
 const SignUp = () => {
   const { loading, error } = useSelector((state) => state.user);
@@ -22,7 +23,7 @@ const SignUp = () => {
     },
     validationSchema: signUpSchema,
     onSubmit: (values) => {
-      dispatch(register({ values, navigate }));
+      dispatch(register({ values, navigate,toast }));
     },
   });
   useEffect(() => {

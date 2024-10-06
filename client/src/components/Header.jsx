@@ -18,32 +18,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { IoSearchSharp } from "react-icons/io5";
 import { logout } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const navigate =useNavigate()
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
-    dispatch(logout(navigate));
+    dispatch(logout({ toast, navigate }));
   };
 
   return (
-    <Navbar fluid rounded className="container">
+    <Navbar fluid rounded className="lg:container">
       <NavbarBrand href="/">
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
           HiBuy
         </span>
       </NavbarBrand>
-    
-
 
       {/* Desktop Search Bar */}
       <div className="md:flex justify-center items-center hidden">
         <div className="relative flex items-center">
           <TextInput
             placeholder="Search Anything"
-            className="rounded-lg pl-10"
+            className="rounded-lg md:w-48 pl-10 lg:w-96"
             id="search-1"
             type="text"
             sizing="sm"
@@ -59,27 +58,18 @@ export default function Header() {
         </Link>
 
         {currentUser == null ? (
-          <div className="md:flex gap-3 hidden">
-            <Link to={"/login"}>
-              <Button color="blue" outline>
-                Login
-              </Button>
-            </Link>
-            {currentUser != null && !currentUser.isVerified && (
-              <Link to={"/verify-me"}>
-                <Button color="blue" outline>
-                  Verify You
-                </Button>
-              </Link>
-            )}
-          </div>
+          <Link to={"/login"}>
+            <Button color="blue" outline>
+              Login
+            </Button>
+          </Link>
         ) : (
           <Dropdown
             arrowIcon={false}
             inline
             label={
               <Avatar
-                 className=" w-12 h-12 rounded-full object-cover"
+                className=" w-12 h-12 rounded-full object-cover"
                 alt="User settings"
                 img={`http://localhost:3000/${currentUser.avatar}`}
                 rounded
@@ -89,13 +79,17 @@ export default function Header() {
             <DropdownHeader>
               <span className="block text-sm">{currentUser.name}</span>
               <span className="block truncate text-sm font-medium">
-              
                 {currentUser.email}
               </span>
             </DropdownHeader>
-            <DropdownItem>Dashboard</DropdownItem>
+            <DropdownItem ><Link to={"/dashboard"}>Dashboard</Link></DropdownItem>
             <DropdownDivider />
             <DropdownItem onClick={handleSignOut}>Sign out</DropdownItem>
+            {currentUser && !currentUser.isVerified && (
+              <Button className="mt-4 mb-4 ml-2" color="blue" outline>
+                <Link to={"/verify-me"}>Veryfy me</Link>
+              </Button>
+            )}
           </Dropdown>
         )}
 
@@ -108,12 +102,15 @@ export default function Header() {
           <div className="relative flex items-center">
             <TextInput
               placeholder="Search Anything"
-              className="rounded-lg pl-10"
+              className="rounded-lg pl-10 w-full"
               id="search-2"
               type="text"
               sizing="sm"
             />
-            <IoSearchSharp className="absolute left-2 text-gray-400" size={25} />
+            <IoSearchSharp
+              className="absolute left-2 text-gray-400"
+              size={25}
+            />
           </div>
         </div>
 
@@ -131,16 +128,9 @@ export default function Header() {
         </NavbarLink>
 
         {currentUser == null ? (
-          <div className="md:hidden space-y-3">
-            <Button outline className="text-lg" href="/login">
-              Login
-            </Button>
-            {currentUser != null && !currentUser.isVerified && (
-              <Button outline className="text-lg" href="#">
-                Verify You
-              </Button>
-            )}
-          </div>
+          <Button outline className="text-lg" href="/login">
+            Login
+          </Button>
         ) : null}
       </NavbarCollapse>
     </Navbar>

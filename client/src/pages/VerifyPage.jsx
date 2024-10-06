@@ -5,6 +5,7 @@ import { useDispatch,useSelector } from 'react-redux';
 import { clearError, verifyUser } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Spinner } from 'flowbite-react';
+import {toast} from 'react-hot-toast'
 
 const VerifyPage = () => {
   const dispatch =useDispatch()
@@ -24,7 +25,7 @@ const VerifyPage = () => {
     }),
     onSubmit: (values) => {
       
-      dispatch(verifyUser({values,navigate}))
+      dispatch(verifyUser({values,navigate,toast}))
       
     },
   });

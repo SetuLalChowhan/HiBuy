@@ -19,7 +19,7 @@ const registerUser = async (req, res, next) => {
     // Check if the user already exists
     let user = await User.findOne({ email });
     if (user) {
-      return next(new AppError("User Already Exists", 400));
+      return next(new AppError("A user with this email already exists.", 400));
     }
     console.log(email,name,password,confirm_password)
 
@@ -29,7 +29,7 @@ const registerUser = async (req, res, next) => {
 
     if (password != confirm_password) {
       return next(
-        new AppError("Password and Confirm Password must be matched..", 400)
+        new AppError("Password and Confirm Password must match.", 400)
       );
     }
 
@@ -63,7 +63,7 @@ const registerUser = async (req, res, next) => {
     res.status(201).json({
       success:true,
       rest,
-      message: "Verification code sent to email.",
+      message: "A verification code has been sent to your email.",
     });
   } catch (error) {
     console.error(error);
@@ -104,7 +104,7 @@ const verifyEmail = async (req, res, next) => {
       success: true,
       rest,
       token: token,
-      message: "Email verified successfully!",
+      message: "Your email has been successfully verified!",
     });
   } catch (error) {
     console.error(error);
@@ -123,14 +123,14 @@ const editProfile = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       if (!user) {
-        return next(new AppError("User not found", 404));
+        return next(new AppError("A user with this email already exists.", 404));
       }
 
       // Check if the email is being updated
       if (email) {
         const emailExists = await User.findOne({ email });
         if (emailExists && emailExists._id.toString() !== userId) {
-          return next(new AppError("Email already in use", 400));
+          return next(new AppError("This email is already in use.", 400));
         }
         user.email = email; // Update email
       }
@@ -147,14 +147,14 @@ const editProfile = async (req, res, next) => {
       }
       await user.save();
     } else {
-      return next(new AppError("Password must be matched"));
+      return next(new AppError("Passwords must match."));
     }
 
     const { password: pass, ...rest } = user._doc;
 
     res
       .status(201)
-      .json({ success: true, rest, message: "Edited Successfully" });
+      .json({ success: true, rest, message: "The user profile has been successfully updated." });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Server error" });
@@ -187,7 +187,7 @@ const loginUser = async (req, res, next) => {
 
     res
       .status(201)
-      .json({ success: true, rest, message: "Login Successfully" });
+      .json({ success: true, rest, message: "Login successful!" });
   } catch (error) {
     console.error(error);
     return next(new AppError("Server error", 500));
@@ -196,7 +196,7 @@ const loginUser = async (req, res, next) => {
 
 const logOutUser = (req, res) => {
   try {
-    res.clearCookie("token").status(200).json(" Logged out");
+    res.clearCookie("token").status(200).json({ success:true,message:"You have been logged out."});
   } catch (error) {
     console.log(error);
     next(error);
@@ -249,7 +249,7 @@ const forgotPassword = async (req, res, next) => {
         message: "You requested a password reset.", // Fallback message in case HTML is not supported
       });
 
-      res.status(200).json({ success: true, message: "Email sent" });
+      res.status(200).json({ success: true, message: " An email has been sent to your inbox to reset your password" });
     } catch (error) {
       console.log(error);
       user.resetPasswordToken = undefined;
@@ -302,13 +302,14 @@ const resetPassword = async (req, res, next) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+    const { password: pass, ...rest } = user._doc;
 
     // Set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
     });
 
-    res.status(200).json({ success: true, token });
+    res.status(200).json({ success: true,rest, message:"Your password has been successfully reset." });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -336,7 +337,7 @@ const passwordChange = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt);
     user.password = hashedPassword;
     await user.save();
-    res.status(201).json("Password Changed");
+    res.status(201).json({success:true,message:"Your password has been successfully changed."});
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));

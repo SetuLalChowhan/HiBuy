@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const register = createAsyncThunk(
   "auth/register",
-  async ({ values, navigate }, { rejectWithValue }) => {
+  async ({ values, navigate,toast }, { rejectWithValue }) => {
    
     try {
       const response = await axios.post("api/users/register", values, {
@@ -12,6 +12,8 @@ export const register = createAsyncThunk(
         },
         withCredentials: true,
       });
+      toast.success("A verification code has been sent to your email.")
+
       navigate("/verify-me");
 
       return response.data;
@@ -23,7 +25,7 @@ export const register = createAsyncThunk(
 );
 export const verifyUser = createAsyncThunk(
   "auth/verify-email",
-  async ({ values, navigate }, { rejectWithValue }) => {
+  async ({ values, toast,navigate }, { rejectWithValue }) => {
    
     try {
       console.log(values);
@@ -33,6 +35,7 @@ export const verifyUser = createAsyncThunk(
         },
         withCredentials: true,
       });
+      toast.success("Your email has been successfully verified!.")
       navigate("/");
 
       return response.data;
@@ -44,7 +47,7 @@ export const verifyUser = createAsyncThunk(
 );
 export const login = createAsyncThunk(
   "auth/login",
-  async ({ values, navigate }, { rejectWithValue }) => {
+  async ({ values, navigate,toast }, { rejectWithValue }) => {
    
     try {
       const response = await axios.post("api/users/login", values, {
@@ -53,6 +56,7 @@ export const login = createAsyncThunk(
         },
         withCredentials: true,
       });
+      toast.success("Login successful!")
       navigate("/");
 
       return response.data;
@@ -64,7 +68,7 @@ export const login = createAsyncThunk(
 );
 export const logout = createAsyncThunk(
   "auth/logout",
-  async (navigate, { rejectWithValue }) => {
+  async ({toast,navigate}, { rejectWithValue }) => {
     console.log("Hi")
    
     try {
@@ -72,6 +76,7 @@ export const logout = createAsyncThunk(
        
         withCredentials: true,
       });
+      toast.success("You have been logged out.")
       navigate("/login");
 
       return response.data;
