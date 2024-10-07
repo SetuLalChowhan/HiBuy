@@ -33,6 +33,11 @@ export const signInSchema = Yup.object({
   password: Yup.string().min(6).required("Please Enter your password"),
 });
 
+export const resetPasswordSchema = Yup.object({
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Please Enter your new password"),
+});
 // export const passwordChangeSchema = Yup.object({
 //     oldPassword: Yup.string()
 //       .min(6, "Old password must be at least 6 characters long")

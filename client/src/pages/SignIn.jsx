@@ -6,7 +6,7 @@ import { MdMailOutline } from "react-icons/md";
 import { Alert, Button, Modal, Spinner } from "flowbite-react";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useDispatch,useSelector } from "react-redux";
-import { clearError, login } from "../redux/user/userSlice";
+import { clearError, login,forgotPassword } from "../redux/user/userSlice";
 import { toast } from "react-hot-toast";
 
 
@@ -53,12 +53,14 @@ const SignIn = () => {
     initialValues: initialValues1,
     validationSchema: signInSchema.pick(["email"]), // Only validate email for this form
     onSubmit: (values1) => {
+      dispatch(forgotPassword({values1,navigate,toast}))
     },
   });
 
   const handleForgotPassword = () => {
     setShowModal(true);
   };
+  console.log(values1)
 
   return (
     <div className="flex justify-center items-center mt-28 bg-gray-50">
@@ -152,26 +154,29 @@ const SignIn = () => {
               </label>
             </div>
             <div
-              onClick={handleForgotPassword}
+              onClick={()=>{handleForgotPassword(),dispatch(clearError())}}
+              
               className="text-blue-600 font-medium hover:underline cursor-pointer"
             >
               Forgot Password?
             </div>
           </div>
-          {error ? (
-            <div className="flex justify-center items-center text-2xl">
-              <Alert color="failure">
-                <span className="text-lg font-semibold">{error}</span>
-              </Alert>
-            </div>
-          ) : null}
+          { 
+             values1.email == "" ? error ? (
+              <div className="flex justify-center items-center text-2xl">
+                <Alert color="failure">
+                  <span className="text-lg font-semibold">{error}</span>
+                </Alert>
+              </div>
+            ) : null :null
+          }
 
           {/* Login Button */}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
           >
-            {loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Login"}
+            { loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Login"}
           </button>
         </form>
 
@@ -237,9 +242,9 @@ const SignIn = () => {
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-4  ">
                 <Button color="blue" type="submit">
-                  Submit
+                {loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Submit"}
                 </Button>
                 <Button
                   color="blue"
@@ -249,6 +254,16 @@ const SignIn = () => {
                   Cancel
                 </Button>
               </div>
+              {
+                error ? (
+                  <div className="flex justify-center items-center text-2xl">
+                    <Alert color="failure">
+                      <span className="text-lg font-medium">{error}</span>
+                    </Alert>
+                  </div>
+                ) : null
+              }
+              
             </form>
           </div>
         </Modal.Body>

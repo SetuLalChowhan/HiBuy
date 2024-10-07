@@ -227,9 +227,7 @@ const forgotPassword = async (req, res, next) => {
     await user.save();
 
     // Create a reset URL
-    const resetUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/api/users/reset-password/${resetToken}`;
+    const resetUrl = ` http://localhost:5173/reset-password/${resetToken}`;
 
     // HTML message
     const htmlMessage = `
@@ -264,18 +262,22 @@ const forgotPassword = async (req, res, next) => {
 };
 
 const resetPassword = async (req, res, next) => {
-  // Hash the token from the URL
+  console.log("hi")
   const resetPasswordToken = crypto
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
-
+  console.log(req.params.token)
+  console.log(resetPasswordToken)
   try {
     // Find the user by the token and check if it's still valid
     const user = await User.findOne({
       resetPasswordToken,
       resetPasswordExpire: { $gt: Date.now() }, // Token should still be valid
     });
+    console.log(user)
+
+
 
     if (!user) {
       return next(new AppError("Invalid or expired token", 400));
@@ -283,7 +285,7 @@ const resetPassword = async (req, res, next) => {
 
     // Get the new password from the request body
     const { password } = req.body;
-
+  console.log(password)
     if (!password) {
       return next(new AppError("Password is required", 400));
     }

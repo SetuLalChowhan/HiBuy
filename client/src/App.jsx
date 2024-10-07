@@ -7,6 +7,7 @@ import VerifyPage from "./pages/VerifyPage";
 import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import { Toaster } from "react-hot-toast";
+import ResetPassword from "./pages/ResetPassword";
 function App() {
   return (
     <>
@@ -15,8 +16,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route element={<PrivateRoute />}>
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          
         </Route>
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/verify-me" element={<VerifyPage />} />
