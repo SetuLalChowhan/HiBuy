@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import { MdLockOutline } from "react-icons/md";
+import { RiEyeOffLine, RiEyeLine } from "react-icons/ri"; // Icons for showing/hiding password
 import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordSchema } from "../schema";
-import { Alert, Button, Spinner } from "flowbite-react";
-import {  clearError, resetPassword } from "../redux/user/userSlice";
+import { Alert, Spinner } from "flowbite-react";
+import { clearError, resetPassword } from "../redux/user/userSlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -12,9 +13,12 @@ import { useParams } from "react-router-dom";
 const ResetPassword = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {token} =useParams()
-  console.log(token)
+  const { token } = useParams();
+  console.log(token);
   const { loading, error } = useSelector((state) => state.user);
+
+  // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   // Initial Values
   const initialValues = {
@@ -27,8 +31,8 @@ const ResetPassword = () => {
       initialValues,
       validationSchema: resetPasswordSchema, // Yup schema for password validation
       onSubmit: (values) => {
-        console.log(values)
-         dispatch(resetPassword({ values, navigate, toast,token }));
+        console.log(values);
+        dispatch(resetPassword({ values, navigate, toast, token }));
       },
     });
 
@@ -64,7 +68,7 @@ const ResetPassword = () => {
                     ? "border-red-500"
                     : "border-gray-800"
                 }`}
-                type="password"
+                type={showPassword ? "text" : "password"} 
                 name="password"
                 required
                 id="password"
@@ -73,12 +77,24 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              {errors.password && touched.password ? (
+              {/* Show/Hide Password Icon */}
+              <div
+                className="absolute right-3 top-3 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <RiEyeOffLine size={24} className="text-blue-500" />
+                ) : (
+                  <RiEyeLine size={24} className="text-blue-500" />
+                )}
+              </div>
+              {errors.password && touched.password && (
                 <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-              ) : null}
+              )}
             </div>
           </div>
 
+          {/* Error Message */}
           {error && (
             <div className="flex justify-center items-center text-2xl">
               <Alert color="failure">
@@ -98,7 +114,6 @@ const ResetPassword = () => {
               "Change Password"
             )}
           </button>
-         
         </form>
       </div>
     </div>

@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { signUpSchema } from "../schema"; // adjust the path as necessary
 import { MdMailOutline } from "react-icons/md";
-import { RiLockPasswordLine } from "react-icons/ri";
-import { Alert, Button, Spinner } from "flowbite-react";
+import { RiLockPasswordLine, RiEyeOffLine, RiEyeLine } from "react-icons/ri"; // Icons for show/hide password
+import { Alert, Spinner } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearError, register } from "../redux/user/userSlice";
@@ -13,6 +13,11 @@ const SignUp = () => {
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
+  // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -23,16 +28,16 @@ const SignUp = () => {
     },
     validationSchema: signUpSchema,
     onSubmit: (values) => {
-      dispatch(register({ values, navigate,toast }));
+      dispatch(register({ values, navigate, toast }));
     },
   });
+
   useEffect(() => {
     // Clear error when component unmounts (when navigating away)
     return () => {
       dispatch(clearError());
     };
-  }, [dispatch])
-
+  }, [dispatch]);
 
   return (
     <div className="flex justify-center items-center mt-20 bg-gray-50">
@@ -123,7 +128,7 @@ const SignUp = () => {
               />
               <input
                 required
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 placeholder="Enter your password"
@@ -136,6 +141,16 @@ const SignUp = () => {
                     : "border-gray-800"
                 }`}
               />
+              <div
+                className="absolute right-3 top-3 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <RiEyeOffLine size={24} className="text-blue-500" />
+                ) : (
+                  <RiEyeLine size={24} className="text-blue-500" />
+                )}
+              </div>
               {formik.errors.password && formik.touched.password && (
                 <p className="text-red-500 text-sm mt-1">
                   {formik.errors.password}
@@ -159,7 +174,7 @@ const SignUp = () => {
               />
               <input
                 required
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 id="confirm_password"
                 name="confirm_password"
                 placeholder="Confirm your password"
@@ -173,6 +188,16 @@ const SignUp = () => {
                     : "border-gray-800"
                 }`}
               />
+              <div
+                className="absolute right-3 top-3 cursor-pointer"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? (
+                  <RiEyeOffLine size={24} className="text-blue-500" />
+                ) : (
+                  <RiEyeLine size={24} className="text-blue-500" />
+                )}
+              </div>
               {formik.errors.confirm_password &&
                 formik.touched.confirm_password && (
                   <p className="text-red-500 text-sm mt-1">
@@ -210,6 +235,8 @@ const SignUp = () => {
               </p>
             )}
           </div>
+
+          {/* Display Error Message */}
           {error ? (
             <div className="flex justify-center items-center text-2xl">
               <Alert color="failure">
@@ -217,12 +244,17 @@ const SignUp = () => {
               </Alert>
             </div>
           ) : null}
+
           {/* Sign Up Button */}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
           >
-            {loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Sign Up"}
+            {loading ? (
+              <Spinner color="success" aria-label="Success spinner example" />
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </form>
       </div>

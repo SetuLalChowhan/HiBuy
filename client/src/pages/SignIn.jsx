@@ -5,23 +5,23 @@ import { signInSchema } from "../schema";
 import { MdMailOutline } from "react-icons/md";
 import { Alert, Button, Modal, Spinner } from "flowbite-react";
 import { RiLockPasswordLine } from "react-icons/ri";
-import { useDispatch,useSelector } from "react-redux";
-import { clearError, login,forgotPassword } from "../redux/user/userSlice";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
+import { useDispatch, useSelector } from "react-redux";
+import { clearError, login, forgotPassword } from "../redux/user/userSlice";
 import { toast } from "react-hot-toast";
-
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const {loading,error} = useSelector((state)=>state.user)
-  const dispatch =useDispatch()
+  const [showPassword, setShowPassword] = useState(false); // Add state to handle password visibility
+  const { loading, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    
     return () => {
       dispatch(clearError());
     };
-  }, [dispatch])
+  }, [dispatch]);
 
   const initialValues = {
     email: "",
@@ -37,8 +37,7 @@ const SignIn = () => {
       initialValues,
       validationSchema: signInSchema,
       onSubmit: (values) => {
-        console.log(values)
-        dispatch(login({values,navigate,toast}))
+        dispatch(login({ values, navigate, toast }));
       },
     });
 
@@ -53,14 +52,13 @@ const SignIn = () => {
     initialValues: initialValues1,
     validationSchema: signInSchema.pick(["email"]), // Only validate email for this form
     onSubmit: (values1) => {
-      dispatch(forgotPassword({values1,navigate,toast}))
+      dispatch(forgotPassword({ values1, navigate, toast }));
     },
   });
 
   const handleForgotPassword = () => {
     setShowModal(true);
   };
-  console.log(values1)
 
   return (
     <div className="flex justify-center items-center mt-28 bg-gray-50">
@@ -110,7 +108,7 @@ const SignIn = () => {
             </div>
           </div>
 
-          {/* Password Input */}
+          {/* Password Input with Visibility Toggle */}
           <div className="space-y-2">
             <label
               htmlFor="password"
@@ -118,20 +116,20 @@ const SignIn = () => {
             >
               Password
             </label>
-            <div className="relative ">
+            <div className="relative">
               <RiLockPasswordLine
                 className="absolute left-3 top-3 text-blue-500"
                 size={24}
               />
               <input
                 required
-                className={`w-full pl-12 text-lg rounded-lg border focus:ring focus:ring-blue-200 transition
+                className={`w-full pl-12 pr-10 text-lg rounded-lg border focus:ring focus:ring-blue-200 transition
                   ${
                     errors.password && touched.password
                       ? "border-red-500"
                       : "border-gray-800"
                   }`}
-                type="password"
+                type={showPassword ? "text" : "password"} // Toggle input type
                 name="password"
                 id="password"
                 placeholder="Enter your password"
@@ -139,6 +137,17 @@ const SignIn = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
+              {/* Toggle icon */}
+              <div
+                className="absolute right-3 top-3 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <FaEyeSlash className="text-blue-500" size={24} />
+                ) : (
+                  <FaEye className="text-blue-500" size={24} />
+                )}
+              </div>
               {errors.password && touched.password ? (
                 <p className="text-red-500 text-sm mt-1">{errors.password}</p>
               ) : null}
@@ -154,29 +163,33 @@ const SignIn = () => {
               </label>
             </div>
             <div
-              onClick={()=>{handleForgotPassword(),dispatch(clearError())}}
-              
+              onClick={() => {
+                handleForgotPassword();
+                dispatch(clearError());
+              }}
               className="text-blue-600 font-medium hover:underline cursor-pointer"
             >
               Forgot Password?
             </div>
           </div>
-          { 
-             values1.email == "" ? error ? (
-              <div className="flex justify-center items-center text-2xl">
-                <Alert color="failure">
-                  <span className="text-lg font-semibold">{error}</span>
-                </Alert>
-              </div>
-            ) : null :null
-          }
+          {values1.email === "" && error && (
+            <div className="flex justify-center items-center text-2xl">
+              <Alert color="failure">
+                <span className="text-lg font-semibold">{error}</span>
+              </Alert>
+            </div>
+          )}
 
           {/* Login Button */}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
           >
-            { loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Login"}
+            {loading ? (
+              <Spinner color="success" aria-label="Success spinner example" />
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
 
@@ -223,7 +236,7 @@ const SignIn = () => {
                   <input
                     type="email"
                     required
-                    id="email" // Change this to be unique
+                    id="emailModal" // Unique ID
                     className={`w-full pl-12 text-lg rounded-lg border focus:ring focus:ring-blue-200 transition
                       ${
                         errors1.email && touched1.email
@@ -242,28 +255,15 @@ const SignIn = () => {
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-center gap-4  ">
+              <div className="flex justify-center gap-4">
                 <Button color="blue" type="submit">
-                {loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Submit"}
-                </Button>
-                <Button
-                  color="blue"
-                  outline
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
+                  {loading ? (
+                    <Spinner color="success" aria-label="Success spinner example" />
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
-              {
-                error ? (
-                  <div className="flex justify-center items-center text-2xl">
-                    <Alert color="failure">
-                      <span className="text-lg font-medium">{error}</span>
-                    </Alert>
-                  </div>
-                ) : null
-              }
-              
             </form>
           </div>
         </Modal.Body>

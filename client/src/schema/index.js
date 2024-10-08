@@ -1,53 +1,55 @@
 import * as Yup from "yup";
 
-
+// Enhanced password validation with stricter rules
+const passwordRules = Yup.string()
+  .min(8, "Password must be at least 8 characters long")
+  .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+  .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .matches(/[0-9]/, "Password must contain at least one number")
+  .matches(/[^\w]/, "Password must contain at least one special character")
+  .required("Please enter your password");
 
 export const signUpSchema = Yup.object({
   name: Yup.string()
     .min(2, "Name must be at least 2 characters")
     .max(25, "Name cannot exceed 25 characters")
+    .matches(/^[a-zA-Z\s]*$/, "Name can only contain letters and spaces")
     .required("Please enter your name"),
+
   email: Yup.string()
     .email("Invalid email address")
     .required("Please enter your email"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Please enter your password"),
+
+  password: passwordRules,
+
   confirm_password: Yup.string()
     .required("Please confirm your password")
-    .oneOf([Yup.ref("password"), null], "Passwords must be matched"),
+    .oneOf([Yup.ref("password"), null], "Passwords must match"),
+
   avatar: Yup.mixed()
     .required("An image file is required")
     .test("fileSize", "File size is too large", (value) => {
       return value && value.size <= 2 * 1024 * 1024; // 2 MB
     })
     .test("fileType", "Unsupported file format", (value) => {
-      return (
-        value && ["image/jpeg", "image/png", "image/gif"].includes(value.type)
-      );
+      return value && ["image/jpeg", "image/png", "image/gif"].includes(value.type);
     }),
 });
 
 export const signInSchema = Yup.object({
-  email: Yup.string().email().required("Please Enter your email"),
-  password: Yup.string().min(6).required("Please Enter your password"),
+  email: Yup.string().email("Invalid email address").required("Please enter your email"),
+  password: passwordRules,
 });
 
 export const resetPasswordSchema = Yup.object({
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Please Enter your new password"),
+  password: passwordRules,
 });
+
+// Uncomment if you need this schema for password change
 // export const passwordChangeSchema = Yup.object({
-//     oldPassword: Yup.string()
-//       .min(6, "Old password must be at least 6 characters long")
-//       .required("Please enter your old password"),
-
-//     newPassword: Yup.string()
-//       .min(6, "New password must be at least 6 characters long")
-//       .required("Please enter your new password"),
-
-//     confirmPassword: Yup.string()
-//       .oneOf([Yup.ref('newPassword'), null], "Confirm password must match the new password")
-//       .required("Please confirm your new password")
-//   });
+//   oldPassword: passwordRules.required("Please enter your old password"),
+//   newPassword: passwordRules.required("Please enter your new password"),
+//   confirmPassword: Yup.string()
+//     .oneOf([Yup.ref('newPassword'), null], "Passwords must match")
+//     .required("Please confirm your new password")
+// });
