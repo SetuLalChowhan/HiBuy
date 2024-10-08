@@ -14,14 +14,14 @@ const registerUser = async (req, res, next) => {
 
   const { name, email, password, confirm_password } = req.body;
   const avatar = req.file ? req.file.path : null;
-   console.log(name,email,password,avatar,confirm_password)
+  console.log(name, email, password, avatar, confirm_password);
   try {
     // Check if the user already exists
     let user = await User.findOne({ email });
     if (user) {
       return next(new AppError("A user with this email already exists.", 400));
     }
-    console.log(email,name,password,confirm_password)
+    console.log(email, name, password, confirm_password);
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
@@ -61,7 +61,7 @@ const registerUser = async (req, res, next) => {
     const { password: pass, ...rest } = user._doc;
 
     res.status(201).json({
-      success:true,
+      success: true,
       rest,
       message: "A verification code has been sent to your email.",
     });
@@ -123,7 +123,9 @@ const editProfile = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       if (!user) {
-        return next(new AppError("A user with this email already exists.", 404));
+        return next(
+          new AppError("A user with this email already exists.", 404)
+        );
       }
 
       // Check if the email is being updated
@@ -154,7 +156,11 @@ const editProfile = async (req, res, next) => {
 
     res
       .status(201)
-      .json({ success: true, rest, message: "The user profile has been successfully updated." });
+      .json({
+        success: true,
+        rest,
+        message: "The user profile has been successfully updated.",
+      });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Server error" });
@@ -164,7 +170,7 @@ const editProfile = async (req, res, next) => {
 // Login User
 const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-  
+
   try {
     // Check if the user exists
     const user = await User.findOne({ email });
@@ -185,9 +191,7 @@ const loginUser = async (req, res, next) => {
     });
     const { password: pass, ...rest } = user._doc;
 
-    res
-      .status(201)
-      .json({ success: true, rest, message: "Login successful!" });
+    res.status(201).json({ success: true, rest, message: "Login successful!" });
   } catch (error) {
     console.error(error);
     return next(new AppError("Server error", 500));
@@ -196,7 +200,10 @@ const loginUser = async (req, res, next) => {
 
 const logOutUser = (req, res) => {
   try {
-    res.clearCookie("token").status(200).json({ success:true,message:"You have been logged out."});
+    res
+      .clearCookie("token")
+      .status(200)
+      .json({ success: true, message: "You have been logged out." });
   } catch (error) {
     console.log(error);
     next(error);
@@ -247,7 +254,13 @@ const forgotPassword = async (req, res, next) => {
         message: "You requested a password reset.", // Fallback message in case HTML is not supported
       });
 
-      res.status(200).json({ success: true, message: " An email has been sent to your inbox to reset your password" });
+      res
+        .status(200)
+        .json({
+          success: true,
+          message:
+            " An email has been sent to your inbox to reset your password",
+        });
     } catch (error) {
       console.log(error);
       user.resetPasswordToken = undefined;
@@ -262,22 +275,20 @@ const forgotPassword = async (req, res, next) => {
 };
 
 const resetPassword = async (req, res, next) => {
-  console.log("hi")
+  console.log("hi");
   const resetPasswordToken = crypto
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
-  console.log(req.params.token)
-  console.log(resetPasswordToken)
+  console.log(req.params.token);
+  console.log(resetPasswordToken);
   try {
     // Find the user by the token and check if it's still valid
     const user = await User.findOne({
       resetPasswordToken,
       resetPasswordExpire: { $gt: Date.now() }, // Token should still be valid
     });
-    console.log(user)
-
-
+    console.log(user);
 
     if (!user) {
       return next(new AppError("Invalid or expired token", 400));
@@ -285,7 +296,7 @@ const resetPassword = async (req, res, next) => {
 
     // Get the new password from the request body
     const { password } = req.body;
-  console.log(password)
+    console.log(password);
     if (!password) {
       return next(new AppError("Password is required", 400));
     }
@@ -311,7 +322,13 @@ const resetPassword = async (req, res, next) => {
       httpOnly: true,
     });
 
-    res.status(200).json({ success: true,rest, message:"Your password has been successfully reset." });
+    res
+      .status(200)
+      .json({
+        success: true,
+        rest,
+        message: "Your password has been successfully reset.",
+      });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -339,7 +356,12 @@ const passwordChange = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt);
     user.password = hashedPassword;
     await user.save();
-    res.status(201).json({success:true,message:"Your password has been successfully changed."});
+    res
+      .status(201)
+      .json({
+        success: true,
+        message: "Your password has been successfully changed.",
+      });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
