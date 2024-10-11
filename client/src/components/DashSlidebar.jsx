@@ -6,13 +6,13 @@ import { MdOutlineReviews } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 
 export default function DashSlidebar() {
   const location = useLocation();
   const [tab, setTab] = useState("");
-  const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.user);
+
+const {currentUser} =useSelector((state)=>state.user)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -26,7 +26,7 @@ export default function DashSlidebar() {
   return (
     <Sidebar
       aria-label="Dashboard Sidebar"
-      className="bg-gray-800 text-white min-h-screen"
+      className="bg-gray-800 text-white "
     >
       <Sidebar.Items className="px-4 py-6">
         <Sidebar.ItemGroup>
@@ -38,6 +38,7 @@ export default function DashSlidebar() {
                   active={tab === "dash"}
                   icon={HiChartPie}
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
+                   as='div'
                 >
                   <span className="text-sm font-semibold">Dashboard</span>
                 </Sidebar.Item>
@@ -48,6 +49,7 @@ export default function DashSlidebar() {
                   active={tab === "create-product"}
                   icon={HiShoppingBag}
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
+                   as='div'
                 >
                   <span className="text-sm font-semibold">Create Product</span>
                 </Sidebar.Item>
@@ -58,6 +60,7 @@ export default function DashSlidebar() {
                   active={tab === "products"}
                   icon={HiShoppingBag}
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
+                   as='div'
                 >
                   <span className="text-sm font-semibold">All Products</span>
                 </Sidebar.Item>
@@ -69,6 +72,7 @@ export default function DashSlidebar() {
                   icon={HiInbox}
                   label="3"
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
+                   as='div'
                 >
                   <span className="text-sm font-semibold">Orders</span>
                 </Sidebar.Item>
@@ -79,6 +83,7 @@ export default function DashSlidebar() {
                   active={tab === "users"}
                   icon={FaUsers}
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
+                   as='div'
                 >
                   <span className="text-sm font-semibold">Users</span>
                 </Sidebar.Item>
@@ -89,6 +94,7 @@ export default function DashSlidebar() {
                   active={tab === "reviews"}
                   icon={MdOutlineReviews}
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
+                   as='div'
                 >
                   <span className="text-sm font-semibold">Reviews</span>
                 </Sidebar.Item>
@@ -103,6 +109,7 @@ export default function DashSlidebar() {
                 active={tab === "order-list"}
                 icon={MdOutlineReviews}
                 className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
+                 as='div'
               >
                 <span className="text-sm font-semibold">Order List</span>
               </Sidebar.Item>
@@ -115,6 +122,7 @@ export default function DashSlidebar() {
               active={tab === "profile"}
               icon={CgProfile}
               className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
+               as='div'
             >
               <span className="text-sm font-semibold">Profile</span>
             </Sidebar.Item>
@@ -124,6 +132,7 @@ export default function DashSlidebar() {
             href="#"
             icon={RiLogoutBoxRLine}
             className="hover:bg-gray-600 transition-colors rounded-lg mt-6"
+             as='div'
           >
             <span className="text-sm font-semibold">Sign Out</span>
           </Sidebar.Item>

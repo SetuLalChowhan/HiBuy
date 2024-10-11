@@ -20,6 +20,7 @@ import { logout } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
+
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ export default function Header() {
             sizing="sm"
           />
           <IoSearchSharp className="absolute left-2 text-gray-400" size={25} />
+        
         </div>
       </div>
 

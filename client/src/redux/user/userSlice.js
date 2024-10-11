@@ -125,11 +125,32 @@ export const resetPassword = createAsyncThunk(
     }
   }
 );
+export const getAllUsers = createAsyncThunk(
+  "admin/getAllUsers",
 
+  async ({ query = "", startIndex = 0, toast = "" }, { rejectWithValue }) => {
+    try {
+      console.log("hllo");
+      const response = await axios.get(
+        `http://localhost:3000/api/users/getAllusers?query=${query}&startIndex=${startIndex}&limit=10`,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data; // Return the fetched data
+    } catch (err) {
+      toast.success("User not Found");
+      return rejectWithValue(err.response.data.message); // Handle error
+    }
+  }
+);
 const initialState = {
   currentUser: null,
   error: null,
   loading: false,
+  users: [],
+  totalUsers: 0,
+  showmore: true,
 };
 
 const userSlice = createSlice({
@@ -146,6 +167,7 @@ const userSlice = createSlice({
     });
     builder.addCase(register.fulfilled, (state, action) => {
       state.loading = false;
+
       state.currentUser = action.payload.rest;
       state.error = "";
     });
@@ -158,6 +180,7 @@ const userSlice = createSlice({
     });
     builder.addCase(verifyUser.fulfilled, (state, action) => {
       state.loading = false;
+
       state.currentUser = action.payload.rest;
       state.error = "";
     });
@@ -170,6 +193,7 @@ const userSlice = createSlice({
     });
     builder.addCase(login.fulfilled, (state, action) => {
       state.loading = false;
+
       state.currentUser = action.payload.rest;
       state.error = "";
     });
@@ -205,6 +229,7 @@ const userSlice = createSlice({
     });
     builder.addCase(resetPassword.fulfilled, (state, action) => {
       state.loading = false;
+
       state.currentUser = action.payload.rest;
       state.error = "";
     });
@@ -212,9 +237,42 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     });
+    builder
+      .addCase(getAllUsers.pending, (state) => {
+        state.loading = true; // Set loading to true when the request starts
+      })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
+        state.loading = false; // Set loading to false on successful fetch
+        const {
+          arg: { startIndex },
+        } = action.meta;
+        if (startIndex) {
+          state.users = [...state.users, ...action.payload.users];
+          state.totalUsers = state.users.length;
+          if (state.totalUsers % 10 === 0) {
+            state.showmore = true;
+          } else {
+            state.showmore = false;
+          }
+        } else {
+          state.users = action.payload.users;
+          state.totalUsers = state.users.length;
+          if (state.totalUsers % 10 === 0) {
+            state.showmore = true;
+          } else {
+            state.showmore = false;
+          }
+        }
+
+        state.error = null; // Clear any previous error
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
+        state.loading = false; // Set loading to false on error
+        state.error = action.payload; // Set error message
+      });
   },
 });
 
-export const { clearError } = userSlice.actions;
+export const { clearError, setUser } = userSlice.actions;
 
 export default userSlice.reducer;

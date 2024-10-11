@@ -9,9 +9,13 @@ import Users from "../components/Users";
 import Reviews from "../components/Reviews";
 import AllDash from "../components/AllDash";
 
+import { useDispatch } from "react-redux";
+
 export default function Dashboard() {
   const location = useLocation();
+
   const [tab, setTab] = useState("");
+
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -22,10 +26,11 @@ export default function Dashboard() {
     }
   }, [location.search]);
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row">
       {/* Sidebar */}
       <div className=" md:w-56">
         < DashSlidebar/>
+      
       </div>
 
       

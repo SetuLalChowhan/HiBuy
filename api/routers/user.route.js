@@ -10,7 +10,8 @@ const {
   passwordChange,
 } = require("../controller/auth.controller.js");
 const upload = require("../uploads/multerConfig.js");
-const authenticate = require("../middleware/authMiddleware.js");
+const {authenticate, isAdmin} = require("../middleware/authMiddleware.js");
+const { updateUserRole, deleteUser, searchUsers, getAllUsers } = require("../controller/user.controller.js");
 const router = express.Router();
 
 //register
@@ -29,7 +30,11 @@ router.put("/reset-password/:token", resetPassword);
 router.post("/verify-email", verifyEmail);
 //password change
 router.put("/password-change", authenticate, passwordChange);
-
-
+//role change
+router.patch("/role", isAdmin, updateUserRole);
+//delete user
+router.delete("/:userId", isAdmin, deleteUser);
+// get all users
+router.get("/getAllusers", isAdmin, getAllUsers);
 
 module.exports = router;
