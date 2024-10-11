@@ -132,8 +132,29 @@ export const getAllUsers = createAsyncThunk(
     try {
       console.log("hllo");
       const response = await axios.get(
-        `http://localhost:3000/api/users/getAllusers?query=${query}&startIndex=${startIndex}&limit=10`,
+        `api/users/getAllusers?query=${query}&startIndex=${startIndex}&limit=10`,
         {
+          withCredentials: true,
+        }
+      );
+      return response.data; // Return the fetched data
+    } catch (err) {
+      toast.success("User not Found");
+      return rejectWithValue(err.response.data.message); // Handle error
+    }
+  }
+);
+export const userRoleChange = createAsyncThunk(
+  "admin/roleChange",
+
+  async ({userId,isAdmin}, { rejectWithValue }) => {
+    console.log({userId,isAdmin})
+    try {
+    
+      const response = await axios.patch(
+        `api/users/role`,{userId,isAdmin},
+        {
+          "Content-Type": "application/json",
           withCredentials: true,
         }
       );
@@ -149,6 +170,7 @@ const initialState = {
   error: null,
   loading: false,
   users: [],
+  allUsersDefault:0,
   totalUsers: 0,
   showmore: true,
 };
@@ -263,10 +285,35 @@ const userSlice = createSlice({
             state.showmore = false;
           }
         }
+        state.allUsersDefault = action.payload.totalUsers
 
         state.error = null; // Clear any previous error
       })
       .addCase(getAllUsers.rejected, (state, action) => {
+        state.loading = false; // Set loading to false on error
+        state.error = action.payload; // Set error message
+      });
+    builder
+      .addCase(userRoleChange.pending, (state) => {
+        state.loading = true; // Set loading to true when the request starts
+      })
+      .addCase(userRoleChange.fulfilled, (state, action) => {
+        state.loading = false; // Set loading to false on successful fetch
+        
+        const {
+          arg: { userId, isAdmin },
+        } = action.meta;
+    
+        if (userId) {
+          // Update the user in the state.users array
+          state.users = state.users.map(user =>
+            user._id === userId ? { ...user, isAdmin: isAdmin } : user
+          );
+        }
+    
+        state.error = null; // Clear any previous error
+    })
+      .addCase(userRoleChange.rejected, (state, action) => {
         state.loading = false; // Set loading to false on error
         state.error = action.payload; // Set error message
       });

@@ -10,7 +10,7 @@ const transform = createTransform(
   // Transform state on the way to being serialized and persisted
   (inboundState) => {
     // Destructure to exclude the error and loading properties
-    const { error, loading, ...rest } = inboundState;
+    const { error, loading,allUsersDefault, ...rest } = inboundState;
     return rest; // Return the modified state without error and loading
   },
   // Transform state being rehydrated (not modifying it here)

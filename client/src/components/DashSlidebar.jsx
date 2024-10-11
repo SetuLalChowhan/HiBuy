@@ -12,7 +12,7 @@ export default function DashSlidebar() {
   const location = useLocation();
   const [tab, setTab] = useState("");
 
-const {currentUser} =useSelector((state)=>state.user)
+const {currentUser,allUsersDefault} =useSelector((state)=>state.user)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -84,6 +84,8 @@ const {currentUser} =useSelector((state)=>state.user)
                   icon={FaUsers}
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
                    as='div'
+                   label={allUsersDefault==0?"":allUsersDefault}
+                   
                 >
                   <span className="text-sm font-semibold">Users</span>
                 </Sidebar.Item>
