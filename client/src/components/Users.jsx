@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getAllUsers, userRoleChange } from "../redux/user/userSlice";
+import { getAllUsers, userDeleted, userRoleChange } from "../redux/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
 
@@ -26,9 +26,13 @@ const Users = () => {
     dispatch(userRoleChange({ userId, isAdmin: !admin }));
   };
 
+  const handleDelete = (userId) => {
+    dispatch(userDeleted({ userId, toast }));
+  };
+
   return (
-    <div className="admin-users p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">Admin - Users Management</h1>
+    <div className="admin-users p-6 max-w-4xl mx-auto bg-gray-50 rounded-lg shadow-md">
+      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">User Management</h1>
 
       {/* Search Bar */}
       <form onSubmit={handleSearch} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
@@ -37,7 +41,7 @@ const Users = () => {
           placeholder="Search users..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-96 focus:ring focus:ring-blue-500"
+          className="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-96 focus:ring focus:ring-blue-500 transition duration-200"
         />
         <button
           type="submit"
@@ -52,22 +56,30 @@ const Users = () => {
         {users?.map((user) => (
           <div
             key={user._id}
-            className="user-card bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between transition-transform hover:scale-105"
+            className="user-card bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between transition-transform hover:scale-105"
           >
-            <div className="flex items-center">
+            <div className="flex items-center mb-4 sm:mb-0">
               <img
                 src={`http://localhost:3000/${user.avatar}` || "/default-avatar.png"}
                 alt={`${user.name}'s profile`}
-                className="w-20 h-20 rounded-full object-cover mr-6"
+                className="w-20 h-20 rounded-full object-cover border border-gray-300 shadow"
               />
-              <div className="text-center sm:text-left">
-                <h2 className="text-xl font-semibold">{user.name}</h2>
-                <p className="text-gray-500">{user.email}</p>
+              <div className="ml-6">
+                <h2 className="text-xl font-semibold text-gray-800">{user.name}</h2>
+                <p className="text-gray-600">{user.email}</p>
                 <div className="admin-status mt-2">
                   {user.isAdmin ? (
-                    <span className="text-green-600 font-bold">Admin</span>
+                    <span className="text-green-600 font-semibold">Admin</span>
                   ) : (
-                    <span className="text-red-600 font-bold">User</span>
+                    <span className="text-red-600 font-semibold">User</span>
+                  )}
+                </div>
+                {/* Verification Status */}
+                <div className="verification-status mt-2">
+                  {user.isVerified ? (
+                    <span className="text-blue-600 font-semibold">Verified ✅</span>
+                  ) : (
+                    <span className="text-yellow-600 font-semibold">Not Verified ❌</span>
                   )}
                 </div>
               </div>
@@ -77,14 +89,15 @@ const Users = () => {
             <div className="mt-4 sm:mt-0 flex space-x-4">
               <button
                 onClick={() => handleRoleChange(user._id, user.isAdmin)}
-                className={`${
-                  user.isAdmin ? "bg-yellow-500" : "bg-green-500"
-                } text-white px-4 py-2 rounded-lg hover:bg-opacity-90`}
+                className={`text-white px-4 py-2 rounded-lg transition-colors ${
+                  user.isAdmin ? "bg-yellow-500 hover:bg-yellow-600" : "bg-green-500 hover:bg-green-600"
+                }`}
               >
-                {user.isAdmin ? "Make User" : "Make Admin"}
+                {user.isAdmin ? "Revoke Admin" : "Make Admin"}
               </button>
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                onClick={() => handleDelete(user._id)}
               >
                 Delete
               </button>
@@ -98,7 +111,7 @@ const Users = () => {
         {showmore && (
           <button
             onClick={handleShowmore}
-            className="w-full sm:w-auto text-teal-600 px-6 py-3 rounded-lg hover:text-teal-700"
+            className="w-full sm:w-auto bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors"
           >
             Show More
           </button>

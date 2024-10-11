@@ -132,7 +132,7 @@ export const getAllUsers = createAsyncThunk(
     try {
       console.log("hllo");
       const response = await axios.get(
-        `api/users/getAllusers?query=${query}&startIndex=${startIndex}&limit=10`,
+        `http://localhost:3000/api/users/getAllusers?query=${query}&startIndex=${startIndex}&limit=10`,
         {
           withCredentials: true,
         }
@@ -147,12 +147,12 @@ export const getAllUsers = createAsyncThunk(
 export const userRoleChange = createAsyncThunk(
   "admin/roleChange",
 
-  async ({userId,isAdmin}, { rejectWithValue }) => {
-    console.log({userId,isAdmin})
+  async ({ userId, isAdmin }, { rejectWithValue }) => {
+  
     try {
-    
       const response = await axios.patch(
-        `api/users/role`,{userId,isAdmin},
+        `api/users/role`,
+        { userId, isAdmin },
         {
           "Content-Type": "application/json",
           withCredentials: true,
@@ -165,12 +165,36 @@ export const userRoleChange = createAsyncThunk(
     }
   }
 );
+export const userDeleted = createAsyncThunk(
+  "admin/userDelete",
+
+  async ({userId,toast}, { rejectWithValue }) => {
+    
+    try {
+      const response = await axios.delete(
+        `api/users/${userId}`,
+       
+        {
+          "Content-Type": "application/json",
+         
+          withCredentials: true,
+        }
+      );
+      toast.success("User deleted successfully ");
+      return response.data; // Return the fetched data
+    } catch (err) {
+      console.log(err)
+      toast.success("User not Found");
+      return rejectWithValue(err.response.data.message); // Handle error
+    }
+  }
+);
 const initialState = {
   currentUser: null,
   error: null,
   loading: false,
   users: [],
-  allUsersDefault:0,
+  allUsersDefault: 0,
   totalUsers: 0,
   showmore: true,
 };
@@ -191,6 +215,7 @@ const userSlice = createSlice({
       state.loading = false;
 
       state.currentUser = action.payload.rest;
+      state.allUsersDefault=state.users.length+=1;
       state.error = "";
     });
     builder.addCase(register.rejected, (state, action) => {
@@ -285,7 +310,7 @@ const userSlice = createSlice({
             state.showmore = false;
           }
         }
-        state.allUsersDefault = action.payload.totalUsers
+        state.allUsersDefault = action.payload.totalUsers;
 
         state.error = null; // Clear any previous error
       })
@@ -299,21 +324,44 @@ const userSlice = createSlice({
       })
       .addCase(userRoleChange.fulfilled, (state, action) => {
         state.loading = false; // Set loading to false on successful fetch
-        
+
         const {
           arg: { userId, isAdmin },
         } = action.meta;
-    
+
         if (userId) {
           // Update the user in the state.users array
-          state.users = state.users.map(user =>
+          state.users = state.users.map((user) =>
             user._id === userId ? { ...user, isAdmin: isAdmin } : user
           );
         }
-    
+
         state.error = null; // Clear any previous error
-    })
+      })
       .addCase(userRoleChange.rejected, (state, action) => {
+        state.loading = false; // Set loading to false on error
+        state.error = action.payload; // Set error message
+      });
+    builder
+      .addCase(userDeleted.pending, (state) => {
+        state.loading = true; // Set loading to true when the request starts
+      })
+      .addCase(userDeleted.fulfilled, (state, action) => {
+        state.loading = false; // Set loading to false on successful fetch
+
+        const {
+          arg: { userId},
+        } = action.meta;
+
+        if (userId) {
+          // Update the user in the state.users array
+          state.users = state.users.filter(user => user._id !== userId  );
+        }
+        state.allUsersDefault = state.users.length
+
+        state.error = null; // Clear any previous error
+      })
+      .addCase(userDeleted.rejected, (state, action) => {
         state.loading = false; // Set loading to false on error
         state.error = action.payload; // Set error message
       });
