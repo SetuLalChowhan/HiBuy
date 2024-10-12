@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db.js');
 const userRoutes = require('./routers/user.route.js');
+const productRoutes=require("./routers/product.route.js")
 const path = require('path');
 const errorHandler = require('./middleware/errorHandler.js');
 const cors = require('cors');
@@ -25,6 +26,7 @@ app.use(cors({
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
 
 app.use(errorHandler);
 

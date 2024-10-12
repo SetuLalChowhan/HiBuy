@@ -14,15 +14,12 @@ const registerUser = async (req, res, next) => {
 
   const { name, email, password, confirm_password } = req.body;
   const avatar = req.file ? req.file.path : null;
-  console.log(name, email, password, avatar, confirm_password);
   try {
     // Check if the user already exists
     let user = await User.findOne({ email });
     if (user) {
       return next(new AppError("A user with this email already exists.", 400));
     }
-    console.log(email, name, password, confirm_password);
-
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);

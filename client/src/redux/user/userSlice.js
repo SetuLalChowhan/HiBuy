@@ -218,7 +218,7 @@ export const editProfile = createAsyncThunk(
       toast.success("Your profile has been successfully updated.");
       return response.data; // Return the fetched data
     } catch (err) {
-      toast.error("Unauthorized Access.Please Login again");
+      toast.error(err.response.data.message);
       console.log(err);
 
       return rejectWithValue(err.response.data.message); // Handle error
