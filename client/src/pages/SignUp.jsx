@@ -28,6 +28,7 @@ const SignUp = () => {
     },
     validationSchema: signUpSchema,
     onSubmit: (values) => {
+      console.log(values)
       dispatch(register({ values, navigate, toast }));
     },
   });
@@ -146,9 +147,9 @@ const SignUp = () => {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <RiEyeOffLine size={24} className="text-blue-500" />
+                  <RiEyeOffLine size={24}  />
                 ) : (
-                  <RiEyeLine size={24} className="text-blue-500" />
+                  <RiEyeLine size={24}  />
                 )}
               </div>
               {formik.errors.password && formik.touched.password && (
@@ -193,9 +194,9 @@ const SignUp = () => {
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? (
-                  <RiEyeOffLine size={24} className="text-blue-500" />
+                  <RiEyeOffLine size={24}  />
                 ) : (
-                  <RiEyeLine size={24} className="text-blue-500" />
+                  <RiEyeLine size={24}  />
                 )}
               </div>
               {formik.errors.confirm_password &&

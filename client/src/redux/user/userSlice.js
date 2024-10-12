@@ -87,7 +87,9 @@ export const forgotPassword = createAsyncThunk(
   async ({ values1, toast, navigate }, { rejectWithValue }) => {
     try {
       const response = await axios.post("api/users/forgot-password", values1, {
-        "Content-Type": "application/json",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
         withCredentials: true,
       });
@@ -110,7 +112,9 @@ export const resetPassword = createAsyncThunk(
         `http://localhost:5173/api/users/reset-password/${token}`,
         values,
         {
-          "Content-Type": "application/json",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
           withCredentials: true,
         }
@@ -147,20 +151,22 @@ export const getAllUsers = createAsyncThunk(
 export const userRoleChange = createAsyncThunk(
   "admin/roleChange",
 
-  async ({ userId, isAdmin }, { rejectWithValue }) => {
-  
+  async ({ userId, isAdmin, toast }, { rejectWithValue }) => {
     try {
       const response = await axios.patch(
         `api/users/role`,
         { userId, isAdmin },
         {
-          "Content-Type": "application/json",
+          headers: {
+            "Content-Type": "application/json",
+          },
           withCredentials: true,
         }
       );
       return response.data; // Return the fetched data
     } catch (err) {
-      toast.success("User not Found");
+      console.log(err);
+      toast.error("Unauthorized Access.Please Login again");
       return rejectWithValue(err.response.data.message); // Handle error
     }
   }
@@ -168,23 +174,81 @@ export const userRoleChange = createAsyncThunk(
 export const userDeleted = createAsyncThunk(
   "admin/userDelete",
 
-  async ({userId,toast}, { rejectWithValue }) => {
-    
+  async ({ userId, toast }, { rejectWithValue }) => {
     try {
       const response = await axios.delete(
         `api/users/${userId}`,
-       
+
         {
-          "Content-Type": "application/json",
-         
+          headers: {
+            "Content-Type": "application/json",
+          },
+
           withCredentials: true,
         }
       );
       toast.success("User deleted successfully ");
       return response.data; // Return the fetched data
     } catch (err) {
-      console.log(err)
-      toast.success("User not Found");
+      toast.error("Unauthorized Access.Please Login again");
+      console.log(err);
+
+      return rejectWithValue(err.response.data.message); // Handle error
+    }
+  }
+);
+export const editProfile = createAsyncThunk(
+  "editProfile",
+
+  async ({ values, toast }, { rejectWithValue }) => {
+    console.log(values);
+    try {
+      const response = await axios.put(
+        `api/users/edit-profile`,
+        values,
+
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+
+          withCredentials: true,
+        }
+      );
+      toast.success("Your profile has been successfully updated.");
+      return response.data; // Return the fetched data
+    } catch (err) {
+      toast.error("Unauthorized Access.Please Login again");
+      console.log(err);
+
+      return rejectWithValue(err.response.data.message); // Handle error
+    }
+  }
+);
+export const passwordChange = createAsyncThunk(
+  "passwordChange",
+
+  async ({ values, toast }, { rejectWithValue }) => {
+    console.log(values);
+    try {
+      const response = await axios.put(
+        `api/users/password-change`,
+        values,
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          withCredentials: true,
+        }
+      );
+      toast.success("Your password has been successfully updated.");
+      return response.data; // Return the fetched data
+    } catch (err) {
+      
+      console.log(err);
+
       return rejectWithValue(err.response.data.message); // Handle error
     }
   }
@@ -215,7 +279,7 @@ const userSlice = createSlice({
       state.loading = false;
 
       state.currentUser = action.payload.rest;
-      state.allUsersDefault=state.users.length+=1;
+      state.allUsersDefault = state.users.length += 1;
       state.error = "";
     });
     builder.addCase(register.rejected, (state, action) => {
@@ -350,14 +414,14 @@ const userSlice = createSlice({
         state.loading = false; // Set loading to false on successful fetch
 
         const {
-          arg: { userId},
+          arg: { userId },
         } = action.meta;
 
         if (userId) {
           // Update the user in the state.users array
-          state.users = state.users.filter(user => user._id !== userId  );
+          state.users = state.users.filter((user) => user._id !== userId);
         }
-        state.allUsersDefault = state.users.length
+        state.allUsersDefault = state.users.length;
 
         state.error = null; // Clear any previous error
       })
@@ -365,6 +429,30 @@ const userSlice = createSlice({
         state.loading = false; // Set loading to false on error
         state.error = action.payload; // Set error message
       });
+    builder.addCase(editProfile.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(editProfile.fulfilled, (state, action) => {
+      state.loading = false;
+
+      state.currentUser = action.payload.rest;
+      state.error = "";
+    });
+    builder.addCase(editProfile.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(passwordChange.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(passwordChange.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = "";
+    });
+    builder.addCase(passwordChange.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
   },
 });
 

@@ -53,6 +53,7 @@ const SignIn = () => {
     validationSchema: signInSchema.pick(["email"]), // Only validate email for this form
     onSubmit: (values1) => {
       dispatch(forgotPassword({ values1, navigate, toast }));
+      
     },
   });
 
@@ -143,9 +144,9 @@ const SignIn = () => {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <FaEyeSlash className="text-blue-500" size={24} />
+                  <FaEyeSlash size={24} />
                 ) : (
-                  <FaEye className="text-blue-500" size={24} />
+                  <FaEye  size={24} />
                 )}
               </div>
               {errors.password && touched.password ? (
@@ -223,7 +224,7 @@ const SignIn = () => {
             <form onSubmit={handleSubmit1}>
               <div className="mb-4">
                 <label
-                  htmlFor="emailModal"
+                  htmlFor="email"
                   className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
                   Email Address
@@ -236,7 +237,8 @@ const SignIn = () => {
                   <input
                     type="email"
                     required
-                    id="emailModal" // Unique ID
+                    id="email" // Unique ID
+                    name="email"
                     className={`w-full pl-12 text-lg rounded-lg border focus:ring focus:ring-blue-200 transition
                       ${
                         errors1.email && touched1.email

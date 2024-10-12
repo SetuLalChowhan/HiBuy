@@ -32,12 +32,16 @@ export const signUpSchema = Yup.object({
       return value && value.size <= 2 * 1024 * 1024; // 2 MB
     })
     .test("fileType", "Unsupported file format", (value) => {
-      return value && ["image/jpeg", "image/png", "image/gif"].includes(value.type);
+      return (
+        value && ["image/jpeg", "image/png", "image/gif"].includes(value.type)
+      );
     }),
 });
 
 export const signInSchema = Yup.object({
-  email: Yup.string().email("Invalid email address").required("Please enter your email"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Please enter your email"),
   password: passwordRules,
 });
 
@@ -45,11 +49,38 @@ export const resetPasswordSchema = Yup.object({
   password: passwordRules,
 });
 
-// Uncomment if you need this schema for password change
-// export const passwordChangeSchema = Yup.object({
-//   oldPassword: passwordRules.required("Please enter your old password"),
-//   newPassword: passwordRules.required("Please enter your new password"),
-//   confirmPassword: Yup.string()
-//     .oneOf([Yup.ref('newPassword'), null], "Passwords must match")
-//     .required("Please confirm your new password")
-// });
+export const passwordChangeSchema = Yup.object({
+  oldPassword: Yup.string().required("Please enter your old password"),
+  newPassword: passwordRules, // Applying the advanced password rules
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
+    .required("Please confirm your new password"),
+});
+
+export const editSchema = Yup.object({
+  name: Yup.string()
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name cannot exceed 50 characters")
+    .matches(/^[a-zA-Z\s]*$/, "Name can only contain letters and spaces"),
+
+  email: Yup.string()
+    .email("Invalid email address"),
+
+  avatar: Yup.mixed().nullable()
+    .test("fileSize", "File size must be 2MB or less", function (value) {
+      // Only validate file size if a file is selected
+      if (value) {
+        return value.size <= 2 * 1024 * 1024; // 2MB limit
+      }
+      return true; // Skip validation if no file is selected
+    })
+    .test("fileType", "Only JPEG, PNG, or GIF formats are supported", function (value) {
+      // Only validate file type if a file is selected
+      if (value) {
+        return ["image/jpeg", "image/png", "image/gif"].includes(value.type);
+      }
+      return true; // Skip validation if no file is selected
+    }),
+});
+
+

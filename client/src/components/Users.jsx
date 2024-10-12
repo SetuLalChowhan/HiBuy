@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getAllUsers, userDeleted, userRoleChange } from "../redux/user/userSlice";
+import {
+  getAllUsers,
+  userDeleted,
+  userRoleChange,
+} from "../redux/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
 
@@ -23,7 +27,7 @@ const Users = () => {
   };
 
   const handleRoleChange = (userId, admin) => {
-    dispatch(userRoleChange({ userId, isAdmin: !admin }));
+    dispatch(userRoleChange({ userId, isAdmin: !admin, toast }));
   };
 
   const handleDelete = (userId) => {
@@ -32,10 +36,15 @@ const Users = () => {
 
   return (
     <div className="admin-users p-6 max-w-4xl mx-auto bg-gray-50 rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">User Management</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
+        User Management
+      </h1>
 
       {/* Search Bar */}
-      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+      <form
+        onSubmit={handleSearch}
+        className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6"
+      >
         <input
           type="text"
           placeholder="Search users..."
@@ -60,12 +69,17 @@ const Users = () => {
           >
             <div className="flex items-center mb-4 sm:mb-0">
               <img
-                src={`http://localhost:3000/${user.avatar}` || "/default-avatar.png"}
+                src={
+                  `http://localhost:3000/${user.avatar}` ||
+                  "/default-avatar.png"
+                }
                 alt={`${user.name}'s profile`}
                 className="w-20 h-20 rounded-full object-cover border border-gray-300 shadow"
               />
               <div className="ml-6">
-                <h2 className="text-xl font-semibold text-gray-800">{user.name}</h2>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {user.name}
+                </h2>
                 <p className="text-gray-600">{user.email}</p>
                 <div className="admin-status mt-2">
                   {user.isAdmin ? (
@@ -77,9 +91,13 @@ const Users = () => {
                 {/* Verification Status */}
                 <div className="verification-status mt-2">
                   {user.isVerified ? (
-                    <span className="text-blue-600 font-semibold">Verified ✅</span>
+                    <span className="text-blue-600 font-semibold">
+                      Verified ✅
+                    </span>
                   ) : (
-                    <span className="text-yellow-600 font-semibold">Not Verified ❌</span>
+                    <span className="text-yellow-600 font-semibold">
+                      Not Verified ❌
+                    </span>
                   )}
                 </div>
               </div>
@@ -90,7 +108,9 @@ const Users = () => {
               <button
                 onClick={() => handleRoleChange(user._id, user.isAdmin)}
                 className={`text-white px-4 py-2 rounded-lg transition-colors ${
-                  user.isAdmin ? "bg-yellow-500 hover:bg-yellow-600" : "bg-green-500 hover:bg-green-600"
+                  user.isAdmin
+                    ? "bg-yellow-500 hover:bg-yellow-600"
+                    : "bg-green-500 hover:bg-green-600"
                 }`}
               >
                 {user.isAdmin ? "Revoke Admin" : "Make Admin"}

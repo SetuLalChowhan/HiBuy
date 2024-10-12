@@ -97,6 +97,7 @@ const verifyEmail = async (req, res, next) => {
     );
     res.cookie("token", token, {
       httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000
     });
 
     const { password: pass, ...rest } = user._doc;
@@ -113,15 +114,16 @@ const verifyEmail = async (req, res, next) => {
 };
 //edit-profile
 const editProfile = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email } = req.body;
   const avatar = req.file ? req.file.path : null;
   const userId = req.user.userId;
+
+  console.log(avatar)
 
   // Assuming you're using JWT to authenticate users
   try {
     const user = await User.findById(userId);
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (isMatch) {
+ 
       if (!user) {
         return next(
           new AppError("A user with this email already exists.", 404)
@@ -140,27 +142,19 @@ const editProfile = async (req, res, next) => {
         user.name = name; // Update name
       }
 
-      // if (password) {
-      //   const salt = await bcrypt.genSalt(10);
-      //   user.password = await bcrypt.hash(password, salt); d
-      // }
       if (avatar) {
-        user.avatar = avatar; // Update avatar path if a new one is uploaded
+        user.avatar = avatar;
       }
       await user.save();
-    } else {
-      return next(new AppError("Passwords must match."));
-    }
+    
 
     const { password: pass, ...rest } = user._doc;
 
-    res
-      .status(201)
-      .json({
-        success: true,
-        rest,
-        message: "The user profile has been successfully updated.",
-      });
+    res.status(201).json({
+      success: true,
+      rest,
+      message: "The user profile has been successfully updated.",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Server error" });
@@ -188,6 +182,7 @@ const loginUser = async (req, res, next) => {
     // Set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000
     });
     const { password: pass, ...rest } = user._doc;
 
@@ -254,13 +249,10 @@ const forgotPassword = async (req, res, next) => {
         message: "You requested a password reset.", // Fallback message in case HTML is not supported
       });
 
-      res
-        .status(200)
-        .json({
-          success: true,
-          message:
-            " An email has been sent to your inbox to reset your password",
-        });
+      res.status(200).json({
+        success: true,
+        message: " An email has been sent to your inbox to reset your password",
+      });
     } catch (error) {
       console.log(error);
       user.resetPasswordToken = undefined;
@@ -312,23 +304,20 @@ const resetPassword = async (req, res, next) => {
     await user.save();
 
     // Optionally, log the user in by generating a token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET,);
     const { password: pass, ...rest } = user._doc;
 
     // Set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000
     });
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        rest,
-        message: "Your password has been successfully reset.",
-      });
+    res.status(200).json({
+      success: true,
+      rest,
+      message: "Your password has been successfully reset.",
+    });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -356,12 +345,10 @@ const passwordChange = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt);
     user.password = hashedPassword;
     await user.save();
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Your password has been successfully changed.",
-      });
+    res.status(201).json({
+      success: true,
+      message: "Your password has been successfully changed.",
+    });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
