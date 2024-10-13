@@ -10,7 +10,7 @@ import { clearError, register } from "../redux/user/userSlice";
 import { toast } from "react-hot-toast";
 
 const SignUp = () => {
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   

@@ -10,7 +10,7 @@ import {toast} from 'react-hot-toast'
 const VerifyPage = () => {
   const dispatch =useDispatch()
   const navigate =useNavigate()
-  const {currentUser,loading,error} =useSelector((state)=>state.user)
+  const {currentUser,loading,error} =useSelector((state)=>state.user.user)
   const formik = useFormik({
     initialValues: {
       email: '',

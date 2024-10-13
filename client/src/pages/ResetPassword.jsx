@@ -15,7 +15,7 @@ const ResetPassword = () => {
   const dispatch = useDispatch();
   const { token } = useParams();
   console.log(token);
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user.user);
 
   // State to toggle password visibility
   const [showPassword, setShowPassword] = useState(false);

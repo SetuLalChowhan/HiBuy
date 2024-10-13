@@ -80,14 +80,14 @@ const deleteProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
   try {
-    const { category, type, search, minPrice, maxPrice, latest, mostSelling } =
-      req.query;
+    const { category, type, search, minPrice, maxPrice, latest } = req.query;
+    console.log("Query Params:", req.query); // Log the incoming query parameters
+
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const skip = startIndex;
 
     let query = {};
-
     if (category) query.category = category;
     if (type) query.type = type;
     if (search) {
@@ -100,19 +100,15 @@ const getProducts = async (req, res, next) => {
     if (minPrice) query.price = { ...query.price, $gte: Number(minPrice) };
     if (maxPrice) query.price = { ...query.price, $lte: Number(maxPrice) };
 
-    // Sorting based on `latest` or `mostSelling`
     let sortOption = {};
     if (latest === "true") {
       sortOption = { createdAt: -1 }; // Sort by creation date (newest first)
     }
-    if (mostSelling === "true") {
-      sortOption = { sold: -1 }; // Sort by most selling (assuming you have a 'sold' field)
-    }
+    console.log("Sort Option:", sortOption); // Log the sort option to check what is being applied
 
     const totalProducts = await Product.countDocuments(query);
-
     const products = await Product.find(query)
-      .sort(sortOption) // Apply sorting based on the query parameter
+      .sort(sortOption)
       .skip(skip)
       .limit(limit);
 
@@ -126,7 +122,7 @@ const getProducts = async (req, res, next) => {
       products,
     });
   } catch (error) {
-    console.error(error);
+    console.error(error); // Log the error for debugging
     next(new AppError("Server error", 500));
   }
 };

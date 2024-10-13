@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { Spinner, Alert } from "flowbite-react";
 import { createProductSchema } from "../schema";
+import { createProduct } from "../redux/product/productSlice";
 
 const CreateProduct = () => {
   // const { loading, error } = useSelector((state) => state.product);
@@ -22,7 +23,7 @@ const CreateProduct = () => {
     validationSchema: createProductSchema,
     onSubmit: (values) => {
       console.log(values);
-      // dispatch(createProduct({ formData, toast }));
+      dispatch(createProduct({ values, toast }));
     },
   });
 

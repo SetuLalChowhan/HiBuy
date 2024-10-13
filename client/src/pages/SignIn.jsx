@@ -14,7 +14,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // Add state to handle password visibility
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
