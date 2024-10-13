@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate,Outlet,Navigate } from 'react-router-dom'
 
 const PrivateRoute = () => {
-    const {currentUser} = useSelector((state)=>state.user)
+    const {currentUser} = useSelector((state)=>state.user.user)
     
   return currentUser ?<Outlet/>: <Navigate to={"/login"}/>
 }

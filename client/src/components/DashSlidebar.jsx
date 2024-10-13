@@ -12,7 +12,7 @@ export default function DashSlidebar() {
   const location = useLocation();
   const [tab, setTab] = useState("");
 
-const {currentUser,allUsersDefault} =useSelector((state)=>state.user)
+const {currentUser,allUsersDefault} =useSelector((state)=>state.user.user)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);

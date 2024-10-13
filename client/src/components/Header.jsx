@@ -22,7 +22,7 @@ import { toast } from "react-hot-toast";
 
 
 export default function Header() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

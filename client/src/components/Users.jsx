@@ -10,7 +10,7 @@ import { toast } from "react-hot-toast";
 const Users = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
-  const { users, totalUsers, showmore } = useSelector((state) => state.user);
+  const { users, totalUsers, showmore } = useSelector((state) => state.user.user);
 
   const handleSearch = (e) => {
     e.preventDefault();

@@ -9,7 +9,7 @@ import { editProfile, passwordChange } from "../redux/user/userSlice";
 
 const DashProfile = () => {
   const dispatch = useDispatch();
-  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user.user);
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
