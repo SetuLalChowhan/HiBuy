@@ -80,9 +80,11 @@ const deleteProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
   try {
-    const { category, type, search, minPrice, maxPrice, latest, sortOrder } = req.query;
-    console.log("Query Params:", req.query); // Log the incoming query parameters
+    const { category, type, search, minPrice, maxPrice, latest, sortOrder } =
+      req.query;
 
+
+    // Log the incoming query parameters
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const skip = startIndex;
@@ -96,7 +98,6 @@ const getProducts = async (req, res, next) => {
         { description: { $regex: search, $options: "i" } },
       ];
     }
-
     if (minPrice) query.price = { ...query.price, $gte: Number(minPrice) };
     if (maxPrice) query.price = { ...query.price, $lte: Number(maxPrice) };
 
@@ -109,10 +110,8 @@ const getProducts = async (req, res, next) => {
       sortOption = { price: -1 }; // Sort by price (high to low)
     }
 
-    console.log("Sort Option:", sortOption); // Log the sort option to check what is being applied
-
     const totalProducts = await Product.countDocuments(query);
-    const allProducts= await Product.countDocuments();
+    const allProducts = await Product.countDocuments();
     const products = await Product.find(query)
       .sort(sortOption)
       .skip(skip)
@@ -125,7 +124,7 @@ const getProducts = async (req, res, next) => {
     res.status(200).json({
       success: true,
       totalProducts,
-      total:allProducts,
+      total: allProducts,
       products,
     });
   } catch (error) {
@@ -133,7 +132,6 @@ const getProducts = async (req, res, next) => {
     next(new AppError("Server error", 500));
   }
 };
-
 
 const addReview = async (req, res, next) => {
   try {

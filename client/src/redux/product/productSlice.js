@@ -37,8 +37,6 @@ export const fetchProducts = createAsyncThunk(
         sortOrder = "",
       } = values;
 
-      console.log(sortOption);
-
       const response = await axios.get(
         `http://localhost:3000/api/products/all-products`,
         {
