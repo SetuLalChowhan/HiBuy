@@ -80,7 +80,7 @@ const deleteProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
   try {
-    const { category, type, search, minPrice, maxPrice, latest } = req.query;
+    const { category, type, search, minPrice, maxPrice, latest, sortOrder } = req.query;
     console.log("Query Params:", req.query); // Log the incoming query parameters
 
     const startIndex = parseInt(req.query.startIndex) || 0;
@@ -103,7 +103,12 @@ const getProducts = async (req, res, next) => {
     let sortOption = {};
     if (latest === "true") {
       sortOption = { createdAt: -1 }; // Sort by creation date (newest first)
+    } else if (sortOrder === "low-high") {
+      sortOption = { price: 1 }; // Sort by price (low to high)
+    } else if (sortOrder === "high-low") {
+      sortOption = { price: -1 }; // Sort by price (high to low)
     }
+
     console.log("Sort Option:", sortOption); // Log the sort option to check what is being applied
 
     const totalProducts = await Product.countDocuments(query);
@@ -126,6 +131,7 @@ const getProducts = async (req, res, next) => {
     next(new AppError("Server error", 500));
   }
 };
+
 
 const addReview = async (req, res, next) => {
   try {

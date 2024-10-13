@@ -20,6 +20,41 @@ export const createProduct = createAsyncThunk(
   }
 );
 
+
+export const fetchProducts = createAsyncThunk(
+    "product/fetchProducts",
+    async ({ values }, { rejectWithValue }) => {
+      try {
+        const { category="", type="", search="", minPrice="", maxPrice="", sortOption="", startIndex="", limit="",latest="",sortOrder="" } = values;
+  
+   console.log(sortOption)
+  
+        const response = await axios.get(`http://localhost:3000/api/products/all-products`, {
+          params: {
+            sortOrder:sortOption,
+            latest: sortOption==="latest"? 'true' : undefined,  // Only include if true
+            category: category || '',               // Fallback to empty string
+            type: type || '',                       // Fallback to empty string
+            search: search || '',                   // Fallback to empty string
+            minPrice: minPrice || '',               // Fallback to empty string
+            maxPrice: maxPrice || '',               // Fallback to empty string
+            startIndex: startIndex || 0,            // Default to 0
+            limit: limit || 10,                     // Default to 10
+          },
+          withCredentials: true,
+        });
+  
+      
+        return response.data; // Ensure your API returns the data in the expected format
+      } catch (err) {
+        console.log(err)
+        console.error(err.response?.data?.message || "Failed to fetch products");
+        return rejectWithValue(err.response?.data?.message || "An error occurred");
+      }
+    }
+  );
+
+
 const initialState = {
   products: [],
   error: null,
@@ -48,6 +83,19 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     });
+    builder.addCase(fetchProducts.pending, (state) => {
+        state.loading = true;
+      });
+      builder.addCase(fetchProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload.products; // Assuming your API returns a `products` array
+        state.totalProducts = action.payload.totalProducts; // Assuming your API returns `totalProducts`
+        state.error = null;
+      });
+      builder.addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
