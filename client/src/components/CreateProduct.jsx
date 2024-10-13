@@ -7,7 +7,7 @@ import { createProductSchema } from "../schema";
 import { createProduct } from "../redux/product/productSlice";
 
 const CreateProduct = () => {
-  // const { loading, error } = useSelector((state) => state.product);
+  const { loading, error } = useSelector((state) => state.product);
   const dispatch = useDispatch();
 
   const formik = useFormik({
@@ -254,7 +254,11 @@ const CreateProduct = () => {
             className="w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-all duration-200"
           >
             {/* {loading ? <Spinner size="sm" /> : "Create Product"} */}
-            Create Product
+            {loading ? (
+                    <Spinner color="success" aria-label="Success spinner example" />
+                  ) : (
+                    "Create Product"
+                  )}
           </button>
         </form>
       </div>

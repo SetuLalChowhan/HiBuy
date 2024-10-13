@@ -49,6 +49,7 @@ export default function Dashboard() {
       {tab === "users" && <Users/> }
       {/* reviews*/}
       {tab === "reviews" && <Reviews/> }
+      {tab == ":id" && <Reviews/> }
       </div>
     </div>
   );

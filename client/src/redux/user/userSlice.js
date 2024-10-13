@@ -246,7 +246,6 @@ export const passwordChange = createAsyncThunk(
       toast.success("Your password has been successfully updated.");
       return response.data; // Return the fetched data
     } catch (err) {
-      
       console.log(err);
 
       return rejectWithValue(err.response.data.message); // Handle error
@@ -257,8 +256,9 @@ const initialState = {
   currentUser: null,
   error: null,
   loading: false,
+  loading2: false,
   users: [],
-  allUsersDefault: 0,
+  allUsersDefault: null,
   totalUsers: 0,
   showmore: true,
 };
@@ -279,7 +279,6 @@ const userSlice = createSlice({
       state.loading = false;
 
       state.currentUser = action.payload.rest;
-      state.allUsersDefault = state.users.length += 1;
       state.error = "";
     });
     builder.addCase(register.rejected, (state, action) => {
@@ -354,9 +353,11 @@ const userSlice = createSlice({
       })
       .addCase(getAllUsers.fulfilled, (state, action) => {
         state.loading = false; // Set loading to false on successful fetch
+        state.allUsersDefault = action.payload.total;
         const {
           arg: { startIndex },
         } = action.meta;
+        
         if (startIndex) {
           state.users = [...state.users, ...action.payload.users];
           state.totalUsers = state.users.length;
@@ -374,7 +375,6 @@ const userSlice = createSlice({
             state.showmore = false;
           }
         }
-        state.allUsersDefault = action.payload.totalUsers;
 
         state.error = null; // Clear any previous error
       })
@@ -384,10 +384,10 @@ const userSlice = createSlice({
       });
     builder
       .addCase(userRoleChange.pending, (state) => {
-        state.loading = true; // Set loading to true when the request starts
+        state.loading2 = true; // Set loading to true when the request starts
       })
       .addCase(userRoleChange.fulfilled, (state, action) => {
-        state.loading = false; // Set loading to false on successful fetch
+        state.loading2 = false; // Set loading to false on successful fetch
 
         const {
           arg: { userId, isAdmin },
@@ -403,15 +403,15 @@ const userSlice = createSlice({
         state.error = null; // Clear any previous error
       })
       .addCase(userRoleChange.rejected, (state, action) => {
-        state.loading = false; // Set loading to false on error
+        state.loading2 = false; // Set loading to false on error
         state.error = action.payload; // Set error message
       });
     builder
       .addCase(userDeleted.pending, (state) => {
-        state.loading = true; // Set loading to true when the request starts
+        state.loading2 = true; // Set loading to true when the request starts
       })
       .addCase(userDeleted.fulfilled, (state, action) => {
-        state.loading = false; // Set loading to false on successful fetch
+        state.loading2 = false; // Set loading to false on successful fetch
 
         const {
           arg: { userId },
@@ -426,7 +426,7 @@ const userSlice = createSlice({
         state.error = null; // Clear any previous error
       })
       .addCase(userDeleted.rejected, (state, action) => {
-        state.loading = false; // Set loading to false on error
+        state.loading2 = false; // Set loading to false on error
         state.error = action.payload; // Set error message
       });
     builder.addCase(editProfile.pending, (state) => {

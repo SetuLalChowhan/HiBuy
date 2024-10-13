@@ -64,6 +64,7 @@ const getAllUsers = async (req, res, next) => {
   
       // Get total number of users (with search filter if query is present)
       const totalUsers = await User.countDocuments(searchQuery);
+      const total = await User.countDocuments();
   
       // Fetch users with pagination and optional filtering based on the query
       const users = await User.find(searchQuery).skip(skip).limit(limit);
@@ -82,7 +83,8 @@ const getAllUsers = async (req, res, next) => {
       // Send back the paginated and filtered results
       res.status(200).json({
         success: true,
-        totalUsers, // Total number of users (filtered if query was provided)
+        totalUsers, 
+        total,
         users: usersWithoutPassword, // Users data (without passwords)
       });
     } catch (error) {

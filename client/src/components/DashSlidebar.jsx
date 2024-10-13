@@ -13,6 +13,7 @@ export default function DashSlidebar() {
   const [tab, setTab] = useState("");
 
 const {currentUser,allUsersDefault} =useSelector((state)=>state.user.user)
+const {  allProductsDefault } = useSelector((state) => state.product);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -59,6 +60,7 @@ const {currentUser,allUsersDefault} =useSelector((state)=>state.user.user)
                 <Sidebar.Item
                   active={tab === "products"}
                   icon={HiShoppingBag}
+                  label={allProductsDefault }
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
                    as='div'
                 >

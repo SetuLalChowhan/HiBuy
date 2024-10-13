@@ -112,6 +112,7 @@ const getProducts = async (req, res, next) => {
     console.log("Sort Option:", sortOption); // Log the sort option to check what is being applied
 
     const totalProducts = await Product.countDocuments(query);
+    const allProducts= await Product.countDocuments();
     const products = await Product.find(query)
       .sort(sortOption)
       .skip(skip)
@@ -124,6 +125,7 @@ const getProducts = async (req, res, next) => {
     res.status(200).json({
       success: true,
       totalProducts,
+      total:allProducts,
       products,
     });
   } catch (error) {

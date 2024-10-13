@@ -10,7 +10,7 @@ import { createTransform } from "redux-persist";
 const transform = createTransform(
   (inboundState) => {
     // Destructure to exclude specific fields from user state
-    const { users, ...rest } = inboundState; // Exclude specific user fields
+    const { users,totalUsers,allUsersDefault, ...rest } = inboundState; // Exclude specific user fields
     return { ...rest }; // Return the modified user state without excluded fields
   },
   (outboundState) => {
