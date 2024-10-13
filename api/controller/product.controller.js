@@ -80,44 +80,50 @@ const deleteProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
   try {
-    // Extract query parameters: category, type, search, price range, pagination (startIndex, limit)
-    const { category, type, search, minPrice, maxPrice } = req.query;
+    const { category, type, search, minPrice, maxPrice, latest, mostSelling } =
+      req.query;
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const skip = startIndex;
 
-    // Build the search/filter query
     let query = {};
 
     if (category) query.category = category;
     if (type) query.type = type;
     if (search) {
       query.$or = [
-        { name: { $regex: search, $options: "i" } }, // Case-insensitive search in product name
-        { description: { $regex: search, $options: "i" } }, // Case-insensitive search in product description
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
       ];
     }
 
-    // Add price range filter if provided
     if (minPrice) query.price = { ...query.price, $gte: Number(minPrice) };
     if (maxPrice) query.price = { ...query.price, $lte: Number(maxPrice) };
 
-    // Get total number of products (with filter if applied)
+    // Sorting based on `latest` or `mostSelling`
+    let sortOption = {};
+    if (latest === "true") {
+      sortOption = { createdAt: -1 }; // Sort by creation date (newest first)
+    }
+    if (mostSelling === "true") {
+      sortOption = { sold: -1 }; // Sort by most selling (assuming you have a 'sold' field)
+    }
+
     const totalProducts = await Product.countDocuments(query);
 
-    // Fetch products with pagination and optional filtering
-    const products = await Product.find(query).skip(skip).limit(limit);
+    const products = await Product.find(query)
+      .sort(sortOption) // Apply sorting based on the query parameter
+      .skip(skip)
+      .limit(limit);
 
-    // Handle case where no products are found
     if (!products.length) {
       return next(new AppError("No products found", 404));
     }
 
-    // Send back the paginated and filtered results
     res.status(200).json({
       success: true,
-      totalProducts, // Total number of products (filtered if query was provided)
-      products, // List of products with pagination
+      totalProducts,
+      products,
     });
   } catch (error) {
     console.error(error);

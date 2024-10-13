@@ -57,6 +57,10 @@ const productSchema = new mongoose.Schema({
     max: [5, "Rating cannot be more than 5"],
   },
   reviews: [reviewSchema], // Add an array of reviews
+  sold: {
+    type: Number,
+    default: 0, // Track number of units sold
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -64,3 +68,4 @@ const productSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Product", productSchema);
+
