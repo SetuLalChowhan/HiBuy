@@ -8,6 +8,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import { Toaster } from "react-hot-toast";
 import ResetPassword from "./pages/ResetPassword";
+import EditProduct from "./components/EditProduct";
 function App() {
   return (
     <>
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/product-edit/:id" element={<EditProduct />} />
           
         </Route>
         <Route path="/reset-password/:token" element={<ResetPassword />} />

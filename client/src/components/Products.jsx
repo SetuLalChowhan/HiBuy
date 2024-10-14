@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "../redux/product/productSlice";
+import { deleteProduct, fetchProducts } from "../redux/product/productSlice";
 import { Spinner } from "flowbite-react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -35,6 +36,12 @@ const Products = () => {
     dispatch(fetchProducts({ values }));
   };
 
+  // Save the scroll position before applying any filter or search
+  const handleFilterChange = (filterHandler) => (e) => {
+    scrollPositionRef.current = window.scrollY; // Save scroll position
+    filterHandler(e.target.value);
+  };
+
   useEffect(() => {
     dispatch(fetchProducts({ values }));
   }, [category, type, search, minPrice, maxPrice, sortOption]);
@@ -55,7 +62,7 @@ const Products = () => {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleFilterChange(setSearch)} // Save scroll before applying search
             placeholder="Search products..."
             className="border border-gray-300 p-3 rounded-md w-full transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
           />
@@ -65,7 +72,7 @@ const Products = () => {
           {/* Category Filter */}
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={handleFilterChange(setCategory)} // Save scroll before applying category
             className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
           >
             <option value="">All Categories</option>
@@ -77,7 +84,7 @@ const Products = () => {
           {/* Type Filter */}
           <select
             value={type}
-            onChange={(e) => setType(e.target.value)}
+            onChange={handleFilterChange(setType)} // Save scroll before applying type
             className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
           >
             <option value="">All Types</option>
@@ -91,21 +98,21 @@ const Products = () => {
             type="number"
             placeholder="Min Price"
             value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
+            onChange={handleFilterChange(setMinPrice)} // Save scroll before applying min price
             className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
           />
           <input
             type="number"
             placeholder="Max Price"
             value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
+            onChange={handleFilterChange(setMaxPrice)} // Save scroll before applying max price
             className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
           />
 
           {/* Sort Option */}
           <select
             value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
+            onChange={handleFilterChange(setSortOption)} // Save scroll before applying sort option
             className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
           >
             <option value="">Sort by</option>
@@ -160,16 +167,13 @@ const Products = () => {
 
               {/* Actions - separated from product details */}
               <div className="mt-4 flex justify-center md:justify-end space-x-4 items-center">
-                <Link to={`/dashboard?tab=${product._id}`}> 
-                <button
-                  
-                  className="px-4 py-2 h-10 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Edit
-                </button>
+                <Link to={`/product-edit/${product._id}`}>
+                  <button className="px-4 py-2 h-10 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    Edit
+                  </button>
                 </Link>
                 <button
-                  onClick={() => console.log("Delete", product._id)}
+                  onClick={() => dispatch(deleteProduct({ id: product._id, toast }))}
                   className="px-4 py-2 h-10 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                 >
                   Delete

@@ -94,7 +94,7 @@ const verifyEmail = async (req, res, next) => {
     );
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     const { password: pass, ...rest } = user._doc;
@@ -115,35 +115,32 @@ const editProfile = async (req, res, next) => {
   const avatar = req.file ? req.file.path : null;
   const userId = req.user.userId;
 
-  console.log(avatar)
+  console.log(avatar);
 
   // Assuming you're using JWT to authenticate users
   try {
     const user = await User.findById(userId);
- 
-      if (!user) {
-        return next(
-          new AppError("A user with this email already exists.", 404)
-        );
-      }
 
-      // Check if the email is being updated
-      if (email) {
-        const emailExists = await User.findOne({ email });
-        if (emailExists && emailExists._id.toString() !== userId) {
-          return next(new AppError("This email is already in use.", 400));
-        }
-        user.email = email; // Update email
-      }
-      if (name) {
-        user.name = name; // Update name
-      }
+    if (!user) {
+      return next(new AppError("A user with this email already exists.", 404));
+    }
 
-      if (avatar) {
-        user.avatar = avatar;
+    // Check if the email is being updated
+    if (email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists && emailExists._id.toString() !== userId) {
+        return next(new AppError("This email is already in use.", 400));
       }
-      await user.save();
-    
+      user.email = email; // Update email
+    }
+    if (name) {
+      user.name = name; // Update name
+    }
+
+    if (avatar) {
+      user.avatar = avatar;
+    }
+    await user.save();
 
     const { password: pass, ...rest } = user._doc;
 
@@ -179,7 +176,7 @@ const loginUser = async (req, res, next) => {
     // Set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000
+      maxAge: 24 * 60 * 60 * 1000,
     });
     const { password: pass, ...rest } = user._doc;
 
@@ -301,13 +298,13 @@ const resetPassword = async (req, res, next) => {
     await user.save();
 
     // Optionally, log the user in by generating a token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET,);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
     const { password: pass, ...rest } = user._doc;
 
     // Set token in cookie
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({

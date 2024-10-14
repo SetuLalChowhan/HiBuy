@@ -14,6 +14,7 @@ export const createProduct = createAsyncThunk(
       toast.success("Product Created");
       return response.data;
     } catch (err) {
+      toast.error(err.response.data.message);
       console.log(err.response.data.message);
       return rejectWithValue(err.response.data.message);
     }
@@ -36,6 +37,8 @@ export const fetchProducts = createAsyncThunk(
         latest = "",
         sortOrder = "",
       } = values;
+
+      console.log(values);
 
       const response = await axios.get(
         `http://localhost:3000/api/products/all-products`,
@@ -66,10 +69,74 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const getSingleProduct = createAsyncThunk(
+  "product/single-product",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/products/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (err) {
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
+export const editProduct = createAsyncThunk(
+  "product/edit-product",
+  async ({ values, id, toast }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/products/${id}`,
+        values,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+
+          withCredentials: true,
+        }
+      );
+      toast.success("Product Edited");
+
+      return response.data;
+    } catch (err) {
+      toast.error(err.response.data.message);
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
+export const deleteProduct = createAsyncThunk(
+  "product/delete-product",
+  async ({ id, toast }, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/products/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      toast.success("Product Deleted");
+
+      return response.data;
+    } catch (err) {
+      toast.error(err.response.data.message);
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
+
 const initialState = {
   products: [],
   error: null,
   loading: false,
+  loading2: false,
   singleProduct: {},
   allProductsDefault: null,
   totalProducts: 0,
@@ -128,6 +195,47 @@ const userSlice = createSlice({
     });
     builder.addCase(fetchProducts.rejected, (state, action) => {
       state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(getSingleProduct.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getSingleProduct.fulfilled, (state, action) => {
+      state.loading = false;
+      state.singleProduct = action.payload;
+      state.error = "";
+    });
+    builder.addCase(getSingleProduct.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(editProduct.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(editProduct.fulfilled, (state, action) => {
+      state.loading = false;
+      state.singleProduct = action.payload;
+      state.error = "";
+    });
+    builder.addCase(editProduct.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(deleteProduct.pending, (state) => {
+      state.loading2 = true;
+    });
+    builder.addCase(deleteProduct.fulfilled, (state, action) => {
+      state.loading2 = false;
+      const {
+        arg: { id },
+      } = action.meta;
+      console.log(id);
+      state.products = state.products.filter((product) => product._id !== id);
+      state.allProductsDefault -= 1;
+      state.error = "";
+    });
+    builder.addCase(deleteProduct.rejected, (state, action) => {
+      state.loading2 = false;
       state.error = action.payload;
     });
   },

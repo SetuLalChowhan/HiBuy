@@ -45,6 +45,7 @@ const updateProduct = async (req, res, next) => {
     }
 
     const { name, price, description, category, type, stock } = req.body;
+    const image = req.file ? req.file.path : null;
 
     product.name = name || product.name;
     product.price = price || product.price;
@@ -52,6 +53,7 @@ const updateProduct = async (req, res, next) => {
     product.category = category || product.category;
     product.type = type || product.type;
     product.stock = stock || product.stock;
+    product.image = image || product.image;
 
     const updatedProduct = await product.save();
     res.status(200).json(updatedProduct);

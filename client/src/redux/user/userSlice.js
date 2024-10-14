@@ -357,7 +357,7 @@ const userSlice = createSlice({
         const {
           arg: { startIndex },
         } = action.meta;
-        
+
         if (startIndex) {
           state.users = [...state.users, ...action.payload.users];
           state.totalUsers = state.users.length;
@@ -422,6 +422,7 @@ const userSlice = createSlice({
           state.users = state.users.filter((user) => user._id !== userId);
         }
         state.allUsersDefault = state.users.length;
+        state.allUsersDefault -= 1;
 
         state.error = null; // Clear any previous error
       })
