@@ -45,9 +45,11 @@ const EditProduct = () => {
         values.sizes !== formik.initialValues.sizes ||
         values.image;
 
-      const formattedSizes = values.sizes.filter(
-        (pair) => pair.size && pair.stock
-      );
+      const formattedSizes = values.sizes.map((pair) => ({
+        size: pair.size !== "" ? pair.size : "default", // Set "default" if size is not selected
+        stock: pair.stock || 0, // Set stock to 0 if not provided
+      }));
+      values.sizes = formattedSizes;
 
       values.sizes = formattedSizes;
 
@@ -246,19 +248,18 @@ const EditProduct = () => {
               Sizes and Stock
             </label>
             <div className="bg-white shadow-md rounded-lg p-4">
-               
-                <div className="space-y-2">
-                  {singleProduct?.sizes?.map((p) => (
-                    <div
-                      key={p.size}
-                      className="flex justify-between items-center border-b py-2"
-                    >
-                      <p className="text-gray-700 font-medium">{p.size}</p>
-                      <p className="text-gray-900 font-semibold">{p.stock}</p>
-                    </div>
-                  ))}
-                </div>
+              <div className="space-y-2">
+                {singleProduct?.sizes?.map((p) => (
+                  <div
+                    key={p.size}
+                    className="flex justify-between items-center border-b py-2"
+                  >
+                    <p className="text-gray-700 font-medium">{p.size}</p>
+                    <p className="text-gray-900 font-semibold">{p.stock}</p>
+                  </div>
+                ))}
               </div>
+            </div>
             <div className="bg-white border border-gray-300 p-4 rounded-lg">
               <div className="space-y-4">
                 {sizeStockPairs.map((pair, index) => (
@@ -349,9 +350,7 @@ const EditProduct = () => {
             >
               {loading ? "Updating..." : "Update Product"}
             </button>
-            {error && (
-              <p className="text-red-500 text-sm mt-4">{error}</p>
-            )}
+            {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
           </div>
         </form>
       </div>

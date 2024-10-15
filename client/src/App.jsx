@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 import ResetPassword from "./pages/ResetPassword";
 import EditProduct from "./components/EditProduct";
 import Collections from "./pages/Collections";
+import Footer from "./components/Footer";
 function App() {
   return (
     <>
@@ -28,6 +29,7 @@ function App() {
         <Route path="/login" element={<SignIn />} />
         <Route path="/verify-me" element={<VerifyPage />} />
       </Routes>
+      <Footer/>
     </Router>
     
     <Toaster

@@ -47,6 +47,7 @@ export const fetchProducts = createAsyncThunk(
           params: {
             sortOrder: sortOption,
             latest: sortOption === "latest" ? "true" : undefined, // Only include if true
+            bestSeller: sortOption === "bestSeller" ? "true" : undefined, // Only include if true
             category: category || "", // Fallback to empty string
             type: type || "", // Fallback to empty string
             search: search || "", // Fallback to empty string

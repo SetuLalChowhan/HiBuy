@@ -185,8 +185,8 @@ export const createProductSchema = Yup.object({
       Yup.object().shape({
         size: Yup.string()
           .min(1, "Size cannot be empty")
-          .max(20, "Size cannot exceed 20 characters") // Optional, adjust as needed
-          .required("Size is required"),
+          .max(20, "Size cannot exceed 20 characters") ,// Optional, adjust as needed
+        
         stock: Yup.number()
           .typeError("Stock must be a number")
           .min(1, "Stock must be at least 1")

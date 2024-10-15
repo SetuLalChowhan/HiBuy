@@ -139,7 +139,6 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
-
 const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -159,8 +158,16 @@ const deleteProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
   try {
-    const { category, type, search, minPrice, maxPrice, latest, sortOrder } =
-      req.query;
+    const {
+      category,
+      type,
+      search,
+      minPrice,
+      maxPrice,
+      latest,
+      sortOrder,
+      bestSeller,
+    } = req.query;
 
     // Log the incoming query parameters
     const startIndex = parseInt(req.query.startIndex) || 0;
@@ -180,7 +187,9 @@ const getProducts = async (req, res, next) => {
     if (maxPrice) query.price = { ...query.price, $lte: Number(maxPrice) };
 
     let sortOption = {};
-    if (latest === "true") {
+    if (bestSeller === "true") {
+      sortOption = { sold: -1 }; // Sort by number of units sold (best sellers first)
+    } else if (latest === "true") {
       sortOption = { createdAt: -1 }; // Sort by creation date (newest first)
     } else if (sortOrder === "low-high") {
       sortOption = { price: 1 }; // Sort by price (low to high)

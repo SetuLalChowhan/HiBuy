@@ -11,8 +11,8 @@ const ProductCard = ({ product }) => {
         alt={product.name}
       />
     </div>
-        <p className='pt-3 pb-1 text-sme'>{product.name}</p>
-        <p className='text-sm font-medium'>{product.price} Tk</p>
+        <p className='pt-3 pb-1 text-sme h-20'>{product.name}</p>
+        <p className='text-lg font-medium'>{product.price} Tk</p>
      
     </Link>
   );

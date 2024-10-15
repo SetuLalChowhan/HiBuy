@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Banner = () => {
   return (
@@ -13,9 +14,9 @@ const Banner = () => {
         <p className="text-gray-600 text-sm md:text-base">
           Discover the latest collection of trendy outfits.
         </p>
-        <button className="bg-teal-500 text-white px-6 py-3 rounded-full font-semibold mt-4 hover:bg-teal-600 transition-colors">
+        <Link to={"/collections"} className="bg-teal-500 text-white px-6 py-3 rounded-full font-semibold mt-4 hover:bg-teal-600 transition-colors">
           Shop Now
-        </button>
+        </Link>
       </div>
       <div className="flex-1">
         <img

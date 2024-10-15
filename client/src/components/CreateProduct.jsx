@@ -26,9 +26,10 @@ const CreateProduct = () => {
     },
     validationSchema: createProductSchema,
     onSubmit: (values) => {
-      const formattedSizes = values.sizes.filter(
-        (pair) => pair.size && pair.stock
-      );
+      const formattedSizes = values.sizes.map((pair) => ({
+        size: pair.size !== "" ? pair.size : "default", // Set "default" if size is not selected
+        stock: pair.stock || 0, // Set stock to 0 if not provided
+      }));
       values.sizes = formattedSizes;
       dispatch(createProduct({ values, toast }));
     },

@@ -38,21 +38,11 @@ export default function Header() {
         </span>
       </NavbarBrand>
 
-      {/* Desktop Search Bar */}
-      <div className="md:flex justify-center items-center hidden">
-        <div className="relative flex items-center">
-          <TextInput
-            placeholder="Search Anything"
-            className="rounded-lg md:w-48 pl-10 lg:w-96"
-            id="search-1"
-            type="text"
-            sizing="sm"
-          />
-          <IoSearchSharp className="absolute left-2 text-gray-400" size={25} />
-        </div>
-      </div>
+      <div className="flex  gap-4 md:order-2">
+        <Link to={"/collections"} className="flex items-center">
+          <IoSearchSharp className=" text-gray-600" size={28} />
+        </Link>
 
-      <div className="flex gap-4 md:order-2">
         <Link to={"/cart"} className="flex justify-center items-center">
           <BsCart4 size={35} />
           <p className="-mt-4 font-semibold">4</p>
@@ -104,25 +94,17 @@ export default function Header() {
       </div>
 
       <NavbarCollapse>
-        {/* Mobile Search Bar */}
-        <div className="md:hidden justify-center items-center mb-3">
-          <div className="relative flex items-center">
-            <TextInput
-              placeholder="Search Anything"
-              className="rounded-lg pl-10 w-full"
-              id="search-2"
-              type="text"
-              sizing="sm"
-            />
-            <IoSearchSharp className="absolute left-2 text-gray-400" size={25} />
-          </div>
-        </div>
+       
 
-        <NavbarLink active={path === "/"} as='div' className="text-lg">
+        <NavbarLink active={path === "/"} as="div" className="text-lg">
           <Link to={"/"}>Home</Link>
         </NavbarLink>
 
-        <NavbarLink  as='div' active={path === "/collections"} className="text-lg">
+        <NavbarLink
+          as="div"
+          active={path === "/collections"}
+          className="text-lg"
+        >
           <Link to={"/collections"}>Collections</Link>
         </NavbarLink>
 

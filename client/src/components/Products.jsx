@@ -114,6 +114,7 @@ const Products = () => {
             <option value="low-high">Price: Low to High</option>
             <option value="high-low">Price: High to Low</option>
             <option value="latest">Latest Arrivals</option>
+            <option value="bestSeller">Best Sellers</option>
           </select>
         </div>
       </div>
