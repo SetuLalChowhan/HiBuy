@@ -1,12 +1,51 @@
 const AppError = require("../error/AppError.js");
 const Product = require("../model/product.model.js");
 
+// const createProduct = async (req, res, next) => {
+//   if (req.fileValidationError) {
+//     return next(new AppError(req.fileValidationError, 400));
+//   }
+//   const { name, price, description, category, type, stock } = req.body;
+//   const image = req.file ? req.file.path : null;
+//   try {
+//     const product = new Product({
+//       name,
+//       price,
+//       description,
+//       image,
+//       category,
+//       type,
+//       stock,
+//     });
+//     const createdProduct = await product.save();
+//     res.status(201).json(createdProduct);
+//   } catch (error) {
+//     console.log(error);
+//     return next(new AppError("Server error", 500));
+//   }
+// };
 const createProduct = async (req, res, next) => {
   if (req.fileValidationError) {
     return next(new AppError(req.fileValidationError, 400));
   }
-  const { name, price, description, category, type, stock } = req.body;
+
+  const { name, price, description, category, type, sizes } = req.body; // Get sizes from the request body
   const image = req.file ? req.file.path : null;
+
+  // Ensure sizes is an array and each size has a corresponding stock value
+  const formattedSizes = Array.isArray(sizes)
+    ? sizes.map((size) => ({
+        size: size.size,
+        stock: size.stock,
+      }))
+    : [];
+
+  // Calculate the total stock by summing the stock of each size
+  const totalStock = formattedSizes.reduce(
+    (total, size) => total + parseInt(size.stock, 10),
+    0
+  );
+
   try {
     const product = new Product({
       name,
@@ -15,8 +54,10 @@ const createProduct = async (req, res, next) => {
       image,
       category,
       type,
-      stock,
+      sizes: formattedSizes, // Use the formatted sizes
+      stock: totalStock, // Save total stock in product.stock
     });
+
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
   } catch (error) {
@@ -41,18 +82,53 @@ const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
-      return next(new AppError("Product not Found", 404));
+      return next(new AppError("Product not found", 404));
     }
 
-    const { name, price, description, category, type, stock } = req.body;
+    const { name, price, description, category, type, sizes } = req.body; // Get sizes from the request body
     const image = req.file ? req.file.path : null;
 
+    // Check if sizes are provided
+    if (Array.isArray(sizes)) {
+      // Create a map for incoming sizes for easy lookup
+      const sizeMap = {};
+      sizes.forEach((size) => {
+        sizeMap[size.size] = parseInt(size.stock, 10); // Map size to stock, ensuring it's an integer
+      });
+
+      // Update sizes based on incoming data
+      product.sizes.forEach((productSize) => {
+        if (sizeMap[productSize.size] !== undefined) {
+          productSize.stock = sizeMap[productSize.size]; // Replace stock with the incoming value
+        }
+      });
+
+      // If there are sizes that do not exist in the product, add them
+      sizes.forEach((size) => {
+        if (
+          !product.sizes.some((productSize) => productSize.size === size.size)
+        ) {
+          product.sizes.push({
+            size: size.size,
+            stock: sizeMap[size.size], // Use the mapped stock value
+          });
+        }
+      });
+    }
+
+    // Calculate the total stock after updating sizes
+    const totalStock = product.sizes.reduce(
+      (total, size) => total + parseInt(size.stock, 10),
+      0
+    );
+
+    // Update other product fields
     product.name = name || product.name;
     product.price = price || product.price;
     product.description = description || product.description;
     product.category = category || product.category;
     product.type = type || product.type;
-    product.stock = stock || product.stock;
+    product.stock = totalStock; // Update total stock
     product.image = image || product.image;
 
     const updatedProduct = await product.save();
@@ -62,6 +138,7 @@ const updateProduct = async (req, res, next) => {
     return next(new AppError("Server error", 500));
   }
 };
+
 
 const deleteProduct = async (req, res, next) => {
   try {
@@ -84,7 +161,6 @@ const getProducts = async (req, res, next) => {
   try {
     const { category, type, search, minPrice, maxPrice, latest, sortOrder } =
       req.query;
-
 
     // Log the incoming query parameters
     const startIndex = parseInt(req.query.startIndex) || 0;

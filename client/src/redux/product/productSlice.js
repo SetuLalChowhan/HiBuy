@@ -4,6 +4,7 @@ import axios from "axios";
 export const createProduct = createAsyncThunk(
   "product/create-product",
   async ({ values, toast }, { rejectWithValue }) => {
+    console.log(values)
     try {
       const response = await axios.post("api/products/create-product", values, {
         headers: {

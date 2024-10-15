@@ -1,44 +1,36 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteProduct, fetchProducts } from "../redux/product/productSlice";
 import { Spinner } from "flowbite-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Modal } from "flowbite-react";
 
 const Products = () => {
   const dispatch = useDispatch();
   const { products, loading, error, totalProducts, showmore } = useSelector(
     (state) => state.product
   );
-  const [category, setCategory] = React.useState("");
-  const [type, setType] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [minPrice, setMinPrice] = React.useState("");
-  const [maxPrice, setMaxPrice] = React.useState("");
-  const [sortOption, setSortOption] = React.useState("");
-  const scrollPositionRef = useRef(null); // To store scroll position
+  const [category, setCategory] = useState("");
+  const [type, setType] = useState("");
+  const [search, setSearch] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [sortOption, setSortOption] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null); // State to hold selected product
+  const scrollPositionRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const values = {
-    category,
-    type,
-    search,
-    minPrice,
-    maxPrice,
-    sortOption,
-  };
+  const values = { category, type, search, minPrice, maxPrice, sortOption };
 
   const handleShowmore = () => {
-    // Save current scroll position
     scrollPositionRef.current = window.scrollY;
-
-    let startIndex = totalProducts;
-    values.startIndex = startIndex;
+    values.startIndex = totalProducts;
     dispatch(fetchProducts({ values }));
   };
 
-  // Save the scroll position before applying any filter or search
   const handleFilterChange = (filterHandler) => (e) => {
-    scrollPositionRef.current = window.scrollY; // Save scroll position
+    scrollPositionRef.current = window.scrollY;
     filterHandler(e.target.value);
   };
 
@@ -47,33 +39,36 @@ const Products = () => {
   }, [category, type, search, minPrice, maxPrice, sortOption]);
 
   useEffect(() => {
-    // Restore scroll position after products are loaded
     if (scrollPositionRef.current !== null) {
       window.scrollTo(0, scrollPositionRef.current);
     }
   }, [products]);
 
-  return (
-    <div className="container mx-auto ">
-      {/* Search & Filters */}
-      <div className="mb-6 flex flex-col  lg:items-center lg:justify-between gap-4">
-        {/* Search Input */}
-        <div className="flex-row">
-          <input
-            type="text"
-            value={search}
-            onChange={handleFilterChange(setSearch)} // Save scroll before applying search
-            placeholder="Search products..."
-            className="border border-gray-300 p-3 rounded-md w-full transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
-          />
-        </div>
+  const handleModal = (product) => {
+    console.log(product)
+    setSelectedProduct(product); // Set the selected product
+    setShowModal(true);
+  };
 
-        <div className="flex lg:flex-row flex-col gap-4 w-full lg:w-auto">
+  return (
+    <div className="container mx-auto p-6">
+      {/* Search & Filters */}
+      <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        {/* Search Input */}
+        <input
+          type="text"
+          value={search}
+          onChange={handleFilterChange(setSearch)}
+          placeholder="Search products..."
+          className="border border-gray-300 p-3 rounded-md w-full lg:max-w-sm transition focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+
+        <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
           {/* Category Filter */}
           <select
             value={category}
-            onChange={handleFilterChange(setCategory)} // Save scroll before applying category
-            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
+            onChange={handleFilterChange(setCategory)}
+            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">All Categories</option>
             <option value="men">Men</option>
@@ -84,8 +79,8 @@ const Products = () => {
           {/* Type Filter */}
           <select
             value={type}
-            onChange={handleFilterChange(setType)} // Save scroll before applying type
-            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
+            onChange={handleFilterChange(setType)}
+            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">All Types</option>
             <option value="topwear">Topwear</option>
@@ -98,22 +93,22 @@ const Products = () => {
             type="number"
             placeholder="Min Price"
             value={minPrice}
-            onChange={handleFilterChange(setMinPrice)} // Save scroll before applying min price
-            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
+            onChange={handleFilterChange(setMinPrice)}
+            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
           <input
             type="number"
             placeholder="Max Price"
             value={maxPrice}
-            onChange={handleFilterChange(setMaxPrice)} // Save scroll before applying max price
-            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
+            onChange={handleFilterChange(setMaxPrice)}
+            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
 
           {/* Sort Option */}
           <select
             value={sortOption}
-            onChange={handleFilterChange(setSortOption)} // Save scroll before applying sort option
-            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-600"
+            onChange={handleFilterChange(setSortOption)}
+            className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">Sort by</option>
             <option value="low-high">Price: Low to High</option>
@@ -131,19 +126,19 @@ const Products = () => {
           <Spinner className="h-24 w-24" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 container max-w-4xl  gap-6">
+        <div className="grid grid-cols-1 gap-6 max-w-4xl mx-auto">
           {products.map((product) => (
             <div
               key={product._id}
-              className="user-card bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between transition-transform hover:scale-105 "
+              className="user-card bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between transition hover:scale-105 hover:shadow-2xl"
             >
               {/* Product Details */}
-              <div className="flex flex-row justify-center items-center gap-5  mb-4">
+              <div className="flex flex-row items-center gap-5 mb-4">
                 {/* Product Image */}
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="h-28 w-28 object-contain rounded-md mb-2"
+                  className="h-28 w-28 object-contain rounded-md"
                 />
                 {/* Product Info */}
                 <div>
@@ -151,29 +146,41 @@ const Products = () => {
                     {product.name}
                   </h2>
                   <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Price:</span> ৳{product.price}
+                    <span className="font-semibold">Price:</span> ৳
+                    {product.price}
                   </p>
                   <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Category:</span> {product.category}
+                    <span className="font-semibold">Category:</span>{" "}
+                    {product.category}
                   </p>
                   <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Stock:</span> {product.stock}
+                    <span className="font-semibold">Stock:</span>{" "}
+                    {product.stock}
                   </p>
                   <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Sold:</span> {product.sold}
+                    <span className="font-semibold">Sold:</span>{" "}
+                    {product.sold}
                   </p>
+                  <button
+                    onClick={() => handleModal(product)} // Pass the product to the modal handler
+                    className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md shadow-lg hover:bg-blue-700 transition-colors duration-300"
+                  >
+                    Available Size
+                  </button>
                 </div>
               </div>
 
-              {/* Actions - separated from product details */}
-              <div className="mt-4 flex justify-center md:justify-end space-x-4 items-center">
+              {/* Actions */}
+              <div className="mt-4 flex space-x-4">
                 <Link to={`/product-edit/${product._id}`}>
                   <button className="px-4 py-2 h-10 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                     Edit
                   </button>
                 </Link>
                 <button
-                  onClick={() => dispatch(deleteProduct({ id: product._id, toast }))}
+                  onClick={() =>
+                    dispatch(deleteProduct({ id: product._id, toast }))
+                  }
                   className="px-4 py-2 h-10 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                 >
                   Delete
@@ -181,16 +188,43 @@ const Products = () => {
               </div>
             </div>
           ))}
-          <div className="mt-6 text-center">
-            {showmore && (
+
+          <Modal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            popup
+            size={"md"}
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <div className="bg-white shadow-md rounded-lg p-4">
+                <h2 className="text-lg font-semibold mb-2">Available Sizes</h2>
+                <div className="space-y-2">
+                  {/* Show sizes of the selected product */}
+                  {selectedProduct?.sizes?.map((size) => (
+                    <div
+                      key={size.size}
+                      className="flex justify-between items-center border-b py-2"
+                    >
+                      <p className="text-gray-700 font-medium">{size.size}</p>
+                      <p className="text-gray-900 font-semibold">{size.stock}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
+
+          {showmore && (
+            <div className="mt-6 text-center">
               <button
                 onClick={handleShowmore}
-                className="w-full sm:w-auto  text-teal-500 px-6 py-3 rounded-lg "
+                className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition"
               >
-                Show More
+                Load More
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>

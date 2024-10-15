@@ -13,18 +13,18 @@ import {
   TextInput,
 } from "flowbite-react";
 import { BsCart4 } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { IoSearchSharp } from "react-icons/io5";
 import { logout } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
-
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const path = useLocation().pathname;
 
   const handleSignOut = () => {
     dispatch(logout({ toast, navigate }));
@@ -32,9 +32,9 @@ export default function Header() {
 
   return (
     <Navbar fluid rounded className="lg:container">
-      <NavbarBrand href="/">
+      <NavbarBrand as="div">
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-          HiBuy
+          <Link to="/">HiBuy</Link>
         </span>
       </NavbarBrand>
 
@@ -49,14 +49,13 @@ export default function Header() {
             sizing="sm"
           />
           <IoSearchSharp className="absolute left-2 text-gray-400" size={25} />
-        
         </div>
       </div>
 
       <div className="flex gap-4 md:order-2">
         <Link to={"/cart"} className="flex justify-center items-center">
           <BsCart4 size={35} />
-          <p className=" -mt-4 font-semibold">4</p>
+          <p className="-mt-4 font-semibold">4</p>
         </Link>
 
         {currentUser == null ? (
@@ -71,7 +70,7 @@ export default function Header() {
             inline
             label={
               <Avatar
-                className=" w-12 h-12 rounded-full object-cover"
+                className="w-12 h-12 rounded-full object-cover"
                 alt="User settings"
                 img={`http://localhost:3000/${currentUser.avatar}`}
                 rounded
@@ -84,13 +83,19 @@ export default function Header() {
                 {currentUser.email}
               </span>
             </DropdownHeader>
-            <DropdownItem ><Link to={"/dashboard"}>Dashboard</Link></DropdownItem>
+            <DropdownItem>
+              <Link to={"/dashboard"}>Dashboard</Link>
+            </DropdownItem>
             <DropdownDivider />
             <DropdownItem onClick={handleSignOut}>Sign out</DropdownItem>
             {currentUser && !currentUser.isVerified && (
-              <Button className="mt-4 mb-4 ml-2" color="blue" outline>
-                <Link to={"/verify-me"}>Veryfy me</Link>
-              </Button>
+              <DropdownItem>
+                <Link to={"/verify-me"}>
+                  <Button className="mt-4 mb-4 ml-2" color="blue" outline>
+                    Verify me
+                  </Button>
+                </Link>
+              </DropdownItem>
             )}
           </Dropdown>
         )}
@@ -109,27 +114,24 @@ export default function Header() {
               type="text"
               sizing="sm"
             />
-            <IoSearchSharp
-              className="absolute left-2 text-gray-400"
-              size={25}
-            />
+            <IoSearchSharp className="absolute left-2 text-gray-400" size={25} />
           </div>
         </div>
 
-        <NavbarLink className="text-lg" href="/" active>
-          Home
+        <NavbarLink active={path === "/"} as='div' className="text-lg">
+          <Link to={"/"}>Home</Link>
         </NavbarLink>
-        <NavbarLink className="text-lg" href="#">
-          Collections
+
+        <NavbarLink  as='div' active={path === "/collections"} className="text-lg">
+          <Link to={"/collections"}>Collections</Link>
         </NavbarLink>
+
         <NavbarLink className="text-lg" href="#">
           About
         </NavbarLink>
         <NavbarLink className="text-lg" href="#">
           Contact
         </NavbarLink>
-
-        
       </NavbarCollapse>
     </Navbar>
   );

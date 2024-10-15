@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import { Toaster } from "react-hot-toast";
 import ResetPassword from "./pages/ResetPassword";
 import EditProduct from "./components/EditProduct";
+import Collections from "./pages/Collections";
 function App() {
   return (
     <>
@@ -16,6 +17,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/collections" element={<Collections />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/product-edit/:id" element={<EditProduct />} />

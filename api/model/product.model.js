@@ -56,6 +56,12 @@ const productSchema = new mongoose.Schema({
     min: [0, "Rating cannot be less than 0"],
     max: [5, "Rating cannot be more than 5"],
   },
+  sizes: [
+    {
+      size: { type: String, required: true },
+      stock: { type: Number, required: true, min: 0 }, // Ensure stock cannot be negative
+    },
+  ],
   reviews: [reviewSchema], // Add an array of reviews
   sold: {
     type: Number,

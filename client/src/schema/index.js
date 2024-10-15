@@ -91,6 +91,57 @@ export const editSchema = Yup.object({
     ),
 });
 
+
+
+// export const createProductSchema = Yup.object({
+//   name: Yup.string()
+//     .min(2, "Product name must be at least 2 characters")
+//     .max(50, "Product name cannot exceed 50 characters")
+//     .required("Please enter the product name"),
+
+//   price: Yup.number()
+//     .typeError("Price must be a number")
+//     .min(1, "Price must be at least 1")
+//     .max(100000, "Price cannot exceed 100,000")
+//     .required("Please enter the price"),
+
+//   description: Yup.string()
+//     .min(10, "Description must be at least 10 characters")
+//     .max(1000, "Description cannot exceed 1000 characters")
+//     .required("Please enter the product description"),
+
+//   category: Yup.string()
+//     .oneOf(["men", "women", "kids"], "Please select a valid category")
+//     .required("Please select a category"),
+
+//   type: Yup.string()
+//     .oneOf(["topwear", "bottomwear", "winterwear"], "Please select a valid type")
+//     .required("Please select a type"),
+
+//   stock: Yup.number()
+//     .typeError("Stock must be a number")
+//     .min(1, "Stock must be at least 1")
+//     .max(10000, "Stock cannot exceed 10,000")
+//     .required("Please enter the stock quantity"),
+
+//   image: Yup.mixed()
+//     .required("An image file is required")
+//     .test("fileSize", "File size is too large (Max: 2MB)", (value) => {
+//       return value && value.size <= 2 * 1024 * 1024; // 2 MB limit
+//     })
+//     .test(
+//       "fileType",
+//       "Unsupported file format (Allowed: jpeg, png)",
+//       (value) => {
+//         return value && ["image/jpeg", "image/png"].includes(value.type); // Only JPEG and PNG allowed
+//       }
+//     ),
+
+
+// });
+
+
+
 export const createProductSchema = Yup.object({
   name: Yup.string()
     .min(2, "Product name must be at least 2 characters")
@@ -113,17 +164,8 @@ export const createProductSchema = Yup.object({
     .required("Please select a category"),
 
   type: Yup.string()
-    .oneOf(
-      ["topwear", "bottomwear", "winterwear"],
-      "Please select a valid type"
-    )
+    .oneOf(["topwear", "bottomwear", "winterwear"], "Please select a valid type")
     .required("Please select a type"),
-
-  stock: Yup.number()
-    .typeError("Stock must be a number")
-    .min(1, "Stock must be at least 1")
-    .max(10000, "Stock cannot exceed 10,000")
-    .required("Please enter the stock quantity"),
 
   image: Yup.mixed()
     .required("An image file is required")
@@ -134,12 +176,30 @@ export const createProductSchema = Yup.object({
       "fileType",
       "Unsupported file format (Allowed: jpeg, png)",
       (value) => {
-        return (
-          value && ["image/jpeg", "image/png"].includes(value.type) // Only JPEG and PNG allowed
-        );
+        return value && ["image/jpeg", "image/png"].includes(value.type); // Only JPEG and PNG allowed
       }
     ),
+
+  sizes: Yup.array()
+    .of(
+      Yup.object().shape({
+        size: Yup.string()
+          .min(1, "Size cannot be empty")
+          .max(20, "Size cannot exceed 20 characters") // Optional, adjust as needed
+          .required("Size is required"),
+        stock: Yup.number()
+          .typeError("Stock must be a number")
+          .min(1, "Stock must be at least 1")
+          .max(10000, "Stock cannot exceed 10,000")
+          .required("Stock is required"),
+      })
+    )
+    .required("At least one size-stock pair is required")
+    .min(1, "At least one size-stock pair is required"),
 });
+
+
+
 export const editProdcutSchema = Yup.object({
   name: Yup.string()
     .min(2, "Product name must be at least 2 characters")
@@ -168,12 +228,6 @@ export const editProdcutSchema = Yup.object({
     )
     ,
 
-  stock: Yup.number()
-    .typeError("Stock must be a number")
-    .min(1, "Stock must be at least 1")
-    .max(10000, "Stock cannot exceed 10,000")
-    ,
-
     image: Yup.mixed()
     .nullable() // Allow image to be null (especially during editing)
     .test("fileSize", "File size is too large (Max: 2MB)", (value) => {
@@ -188,4 +242,21 @@ export const editProdcutSchema = Yup.object({
         return !value || (value instanceof File && ["image/jpeg", "image/png"].includes(value.type));
       }
     ),
+    sizes: Yup.array()
+    .of(
+      Yup.object().shape({
+        size: Yup.string()
+          .min(1, "Size cannot be empty")
+          .max(20, "Size cannot exceed 20 characters"), // Optional, adjust as needed
+        
+        stock: Yup.number()
+          .typeError("Stock must be a number")
+          .min(0, "Stock must be at least 1")
+          .max(10000, "Stock cannot exceed 10,000")
+         
+      })
+    )
+    .required("At least one size-stock pair is required")
+    .min(1, "At least one size-stock pair is required"),
+    
 });

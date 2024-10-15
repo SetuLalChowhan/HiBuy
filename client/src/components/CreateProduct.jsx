@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
@@ -10,6 +10,10 @@ const CreateProduct = () => {
   const { loading, error } = useSelector((state) => state.product);
   const dispatch = useDispatch();
 
+  const [sizeStockPairs, setSizeStockPairs] = useState([
+    { size: "", stock: "" },
+  ]);
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -17,249 +21,268 @@ const CreateProduct = () => {
       description: "",
       category: "",
       type: "",
-      stock: "",
       image: null,
+      sizes: sizeStockPairs,
     },
     validationSchema: createProductSchema,
     onSubmit: (values) => {
-      console.log(values);
+      const formattedSizes = values.sizes.filter(
+        (pair) => pair.size && pair.stock
+      );
+      values.sizes = formattedSizes;
       dispatch(createProduct({ values, toast }));
     },
   });
 
+  const handleAddSizeStock = () => {
+    setSizeStockPairs([...sizeStockPairs, { size: "", stock: "" }]);
+    formik.setFieldValue("sizes", [...sizeStockPairs, { size: "", stock: "" }]);
+  };
+
+  const handleRemoveSizeStock = (index) => {
+    const updatedPairs = sizeStockPairs.filter((_, i) => i !== index);
+    setSizeStockPairs(updatedPairs);
+    formik.setFieldValue("sizes", updatedPairs);
+  };
+
+  const handleSizeStockChange = (index, field, value) => {
+    const updatedPairs = [...sizeStockPairs];
+    updatedPairs[index][field] = value;
+    setSizeStockPairs(updatedPairs);
+    formik.setFieldValue("sizes", updatedPairs);
+  };
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-5">
-      <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-2xl border border-gray-300">
-        {/* Header Section */}
-        <h1 className="text-3xl font-semibold text-center text-gray-800 mb-8">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-5">
+      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl border border-gray-200">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-6">
           Create New Product
         </h1>
 
-        {/* Form Section */}
+        
+
         <form onSubmit={formik.handleSubmit} className="space-y-6">
-          {/* Product Name Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="name"
-              className="text-lg font-medium text-gray-700 mb-1"
-            >
+          {/* Product Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Product Name
             </label>
             <input
-              required
               type="text"
-              id="name"
               name="name"
               placeholder="Enter product name"
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full px-4 py-3 border ${
-                formik.errors.name && formik.touched.name
+              className={`w-full px-4 py-3 border rounded-md ${
+                formik.touched.name && formik.errors.name
                   ? "border-red-500"
                   : "border-gray-300"
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200`}
+              } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             />
-            {formik.errors.name && formik.touched.name && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.name}</p>
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-xs text-red-500 mt-1">
+                {formik.errors.name}
+              </p>
             )}
           </div>
 
-          {/* Price Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="price"
-              className="text-lg font-medium text-gray-700 mb-1"
-            >
+          {/* Price */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Price
             </label>
             <input
-              required
               type="number"
-              id="price"
               name="price"
               placeholder="Enter price"
               value={formik.values.price}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full px-4 py-3 border ${
-                formik.errors.price && formik.touched.price
+              className={`w-full px-4 py-3 border rounded-md ${
+                formik.touched.price && formik.errors.price
                   ? "border-red-500"
                   : "border-gray-300"
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200`}
+              } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             />
-            {formik.errors.price && formik.touched.price && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.price}</p>
+            {formik.touched.price && formik.errors.price && (
+              <p className="text-xs text-red-500 mt-1">
+                {formik.errors.price}
+              </p>
             )}
           </div>
 
-          {/* Description Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="description"
-              className="text-lg font-medium text-gray-700 mb-1"
-            >
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Description
             </label>
             <textarea
-              required
-              id="description"
               name="description"
               placeholder="Enter product description"
               value={formik.values.description}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full px-4 py-3 border ${
-                formik.errors.description && formik.touched.description
+              className={`w-full px-4 py-3 border rounded-md ${
+                formik.touched.description && formik.errors.description
                   ? "border-red-500"
                   : "border-gray-300"
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200`}
+              } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             />
-            {formik.errors.description && formik.touched.description && (
-              <p className="text-red-500 text-sm mt-1">
+            {formik.touched.description && formik.errors.description && (
+              <p className="text-xs text-red-500 mt-1">
                 {formik.errors.description}
               </p>
             )}
           </div>
 
-          {/* Category Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="category"
-              className="text-lg font-medium text-gray-700 mb-1"
-            >
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Category
             </label>
             <select
-              required
-              id="category"
               name="category"
               value={formik.values.category}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full px-4 py-3 border ${
-                formik.errors.category && formik.touched.category
+              className={`w-full px-4 py-3 border rounded-md ${
+                formik.touched.category && formik.errors.category
                   ? "border-red-500"
                   : "border-gray-300"
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200`}
+              } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             >
               <option value="">Select category</option>
               <option value="men">Men</option>
               <option value="women">Women</option>
               <option value="kids">Kids</option>
             </select>
-            {formik.errors.category && formik.touched.category && (
-              <p className="text-red-500 text-sm mt-1">
+            {formik.touched.category && formik.errors.category && (
+              <p className="text-xs text-red-500 mt-1">
                 {formik.errors.category}
               </p>
             )}
           </div>
 
-          {/* Type Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="type"
-              className="text-lg font-medium text-gray-700 mb-1"
-            >
+          {/* Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Type
             </label>
             <select
-              required
-              id="type"
               name="type"
               value={formik.values.type}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full px-4 py-3 border ${
-                formik.errors.type && formik.touched.type
+              className={`w-full px-4 py-3 border rounded-md ${
+                formik.touched.type && formik.errors.type
                   ? "border-red-500"
                   : "border-gray-300"
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200`}
+              } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             >
               <option value="">Select type</option>
               <option value="topwear">Topwear</option>
               <option value="bottomwear">Bottomwear</option>
               <option value="winterwear">Winterwear</option>
             </select>
-            {formik.errors.type && formik.touched.type && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.type}</p>
+            {formik.touched.type && formik.errors.type && (
+              <p className="text-xs text-red-500 mt-1">
+                {formik.errors.type}
+              </p>
             )}
           </div>
 
-          {/* Stock Input */}
+          {/* Sizes and Stock */}
           <div className="flex flex-col">
-            <label
-              htmlFor="stock"
-              className="text-lg font-medium text-gray-700 mb-1"
-            >
-              Stock
+            <label className="text-sm font-semibold text-gray-700 mb-1">
+              Sizes and Stock
             </label>
-            <input
-              required
-              type="number"
-              id="stock"
-              name="stock"
-              placeholder="Enter stock quantity"
-              value={formik.values.stock}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full px-4 py-3 border ${
-                formik.errors.stock && formik.touched.stock
-                  ? "border-red-500"
-                  : "border-gray-300"
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200`}
-            />
-            {formik.errors.stock && formik.touched.stock && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.stock}</p>
-            )}
+            <div className="bg-white border border-gray-300 p-4 rounded-lg">
+              <div className="space-y-4">
+                {sizeStockPairs.map((pair, index) => (
+                  <div key={index} className="flex items-center space-x-4">
+                    <select
+                      value={pair.size}
+                      onChange={(e) =>
+                        handleSizeStockChange(index, "size", e.target.value)
+                      }
+                      className="w-1/2 px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Size</option>
+                      <option value="S">Small</option>
+                      <option value="M">Medium</option>
+                      <option value="L">Large</option>
+                      <option value="XL">X-Large</option>
+                      <option value="XXL">XX-Large</option>
+                    </select>
+                    <input
+                      type="number"
+                      value={pair.stock}
+                      placeholder="Stock"
+                      onChange={(e) =>
+                        handleSizeStockChange(index, "stock", e.target.value)
+                      }
+                      className="w-1/2 px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSizeStock(index)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={handleAddSizeStock}
+                className="mt-4 w-full px-4 py-2 text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-200"
+              >
+                Add Size/Stock
+              </button>
+            </div>
           </div>
 
-          {/* Image Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="image"
-              className="text-lg font-medium text-gray-700 mb-1"
-            >
-              Upload Image
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Product Image
             </label>
             <input
               type="file"
-              id="image"
               name="image"
               accept="image/*"
-              onChange={(event) => {
-                formik.setFieldValue("image", event.currentTarget.files[0]);
-              }}
-              className={`w-full px-4 py-3 border ${
-                formik.errors.image && formik.touched.image
+              onChange={(e) =>
+                formik.setFieldValue("image", e.target.files[0])
+              }
+              className={`w-full px-4 py-3 border rounded-md ${
+                formik.touched.image && formik.errors.image
                   ? "border-red-500"
                   : "border-gray-300"
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200`}
+              } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             />
-            {formik.errors.image && formik.touched.image && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.image}</p>
+            {formik.touched.image && formik.errors.image && (
+              <p className="text-xs text-red-500 mt-1">
+                {formik.errors.image}
+              </p>
             )}
           </div>
 
-          {/* Display Error Message */}
-          {/* {error ? (
-            <Alert color="failure">
-              <span className="text-lg font-semibold">{error}</span>
-            </Alert>
-          ) : null} */}
-
           {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition-all duration-200"
-          >
-            {/* {loading ? <Spinner size="sm" /> : "Create Product"} */}
-            {loading ? (
-                    <Spinner color="success" aria-label="Success spinner example" />
-                  ) : (
-                    "Create Product"
-                  )}
-          </button>
+          <div>
+            <button
+              type="submit"
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+              disabled={loading}
+            >
+              {loading ? (
+                <Spinner color="white" size="sm" />
+              ) : (
+                "Create Product"
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>
