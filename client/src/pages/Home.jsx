@@ -3,12 +3,17 @@ import Banner from "../components/Banner";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import Title from "../components/Title";
-import { FaCheckCircle, FaExchangeAlt, FaLock } from "react-icons/fa";
-import { TbTruck, TbTruckReturn } from "react-icons/tb";
+import { FaExchangeAlt } from "react-icons/fa";
+import { TbTruckReturn } from "react-icons/tb";
 import { BiSupport } from "react-icons/bi";
+import { Spinner } from "flowbite-react";
 export default function Home() {
   const [latestProducts, setLatestProdcuts] = useState([]);
   const [bestSellerProducts, setBestSellerProdcuts] = useState([]);
+  const [latestLoading, setLoadingLatest] = useState(false);
+  const [loadingBestSellers, setLoadingBestSellers] = useState(false);
+  const [errorLatest, setErrorLatest] = useState("");
+  const [errorBest, setErrorBest] = useState("");
   const testimonials = [
     {
       name: "John Doe",
@@ -42,24 +47,46 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    const fetchLatestProduct = async () => {
-      const response = await axios.get(
-        `http://localhost:3000/api/products/all-products?latest=true&startIndex=0&limit=10`
-      );
-      setLatestProdcuts(response.data.products);
+    const fetchLatestProducts = async () => {
+      setLoadingLatest(true);
+      setErrorLatest(""); // Reset error state before fetching
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/products/all-products?latest=true&startIndex=0&limit=10`
+        );
+        setLoadingLatest(false);
+        setLatestProdcuts(response.data.products);
+      } catch (error) {
+        console.error("Error fetching latest products:", error);
+        setErrorLatest("Failed to fetch latest products. Please try again.");
+      } finally {
+        setLoadingLatest(false); // Ensure loading state is reset
+      }
     };
 
-    fetchLatestProduct();
+    fetchLatestProducts();
   }, []);
+
+  console.log(latestLoading);
+
   useEffect(() => {
-    const fetchLatestProduct = async () => {
-      const response = await axios.get(
-        `http://localhost:3000/api/products/all-products?bestSeller=true&startIndex=0&limit=10`
-      );
-      setBestSellerProdcuts(response.data.products);
+    const fetchBestSellerProducts = async () => {
+      setLoadingBestSellers(true);
+      setErrorBest(""); // Reset error state before fetching
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/products/all-products?bestSeller=true&startIndex=0&limit=10`
+        );
+        setBestSellerProdcuts(response.data.products);
+      } catch (error) {
+        console.error("Error fetching best seller products:", error);
+        setErrorBest("Failed to fetch best seller products. Please try again.");
+      } finally {
+        setLoadingBestSellers(false); // Ensure loading state is reset
+      }
     };
 
-    fetchLatestProduct();
+    fetchBestSellerProducts();
   }, []);
   console.log(latestProducts);
   return (
@@ -76,11 +103,19 @@ export default function Home() {
           }
         />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-5 ">
-          {latestProducts.map((product, index) => (
-            <ProductCard key={index} product={product} />
-          ))}
-        </div>
+        {errorLatest ? (
+          <p className="text-red-600 text-2xl mt-5 ">{errorLatest}</p>
+        ) : latestLoading ? (
+          <div className="flex items-center justify-center h-48">
+            <Spinner className="h-24 w-24" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-5 ">
+            {latestProducts.map((product, index) => (
+              <ProductCard key={index} product={product} />
+            ))}
+          </div>
+        )}
       </div>
       {/* Best Sellers */}
       <div className="w-full py-10">
@@ -92,11 +127,19 @@ export default function Home() {
           }
         />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-5 ">
-          {bestSellerProducts.map((product, index) =>
-            index <= 7 ? <ProductCard key={index} product={product} /> : null
-          )}
-        </div>
+        {errorBest ? (
+          <p className="text-red-600 text-2xl mt-5 ">{errorBest}</p>
+        ) : loadingBestSellers ? (
+          <div className="flex items-center justify-center h-48">
+            <Spinner className="h-24 w-24" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-5 ">
+            {bestSellerProducts.map((product, index) =>
+              index <= 7 ? <ProductCard key={index} product={product} /> : null
+            )}
+          </div>
+        )}
       </div>
       {/* Policy */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 py-10">
@@ -116,19 +159,20 @@ export default function Home() {
 
       {/* Testimonials Section */}
       <div className="w-full py-10 bg-gray-100">
-        <h2 className="text-center text-2xl font-bold mb-5">What Our Customers Say</h2>
+        <h2 className="text-center text-2xl font-bold mb-5">
+          What Our Customers Say
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
           {testimonials.map((testimonial, index) => (
             <div key={index} className="bg-white p-6 rounded-lg shadow-md">
               <p className="text-gray-600 italic mb-4">"{testimonial.text}"</p>
-              <h4 className="text-lg font-semibold text-gray-800">{testimonial.name}</h4>
+              <h4 className="text-lg font-semibold text-gray-800">
+                {testimonial.name}
+              </h4>
             </div>
           ))}
         </div>
       </div>
-
-
-      
     </div>
   );
 }

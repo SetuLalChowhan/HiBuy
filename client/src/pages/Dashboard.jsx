@@ -26,7 +26,7 @@ export default function Dashboard() {
     }
   }, [location.search]);
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row  ">
       {/* Sidebar */}
       <div className=" md:w-56">
         < DashSlidebar/>

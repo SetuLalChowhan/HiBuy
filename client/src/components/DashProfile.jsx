@@ -63,7 +63,7 @@ const DashProfile = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-16 p-8 bg-white shadow-lg rounded-lg border border-gray-300">
+    <div className="max-w-2xl mx-auto mt-16 p-8 bg-white shadow-lg rounded-lg border border-gray-300 h-screen">
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">My Profile</h1>
 
       {/* Profile Image with upload option */}

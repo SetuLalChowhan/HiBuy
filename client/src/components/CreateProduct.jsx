@@ -54,7 +54,7 @@ const CreateProduct = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-5">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-5 h-screen mb-6">
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl border border-gray-200">
         <h1 className="text-2xl font-semibold text-gray-800 mb-6">
           Create New Product
