@@ -171,7 +171,7 @@ const getProducts = async (req, res, next) => {
 
     // Log the incoming query parameters
     const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit);
     const skip = startIndex;
 
     let query = {};
@@ -202,7 +202,7 @@ const getProducts = async (req, res, next) => {
     const products = await Product.find(query)
       .sort(sortOption)
       .skip(skip)
-      .limit(limit);
+      .limit(limit || totalProducts);
 
     if (!products.length) {
       return next(new AppError("No products found", 404));

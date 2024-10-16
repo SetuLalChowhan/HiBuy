@@ -54,7 +54,7 @@ export const fetchProducts = createAsyncThunk(
             minPrice: minPrice || "", // Fallback to empty string
             maxPrice: maxPrice || "", // Fallback to empty string
             startIndex: startIndex || 0, // Default to 0
-            limit: limit || 10, // Default to 10
+            limit: limit , // Default to 10
           },
           withCredentials: true,
         }
@@ -136,6 +136,7 @@ export const deleteProduct = createAsyncThunk(
 
 const initialState = {
   products: [],
+  allProducts:[],
   error: null,
   loading: false,
   loading2: false,
@@ -167,7 +168,7 @@ const userSlice = createSlice({
     });
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
       state.loading = false;
-      state.allProductsDefault = action.payload.total;
+      state.allProductsDefault = action.payload.totalProducts;
       const {
         arg: {
           values: { startIndex },
@@ -190,7 +191,8 @@ const userSlice = createSlice({
           state.showmore = false;
         }
       }
-      state.allUsersDefault = action.payload.totalUsers;
+    
+      state.allProducts = action.payload.products
 
       state.error = null;
       console.log(action.meta);

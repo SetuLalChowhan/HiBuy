@@ -20,8 +20,9 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null); // State to hold selected product
   const scrollPositionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-
-  const values = { category, type, search, minPrice, maxPrice, sortOption };
+   
+  const limit=10;
+  const values = { category, type, search, minPrice, maxPrice, sortOption,limit };
 
   const handleShowmore = () => {
     scrollPositionRef.current = window.scrollY;
@@ -45,7 +46,7 @@ const Products = () => {
   }, [products]);
 
   const handleModal = (product) => {
-    console.log(product)
+    console.log(product);
     setSelectedProduct(product); // Set the selected product
     setShowModal(true);
   };
@@ -159,8 +160,7 @@ const Products = () => {
                     {product.stock}
                   </p>
                   <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Sold:</span>{" "}
-                    {product.sold}
+                    <span className="font-semibold">Sold:</span> {product.sold}
                   </p>
                   <button
                     onClick={() => handleModal(product)} // Pass the product to the modal handler
@@ -208,7 +208,9 @@ const Products = () => {
                       className="flex justify-between items-center border-b py-2"
                     >
                       <p className="text-gray-700 font-medium">{size.size}</p>
-                      <p className="text-gray-900 font-semibold">{size.stock}</p>
+                      <p className="text-gray-900 font-semibold">
+                        {size.stock}
+                      </p>
                     </div>
                   ))}
                 </div>
