@@ -20,9 +20,8 @@ const Collections = () => {
   );
   const dispatch = useDispatch();
 
-  // Calculate total pages based on total products and items per page
   const totalPages = Math.ceil(allProductsDefault / itemsPerPage);
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+  const productsContainerRef = useRef(null);
 
   const values = {
     category,
@@ -31,9 +30,8 @@ const Collections = () => {
     minPrice,
     maxPrice,
     sortOption,
-    limit: itemsPerPage, 
+    limit: itemsPerPage,
   };
-  const productsContainerRef = useRef(null);
 
   const handleFilterChange = (filterHandler) => (e) => {
     setActivePage(1);
@@ -41,14 +39,88 @@ const Collections = () => {
   };
 
   useEffect(() => {
-    const startIndex = (activePage - 1) * itemsPerPage; // Calculate startIndex based on activePage
+    const startIndex = (activePage - 1) * itemsPerPage; 
     dispatch(fetchProducts({ values: { ...values, startIndex } }));
-  }, [category, type, search, minPrice, maxPrice, sortOption, activePage]); // Add activePage to dependencies
+  }, [category, type, search, minPrice, maxPrice, sortOption, activePage]);
 
   const handlePage = (page) => {
     setActivePage(page);
-    // Handle page change, the effect above will take care of fetching the products
     productsContainerRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const renderPaginationButtons = () => {
+    const buttons = [];
+    const maxButtons = 5; // maximum number of visible buttons
+    let startPage, endPage;
+
+    if (totalPages <= maxButtons) {
+      // If total pages are less than or equal to max buttons, show all
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      // If the active page is near the beginning
+      if (activePage <= Math.ceil(maxButtons / 2)) {
+        startPage = 1;
+        endPage = maxButtons;
+      }
+      // If the active page is near the end
+      else if (activePage + Math.floor(maxButtons / 2) >= totalPages) {
+        startPage = totalPages - maxButtons + 1;
+        endPage = totalPages;
+      }
+      // If the active page is somewhere in the middle
+      else {
+        startPage = activePage - Math.floor(maxButtons / 2);
+        endPage = activePage + Math.floor(maxButtons / 2);
+      }
+    }
+
+    // Build the pagination buttons
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePage(i)}
+          aria-label={`Go to page ${i}`}
+          className={`p-2 px-4 rounded transition duration-200 ${
+            i === activePage
+              ? "bg-blue-500 text-white font-bold"
+              : "bg-gray-200 text-gray-600"
+          } hover:bg-blue-600 hover:text-white`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    // Add 'First' and 'Last' buttons
+    return (
+      <div className="flex justify-center space-x-2 mt-8">
+        {activePage > 1 && (
+          <>
+            <button
+              onClick={() => handlePage(1)}
+              className="p-2 px-4 rounded bg-gray-200 text-gray-600 hover:bg-blue-600 hover:text-white transition duration-200"
+            >
+              First
+            </button>
+            {activePage > 2 && <span className="p-2">...</span>}
+          </>
+        )}
+        {buttons}
+        {activePage < totalPages - 1 && (
+          <>
+            {activePage < totalPages - 2 && <span className="p-2">...</span>}
+            <button
+              onClick={() => handlePage(totalPages)}
+              className="p-2 px-4 rounded bg-gray-200 text-gray-600 hover:bg-blue-600 hover:text-white transition duration-200"
+            >
+              Last
+            </button>
+          </>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -128,7 +200,7 @@ const Collections = () => {
         />
 
         {error ? (
-          <p className="text-red-600 text-2xl mt-5 ">{error}</p>
+          <p className="text-red-600 text-2xl mt-5">{error}</p>
         ) : loading ? (
           <div className="flex items-center justify-center h-48">
             <Spinner className="h-24 w-24" />
@@ -145,24 +217,7 @@ const Collections = () => {
       {/* Pagination */}
       {error
         ? ""
-        : totalPages > 1 && (
-            <div className="flex justify-center space-x-2 mt-8 ">
-              {pages.map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePage(page)}
-                  aria-label={`Go to page ${page}`}
-                  className={`p-2 px-4 rounded transition duration-200 ${
-                    page === activePage
-                      ? "bg-blue-500 text-white font-bold"
-                      : "bg-gray-200 text-gray-600"
-                  } hover:bg-blue-600 hover:text-white`}
-                >
-                  {page}
-                </button>
-              ))}
-            </div>
-          )}
+        : totalPages > 1 && renderPaginationButtons()}
     </div>
   );
 };
