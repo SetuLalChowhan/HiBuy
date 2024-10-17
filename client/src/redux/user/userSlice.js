@@ -69,7 +69,7 @@ export const logout = createAsyncThunk(
     console.log("Hi");
 
     try {
-      const response = await axios.post("api/users/logout", {
+      const response = await axios.post("http://localhost:3000/api/users/logout", {
         withCredentials: true,
       });
       toast.success("You have been logged out.");

@@ -1,5 +1,7 @@
+const { default: mongoose } = require("mongoose");
 const AppError = require("../error/AppError.js");
 const Product = require("../model/product.model.js");
+const User =require('../model/user.model.js')
 
 // const createProduct = async (req, res, next) => {
 //   if (req.fileValidationError) {
@@ -68,12 +70,14 @@ const createProduct = async (req, res, next) => {
 
 const getProductById = async (req, res, next) => {
   try {
+    
     const product = await Product.findById(req.params.id);
     if (!product) {
       return next(new AppError("Product not Found", 404));
     }
     res.status(200).json(product);
   } catch (error) {
+    console.log(error)
     return next(new AppError("Server error", 500));
   }
 };
@@ -224,6 +228,8 @@ const addReview = async (req, res, next) => {
   try {
     const { rating, comment } = req.body;
     const product = await Product.findById(req.params.id);
+    const user = await User.findById(req.user.userId)
+  
 
     if (!product) {
       return next(new AppError("Product not Found", 404));
@@ -234,7 +240,7 @@ const addReview = async (req, res, next) => {
       (r) => r.userId.toString() === req.user.userId.toString() // Match by user ID
     );
 
-    console.log(req.user.userId);
+
 
     if (alreadyReviewed) {
       return res
@@ -243,6 +249,8 @@ const addReview = async (req, res, next) => {
     }
 
     const review = {
+      _id: new mongoose.Types.ObjectId(), 
+      name:user.name,
       rating: Number(rating),
       comment: comment ? comment : null, // Optional comment
       userId: req.user.userId,
@@ -259,7 +267,7 @@ const addReview = async (req, res, next) => {
 
     // Save the updated product
     await product.save();
-    res.status(201).json({ message: "Review added" });
+    res.status(201).json({ success:true, rating:product.rating, review:review, message: "Review added" });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -294,7 +302,7 @@ const editReview = async (req, res, next) => {
 
     // Save the updated product
     await product.save();
-    res.status(200).json({ message: "Review updated successfully" });
+    res.status(200).json({ success:true, rating:product.rating, review:review, message: "Review added" });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -302,17 +310,20 @@ const editReview = async (req, res, next) => {
 };
 
 const deleteReview = async (req, res, next) => {
+  
   try {
     const product = await Product.findById(req.params.id);
+    
 
     if (!product) {
       return next(new AppError("Product not Found", 404));
     }
 
-    // Check if the review exists
-    const reviewIndex = product.reviews.findIndex(
-      (r) => r.userId.toString() === req.user.userId.toString() // Match by user ID
-    );
+
+    let reviewIndex;
+      reviewIndex = product.reviews.findIndex(
+        (r) => r._id.toString() === req.params.id2.toString()
+      );
 
     if (reviewIndex === -1) {
       return next(new AppError("Review not Found", 404));
@@ -331,12 +342,13 @@ const deleteReview = async (req, res, next) => {
     }
 
     await product.save();
-    res.status(200).json({ message: "Review deleted successfully" });
+    res.status(200).json({ success: true, rating: product.rating, message: "Review deleted successfully" });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
   }
 };
+
 module.exports = {
   createProduct,
   getProducts,

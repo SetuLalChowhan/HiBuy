@@ -4,7 +4,7 @@ import axios from "axios";
 export const createProduct = createAsyncThunk(
   "product/create-product",
   async ({ values, toast }, { rejectWithValue }) => {
-    console.log(values)
+    console.log(values);
     try {
       const response = await axios.post("api/products/create-product", values, {
         headers: {
@@ -54,7 +54,7 @@ export const fetchProducts = createAsyncThunk(
             minPrice: minPrice || "", // Fallback to empty string
             maxPrice: maxPrice || "", // Fallback to empty string
             startIndex: startIndex || 0, // Default to 0
-            limit: limit , // Default to 10
+            limit: limit, // Default to 10
           },
           withCredentials: true,
         }
@@ -133,10 +133,82 @@ export const deleteProduct = createAsyncThunk(
     }
   }
 );
+export const addReview = createAsyncThunk(
+  "product/add-review",
+  async ({ id, toast, review }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/products/reviews/${id}`,
+        review,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      toast.success("Review Added");
+
+      return response.data;
+    } catch (err) {
+      toast.error(err.response.data.message);
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
+export const editReview = createAsyncThunk(
+  "product/edit-review",
+  async ({ id, toast, review }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/products/reviews/${id}`,
+        review,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      toast.success("Review edited");
+
+      return response.data;
+    } catch (err) {
+      toast.error(err.response.data.message);
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
+export const deleteReview = createAsyncThunk(
+  "product/delete-review",
+  async ({ id, id2,toast }, { rejectWithValue }) => {
+    const value={reviewId:id2};
+    console.log(value)
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/products/reviews/${id}/${id2}`,
+       
+        {
+          
+          withCredentials: true,
+        }
+      );
+      toast.success("Review Deleted");
+
+      return response.data;
+    } catch (err) {
+      toast.error(err.response.data.message);
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
 
 const initialState = {
   products: [],
-  allProducts:[],
+  allProducts: [],
   error: null,
   loading: false,
   loading2: false,
@@ -146,7 +218,7 @@ const initialState = {
   showmore: true,
 };
 
-const userSlice = createSlice({
+const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {},
@@ -191,8 +263,8 @@ const userSlice = createSlice({
           state.showmore = false;
         }
       }
-    
-      state.allProducts = action.payload.products
+
+      state.allProducts = action.payload.products;
 
       state.error = null;
       console.log(action.meta);
@@ -242,9 +314,68 @@ const userSlice = createSlice({
       state.loading2 = false;
       state.error = action.payload;
     });
+    builder.addCase(addReview.pending, (state) => {
+      state.loading2 = true;
+    });
+    builder.addCase(addReview.fulfilled, (state, action) => {
+      state.loading2 = false;
+      const isReviewd = state.singleProduct.reviews.find((review) => {
+        
+       return review.userId.toString()=== action.payload.review.userId.toString()
+      });
+      console.log(action.payload)
+      if (!isReviewd) {
+        console.log("hi")
+        state.singleProduct.reviews.push(action.payload.review);
+        state.singleProduct.rating = action.payload.rating;
+      }
+    });
+    builder.addCase(addReview.rejected, (state, action) => {
+      state.loading2 = false;
+      state.error = action.payload;
+    });
+
+    builder.addCase(editReview.pending, (state) => {
+      state.loading2 = true;
+    });
+    builder.addCase(editReview.fulfilled, (state, action) => {
+      state.loading2 = false;
+      state.singleProduct.reviews = state.singleProduct.reviews.map(
+        (review) => {
+          if (review.userId.toString()=== action.payload.review.userId.toString()) {
+            return { ...review, comment: action.payload.review.comment };
+          } else {
+            return review;
+          }
+        }
+      );
+
+      state.singleProduct.rating = action.payload.rating;
+    });
+    builder.addCase(editReview.rejected, (state, action) => {
+      state.loading2 = false;
+      state.error = action.payload;
+    });
+    builder.addCase(deleteReview .pending, (state) => {
+      state.loading2 = true;
+    });
+    builder.addCase(deleteReview .fulfilled, (state, action) => {
+      state.loading2 = false;
+      const {
+        arg: {id2 },
+      } = action.meta;
+
+      state.singleProduct.reviews = state.singleProduct.reviews.filter(review=> review._id!==id2 );
+
+      state.singleProduct.rating = action.payload.rating;
+    });
+    builder.addCase(deleteReview .rejected, (state, action) => {
+      state.loading2 = false;
+      state.error = action.payload;
+    });
   },
 });
 
-export const {} = userSlice.actions;
+export const {} = productSlice.actions;
 
-export default userSlice.reducer;
+export default productSlice.reducer;

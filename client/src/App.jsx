@@ -11,14 +11,19 @@ import ResetPassword from "./pages/ResetPassword";
 import EditProduct from "./components/EditProduct";
 import Collections from "./pages/Collections";
 import Footer from "./components/Footer";
+import SingleProduct from "./pages/SingleProduct";
+import ScrollToTop from "./components/ScrollToTop";
 function App() {
   return (
     <>
     <Router>
+    <ScrollToTop/>
       <Header />
       <Routes>
+      
         <Route path="/" element={<Home />} />
         <Route path="/collections" element={<Collections />} />
+        <Route path="/product/:id" element={<SingleProduct />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/product-edit/:id" element={<EditProduct />} />

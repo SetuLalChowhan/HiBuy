@@ -27,7 +27,7 @@ router.put("/:id", isAdmin, upload.single("image"), updateProduct);
 router.delete("/:id", isAdmin, deleteProduct);
 // Review routes
 router.post("/reviews/:id", authenticate, addReview);
-router.put("/reviews/:id",authOrAdmin, editReview);
-router.delete("/reviews/:id", authOrAdmin, deleteReview);
+router.put("/reviews/:id",authenticate, editReview);
+router.delete("/reviews/:id/:id2", authenticate, deleteReview);
 
 module.exports = router;

@@ -5,6 +5,7 @@ const User = require("../model/user.model.js");
 // Middleware to authenticate user
 const authenticate = (req, res, next) => {
     const token = req.cookies.token;
+ 
 
     if (!token) {
         return next(new AppError('Not authorized, no token', 401));
