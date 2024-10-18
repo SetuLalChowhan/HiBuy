@@ -5,6 +5,7 @@ import Title from "../components/Title";
 import { Spinner } from "flowbite-react";
 import ProductCard from "../components/ProductCard";
 import { FaSearch } from "react-icons/fa";
+import { motion } from "framer-motion"; // Import Framer Motion
 
 const Collections = () => {
   const [category, setCategory] = useState("");
@@ -72,10 +73,11 @@ const Collections = () => {
 
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
-        <button
+        <motion.button
           key={i}
           onClick={() => handlePage(i)}
           aria-label={`Go to page ${i}`}
+          whileHover={{ scale: 1.05 }} // Hover animation
           className={`p-2 px-4 rounded-full transition duration-300 ease-in-out ${
             i === activePage
               ? "bg-gradient-to-r from-blue-500 to-teal-500 text-white font-semibold shadow-lg"
@@ -83,28 +85,30 @@ const Collections = () => {
           } hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-600 hover:text-white`}
         >
           {i}
-        </button>
+        </motion.button>
       );
     }
 
     return (
       <div className="flex justify-center space-x-2 mt-8">
         {activePage > 1 && (
-          <button
+          <motion.button
             onClick={() => handlePage(1)}
+            whileHover={{ scale: 1.05 }} // Hover animation
             className="p-2 px-4 rounded-full bg-gray-200 text-gray-600 hover:bg-blue-500 hover:text-white transition duration-300"
           >
             First
-          </button>
+          </motion.button>
         )}
         {buttons}
         {activePage < totalPages && (
-          <button
+          <motion.button
             onClick={() => handlePage(totalPages)}
+            whileHover={{ scale: 1.05 }} // Hover animation
             className="p-2 px-4 rounded-full bg-gray-200 text-gray-600 hover:bg-blue-500 hover:text-white transition duration-300"
           >
             Last
-          </button>
+          </motion.button>
         )}
       </div>
     );
@@ -113,7 +117,12 @@ const Collections = () => {
   return (
     <div className="min-h-screen container mx-auto px-4 py-8">
       {/* Filter Section */}
-      <div className="mb-6 flex flex-col lg:items-center lg:justify-between gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-6 flex flex-col lg:items-center lg:justify-between gap-6"
+      >
         <div className="relative w-full lg:max-w-6xl">
           <input
             type="text"
@@ -179,10 +188,16 @@ const Collections = () => {
             <option value="bestSeller">Best Sellers</option>
           </select>
         </div>
-      </div>
+      </motion.div>
 
       {/* Products Section */}
-      <div ref={productsContainerRef} className="mb-10">
+      <motion.div
+        ref={productsContainerRef}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="mb-10"
+      >
         <Title title="All" title2="Collections" para="Explore your favourite Products" />
 
         {error ? (
@@ -192,19 +207,34 @@ const Collections = () => {
             <Spinner className="h-24 w-24" />
           </div>
         ) : (
-          <div
+          <motion.div
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-8 transition-all"
-            style={{ animation: "fadeIn 0.5s ease-in-out" }}
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { staggerChildren: 0.1 },
+              },
+            }}
           >
-            {allProducts.map((product, index) => (
-              <ProductCard key={index} product={product} />
-            ))}
-          </div>
+            {allProducts?.length ? (
+              allProducts.map((product, idx) => (
+                <motion.div key={idx} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
+                  <ProductCard product={product} />
+                </motion.div>
+              ))
+            ) : (
+              <p className="text-xl mt-5 text-red-600">No products found</p>
+            )}
+          </motion.div>
         )}
-      </div>
+      </motion.div>
 
       {/* Pagination */}
-      {!error && totalPages > 1 && renderPaginationButtons()}
+      {renderPaginationButtons()}
     </div>
   );
 };
