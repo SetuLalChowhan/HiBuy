@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react"; // Import useRef
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import moment from 'moment'
 import {
   addReview,
   deleteReview,
@@ -71,7 +72,27 @@ const SingleProduct = () => {
       </div>
     );
   }
-
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
+        <div className="text-center p-6 max-w-md bg-white rounded-lg shadow-lg">
+          <h1 className="text-3xl font-semibold text-red-500 mb-4">
+            Oops! Something went wrong.
+          </h1>
+          <p className="text-gray-700 mb-6">
+            We're experiencing some issues on our server. Please try again
+            later.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition"
+          >
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen container mx-auto p-4 md:p-6 lg:p-8 space-y-24">
       <div className="flex flex-col md:flex-row gap-10 w-full">
@@ -168,45 +189,58 @@ const SingleProduct = () => {
         <h2 className="font-bold md:text-3xl mb-6">Customer Reviews</h2>
 
         {/* Review Form */}
-        <form
-          onSubmit={handleReviewSubmit}
-          ref={reviewFormRef} // Attach the ref to the form
-          className="w-full bg-gray-50 p-4 rounded-md shadow-md space-y-4"
-        >
-          <div className="flex flex-col gap-2">
-            <label className="font-medium">Rating</label>
-            <Rating>
-              {[1, 2, 3, 4, 5].map((rate) => (
-                <Rating.Star
-                  key={rate}
-                  filled={review.rating >= rate}
-                  onClick={() => handleRatingChange(rate)}
-                  className="cursor-pointer"
-                />
-              ))}
-            </Rating>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="font-medium">Comment</label>
-            <textarea
-              name="comment"
-              value={review.comment}
-              onChange={handleReviewChange}
-              placeholder="Write your comment here..."
-              rows="4"
-              className="w-full border border-gray-300 p-2 rounded-md"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="px-6 py-3 bg-black text-white rounded-md hover:opacity-75 transition-all"
+        {currentUser ? (
+          <form
+            onSubmit={handleReviewSubmit}
+            ref={reviewFormRef} // Attach the ref to the form
+            className="w-full bg-gray-50 p-4 rounded-md shadow-md space-y-4"
           >
-            {editingReviewId ? "Update Review" : "Submit Review"}
-          </button>
-        </form>
+            <div className="flex flex-col gap-2">
+              <label className="font-medium">Rating</label>
+              <Rating>
+                {[1, 2, 3, 4, 5].map((rate) => (
+                  <Rating.Star
+                    key={rate}
+                    filled={review.rating >= rate}
+                    onClick={() => handleRatingChange(rate)}
+                    className="cursor-pointer"
+                  />
+                ))}
+              </Rating>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-medium">Comment</label>
+              <textarea
+                name="comment"
+                value={review.comment}
+                onChange={handleReviewChange}
+                placeholder="Share your thoughts on this product..."
+                rows="4"
+                className="w-full border border-gray-300 p-2 rounded-md"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="px-6 py-3 bg-black text-white rounded-md hover:opacity-75 transition-all"
+            >
+              {editingReviewId ? "Update Review" : "Submit Review"}
+            </button>
+          </form>
+        ) : (
+          <p className="text-gray-700">
+            To share your feedback and assist other customers in making informed
+            decisions, please{" "}
+            <Link to={"/login"} className="font-semibold text-blue-500 ">
+              log in
+            </Link>{" "}
+            to your account. Once logged in, you'll be able to submit your
+            review for this product.
+          </p>
+        )}
 
         {/* Display Reviews */}
         <div className="mt-10 space-y-6 w-full">
@@ -224,7 +258,7 @@ const SingleProduct = () => {
                     ))}
                   </Rating>
                   <p className="text-sm text-gray-500">
-                    {new Date(review.createdAt).toLocaleDateString()}
+                    {moment(review.createdAt).fromNow()}
                   </p>
                 </div>
 
@@ -274,3 +308,5 @@ const SingleProduct = () => {
 };
 
 export default SingleProduct;
+
+
