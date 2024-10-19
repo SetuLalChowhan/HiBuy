@@ -1,14 +1,23 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { motion } from "framer-motion";
+import {
+  addQuantity,
+  addTotal,
+  deleteItem,
+  removeQuantity,
+} from "../redux/product/productSlice";
 
 const Cart = () => {
-  const { cart } = useSelector((state) => state.product);
+  const { cart,totalPrice } = useSelector((state) => state.product);
+  const dispatch = useDispatch();
 
   // Function to calculate total price
   const calculateTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    const total =cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    dispatch(addTotal(total))
+    return total
   };
 
   // Animation variants for the cart items
@@ -89,6 +98,11 @@ const Cart = () => {
                           className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full text-lg font-semibold text-gray-700 transition"
                           whileHover={{ scale: 1.2 }}
                           whileTap={{ scale: 0.9 }}
+                          onClick={() =>
+                            dispatch(
+                              addQuantity({ id: item.id, size: item.size })
+                            )
+                          }
                         >
                           +
                         </motion.button>
@@ -99,6 +113,11 @@ const Cart = () => {
                           className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full text-lg font-semibold text-gray-700 transition"
                           whileHover={{ scale: 1.2 }}
                           whileTap={{ scale: 0.9 }}
+                          onClick={() =>
+                            dispatch(
+                              removeQuantity({ id: item.id, size: item.size })
+                            )
+                          }
                         >
                           -
                         </motion.button>
@@ -113,6 +132,9 @@ const Cart = () => {
                   title="Remove item"
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
+                  onClick={()=> dispatch(
+                    deleteItem({ id: item.id, size: item.size })
+                  )}
                 >
                   <RiDeleteBinLine size={28} />
                 </motion.button>
@@ -169,7 +191,7 @@ const Cart = () => {
                 transition={{ duration: 0.5 }}
               >
                 <span>Total</span>
-                <span>৳{calculateTotalPrice() + 50}</span>
+                <span>৳{totalPrice}</span>
               </motion.div>
               <motion.button
                 className="w-full bg-teal-500 hover:bg-teal-700 text-white text-lg font-semibold py-4 rounded-lg transition duration-300 ease-in-out"

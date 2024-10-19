@@ -245,7 +245,7 @@ const SingleProduct = () => {
               <label className="font-medium">Comment</label>
               <textarea
                 name="comment"
-                value={review.comment}
+                value={review?.comment}
                 onChange={handleReviewChange}
                 placeholder="Share your thoughts on this product..."
                 rows="4"
@@ -289,7 +289,7 @@ const SingleProduct = () => {
                 {review.comment}
               </p>
 
-              {(currentUser.isAdmin || currentUser?._id === review.userId) && (
+              {(currentUser?.isAdmin || currentUser?._id === review.userId) && (
                 <div className="flex gap-2">
                   {currentUser?._id === review.userId && (
                     <button
@@ -303,8 +303,8 @@ const SingleProduct = () => {
                     onClick={() =>
                       dispatch(
                         deleteReview({
-                          id: singleProduct._id,
-                          id2: review._id,
+                          id: singleProduct?._id,
+                          id2: review?._id,
                           toast,
                         })
                       )
