@@ -8,9 +8,11 @@ import {
   deleteItem,
   removeQuantity,
 } from "../redux/product/productSlice";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
   const { cart,totalPrice } = useSelector((state) => state.product);
+  const { currentUser } = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
   // Function to calculate total price
@@ -193,13 +195,15 @@ const Cart = () => {
                 <span>Total</span>
                 <span>৳{totalPrice}</span>
               </motion.div>
-              <motion.button
-                className="w-full bg-teal-500 hover:bg-teal-700 text-white text-lg font-semibold py-4 rounded-lg transition duration-300 ease-in-out"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Proceed to Checkout
-              </motion.button>
+             {currentUser ?(
+               <motion.button
+               className="w-full bg-teal-500 hover:bg-teal-700 text-white text-lg font-semibold py-4 rounded-lg transition duration-300 ease-in-out"
+               whileHover={{ scale: 1.05 }}
+               whileTap={{ scale: 0.95 }}
+             >
+               Proceed to Checkout
+             </motion.button>
+             ):(<p className="md:text-xl">Please <Link className="font-semibold text-blue-500" to={'/login'}>Login</Link> To CheckOut</p>)}
             </div>
           </div>
         </div>
