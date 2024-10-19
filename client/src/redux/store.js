@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./user/userSlice";
-import productSlice from './product/productSlice';
+import productSlice from "./product/productSlice";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
@@ -10,7 +10,7 @@ import { createTransform } from "redux-persist";
 const transform = createTransform(
   (inboundState) => {
     // Destructure to exclude specific fields from user state
-    const { users,totalUsers,allUsersDefault, ...rest } = inboundState; // Exclude specific user fields
+    const { users, totalUsers, allUsersDefault, ...rest } = inboundState; // Exclude specific user fields
     return { ...rest }; // Return the modified user state without excluded fields
   },
   (outboundState) => {
@@ -33,9 +33,12 @@ const rootReducer = combineReducers({
 });
 
 // Create a persisted reducer for user state only
-const persistedUserReducer = persistReducer(persistConfig, combineReducers({
-  user: userReducer, // Only persist the user state
-}));
+const persistedUserReducer = persistReducer(
+  persistConfig,
+  combineReducers({
+    user: userReducer, // Only persist the user state
+  })
+);
 
 // Create store
 export const store = configureStore({
