@@ -1,31 +1,8 @@
 const { default: mongoose } = require("mongoose");
 const AppError = require("../error/AppError.js");
 const Product = require("../model/product.model.js");
-const User =require('../model/user.model.js')
+const User = require("../model/user.model.js");
 
-// const createProduct = async (req, res, next) => {
-//   if (req.fileValidationError) {
-//     return next(new AppError(req.fileValidationError, 400));
-//   }
-//   const { name, price, description, category, type, stock } = req.body;
-//   const image = req.file ? req.file.path : null;
-//   try {
-//     const product = new Product({
-//       name,
-//       price,
-//       description,
-//       image,
-//       category,
-//       type,
-//       stock,
-//     });
-//     const createdProduct = await product.save();
-//     res.status(201).json(createdProduct);
-//   } catch (error) {
-//     console.log(error);
-//     return next(new AppError("Server error", 500));
-//   }
-// };
 const createProduct = async (req, res, next) => {
   if (req.fileValidationError) {
     return next(new AppError(req.fileValidationError, 400));
@@ -70,14 +47,13 @@ const createProduct = async (req, res, next) => {
 
 const getProductById = async (req, res, next) => {
   try {
-    
     const product = await Product.findById(req.params.id);
     if (!product) {
       return next(new AppError("Product not Found", 404));
     }
     res.status(200).json(product);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return next(new AppError("Server error", 500));
   }
 };
@@ -228,8 +204,7 @@ const addReview = async (req, res, next) => {
   try {
     const { rating, comment } = req.body;
     const product = await Product.findById(req.params.id);
-    const user = await User.findById(req.user.userId)
-  
+    const user = await User.findById(req.user.userId);
 
     if (!product) {
       return next(new AppError("Product not Found", 404));
@@ -240,8 +215,6 @@ const addReview = async (req, res, next) => {
       (r) => r.userId.toString() === req.user.userId.toString() // Match by user ID
     );
 
-
-
     if (alreadyReviewed) {
       return res
         .status(400)
@@ -249,8 +222,8 @@ const addReview = async (req, res, next) => {
     }
 
     const review = {
-      _id: new mongoose.Types.ObjectId(), 
-      name:user.name,
+      _id: new mongoose.Types.ObjectId(),
+      name: user.name,
       rating: Number(rating),
       comment: comment ? comment : null, // Optional comment
       userId: req.user.userId,
@@ -267,7 +240,14 @@ const addReview = async (req, res, next) => {
 
     // Save the updated product
     await product.save();
-    res.status(201).json({ success:true, rating:product.rating, review:review, message: "Review added" });
+    res
+      .status(201)
+      .json({
+        success: true,
+        rating: product.rating,
+        review: review,
+        message: "Review added",
+      });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -302,7 +282,14 @@ const editReview = async (req, res, next) => {
 
     // Save the updated product
     await product.save();
-    res.status(200).json({ success:true, rating:product.rating, review:review, message: "Review added" });
+    res
+      .status(200)
+      .json({
+        success: true,
+        rating: product.rating,
+        review: review,
+        message: "Review added",
+      });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -310,20 +297,17 @@ const editReview = async (req, res, next) => {
 };
 
 const deleteReview = async (req, res, next) => {
-  
   try {
     const product = await Product.findById(req.params.id);
-    
 
     if (!product) {
       return next(new AppError("Product not Found", 404));
     }
 
-
     let reviewIndex;
-      reviewIndex = product.reviews.findIndex(
-        (r) => r._id.toString() === req.params.id2.toString()
-      );
+    reviewIndex = product.reviews.findIndex(
+      (r) => r._id.toString() === req.params.id2.toString()
+    );
 
     if (reviewIndex === -1) {
       return next(new AppError("Review not Found", 404));
@@ -342,7 +326,13 @@ const deleteReview = async (req, res, next) => {
     }
 
     await product.save();
-    res.status(200).json({ success: true, rating: product.rating, message: "Review deleted successfully" });
+    res
+      .status(200)
+      .json({
+        success: true,
+        rating: product.rating,
+        message: "Review deleted successfully",
+      });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));

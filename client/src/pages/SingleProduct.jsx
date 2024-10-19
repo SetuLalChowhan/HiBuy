@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import moment from "moment";
 import {
   addReview,
+  addToCart,
   deleteReview,
   editReview,
   getSingleProduct,
@@ -20,7 +21,7 @@ const SingleProduct = () => {
   const [review, setReview] = useState({ comment: "", rating: 0 });
   const [editingReviewId, setEditingReviewId] = useState(null);
   const { currentUser } = useSelector((state) => state.user.user);
-  const { singleProduct, loading } = useSelector((state) => state.product);
+  const { singleProduct, loading,cart } = useSelector((state) => state.product);
 
   const handleChangeSize = (size) => setActiveSize(size);
 
@@ -53,6 +54,15 @@ const SingleProduct = () => {
       reviewFormRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const handleAddToCart = (value) => {
+    dispatch(addToCart(value))
+    toast.success("Item successfully added to your cart!");
+
+
+  };
+
+  console.log(cart)
 
   useEffect(() => {
     dispatch(getSingleProduct(id));
@@ -172,6 +182,19 @@ const SingleProduct = () => {
 
           {/* Add to Cart Button */}
           <motion.button
+            onClick={() =>{
+              if (!activeSize) return; 
+
+              handleAddToCart({
+                  id: singleProduct?._id,
+                  name:singleProduct?.name,
+                  image: singleProduct?.image,
+                  price: singleProduct?.price,
+                  size: activeSize,
+                  quantity: 1,
+                })
+            }
+            }
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={`px-6 py-3 rounded-md text-white transition duration-200 ease-in-out ${
@@ -258,10 +281,12 @@ const SingleProduct = () => {
                     <Rating.Star key={index} filled={index < review.rating} />
                   ))}
                 </Rating>
+                <p className="text-sm text-gray-500">
+                  {moment(review.createdAt).fromNow()}
+                </p>
               </div>
-              <p className="text-gray-600 mb-2 ">{review.comment}</p>
-              <p className="text-sm text-gray-500">
-                {moment(review.createdAt).fromNow()}
+              <p className="text-gray-600 mb-2 max-w-xs sm:max-w-md">
+                {review.comment}
               </p>
 
               {(currentUser.isAdmin || currentUser?._id === review.userId) && (

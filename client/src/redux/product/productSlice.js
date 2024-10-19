@@ -35,8 +35,6 @@ export const fetchProducts = createAsyncThunk(
         sortOption = "",
         startIndex = "",
         limit = "",
-        latest = "",
-        sortOrder = "",
       } = values;
 
       console.log(values);
@@ -183,15 +181,14 @@ export const editReview = createAsyncThunk(
 );
 export const deleteReview = createAsyncThunk(
   "product/delete-review",
-  async ({ id, id2,toast }, { rejectWithValue }) => {
-    const value={reviewId:id2};
-    console.log(value)
+  async ({ id, id2, toast }, { rejectWithValue }) => {
+    const value = { reviewId: id2 };
+    console.log(value);
     try {
       const response = await axios.delete(
         `http://localhost:3000/api/products/reviews/${id}/${id2}`,
-       
+
         {
-          
           withCredentials: true,
         }
       );
@@ -209,6 +206,7 @@ export const deleteReview = createAsyncThunk(
 const initialState = {
   products: [],
   allProducts: [],
+  cart: [],
   error: null,
   loading: false,
   loading2: false,
@@ -221,7 +219,25 @@ const initialState = {
 const productSlice = createSlice({
   name: "product",
   initialState,
-  reducers: {},
+  reducers: {
+    addToCart: (state, action) => {
+      console.log(action.payload);
+      const itemExist = state.cart.find(
+        (item) =>
+          item.id === action.payload.id && item.size === action.payload.size
+      );
+
+      if (itemExist) {
+        state.cart.forEach((item, index) => {
+          item.id === action.payload.id && item.size === action.payload.size
+            ? (item.quantity += 1)
+            : item;
+        });
+      } else {
+        state.cart.push(action.payload);
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(createProduct.pending, (state) => {
       state.loading = true;
@@ -320,12 +336,13 @@ const productSlice = createSlice({
     builder.addCase(addReview.fulfilled, (state, action) => {
       state.loading2 = false;
       const isReviewd = state.singleProduct.reviews.find((review) => {
-        
-       return review.userId.toString()=== action.payload.review.userId.toString()
+        return (
+          review.userId.toString() === action.payload.review.userId.toString()
+        );
       });
-      console.log(action.payload)
+      console.log(action.payload);
       if (!isReviewd) {
-        console.log("hi")
+        console.log("hi");
         state.singleProduct.reviews.push(action.payload.review);
         state.singleProduct.rating = action.payload.rating;
       }
@@ -342,7 +359,9 @@ const productSlice = createSlice({
       state.loading2 = false;
       state.singleProduct.reviews = state.singleProduct.reviews.map(
         (review) => {
-          if (review.userId.toString()=== action.payload.review.userId.toString()) {
+          if (
+            review.userId.toString() === action.payload.review.userId.toString()
+          ) {
             return { ...review, comment: action.payload.review.comment };
           } else {
             return review;
@@ -356,26 +375,28 @@ const productSlice = createSlice({
       state.loading2 = false;
       state.error = action.payload;
     });
-    builder.addCase(deleteReview .pending, (state) => {
+    builder.addCase(deleteReview.pending, (state) => {
       state.loading2 = true;
     });
-    builder.addCase(deleteReview .fulfilled, (state, action) => {
+    builder.addCase(deleteReview.fulfilled, (state, action) => {
       state.loading2 = false;
       const {
-        arg: {id2 },
+        arg: { id2 },
       } = action.meta;
 
-      state.singleProduct.reviews = state.singleProduct.reviews.filter(review=> review._id!==id2 );
+      state.singleProduct.reviews = state.singleProduct.reviews.filter(
+        (review) => review._id !== id2
+      );
 
       state.singleProduct.rating = action.payload.rating;
     });
-    builder.addCase(deleteReview .rejected, (state, action) => {
+    builder.addCase(deleteReview.rejected, (state, action) => {
       state.loading2 = false;
       state.error = action.payload;
     });
   },
 });
 
-export const {} = productSlice.actions;
+export const { addToCart } = productSlice.actions;
 
 export default productSlice.reducer;

@@ -22,6 +22,7 @@ import { toast } from "react-hot-toast";
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user.user);
+  const { cart } = useSelector((state) => state.product);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const path = useLocation().pathname;
@@ -45,7 +46,7 @@ export default function Header() {
 
         <Link to={"/cart"} className="flex justify-center items-center">
           <BsCart4 size={35} />
-          <p className="-mt-4 font-semibold">4</p>
+          <p className="-mt-4 font-semibold">{cart.length}</p>
         </Link>
 
         {currentUser == null ? (
