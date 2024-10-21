@@ -1,9 +1,25 @@
 const mongoose = require("mongoose");
+
 const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  orderCode: {
+    type: String,
+    required: true,
+    unique: true,
+    minlength: 4,
+    maxlength: 4,
   },
   products: [
     {
@@ -28,11 +44,11 @@ const orderSchema = new mongoose.Schema({
     city: { type: String, required: true },
     postalCode: { type: String, required: true },
     country: { type: String, required: true },
-    phone: { type: String, required: true }, // Added phone number field here
+    phone: { type: String, required: true },
   },
   status: {
     type: String,
-    enum: ["pending", "paid", "shipped", "cancelled", "completed"],
+    enum: ["pending", "confirmed", "shipped", "cancelled", "completed"],
     default: "pending",
   },
   createdAt: {
@@ -40,6 +56,7 @@ const orderSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
 
 const Order = mongoose.model("Order", orderSchema);
 module.exports = Order;

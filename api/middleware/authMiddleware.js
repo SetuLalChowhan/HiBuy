@@ -44,26 +44,9 @@ const isAdmin = async (req, res, next) => {
     }
 };
 
-// Middleware to allow either authenticated user or admin
-const authOrAdmin = async (req, res, next) => {
-    try {
-        // Attempt to authenticate the user
-        await authenticate(req, res, async (err) => {
-            if (err) {
-                // If authentication fails, check if user is an admin
-                await isAdmin(req, res, next);
-            } else {
-                // If authenticated successfully, proceed to the next middleware
-                return next();
-            }
-        });
-    } catch (error) {
-        return next(new AppError("Authorization failed", 401));
-    }
-};
+
 
 module.exports = {
     authenticate,
     isAdmin,
-    authOrAdmin // Export the new middleware
-};
+}
