@@ -34,7 +34,11 @@ const PlaceOrder = () => {
       onSubmit: (values) => {
         if (!values.paymentMethod) {
           toast.error("Please Select Payment Method");
-        } else {
+        } 
+        if (values.products.length===0) {
+          toast.error("Please add products to your cart before placing an order.");
+        }
+        else {
           dispatch(createOrder({ values, toast }));
         }
       },
