@@ -14,6 +14,7 @@ import Footer from "./components/Footer";
 import SingleProduct from "./pages/SingleProduct";
 import ScrollToTop from "./components/ScrollToTop";
 import Cart from "./pages/Cart";
+import PlaceOrder from "./pages/PlaceOrder";
 function App() {
   return (
     <>
@@ -28,6 +29,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/product-edit/:id" element={<EditProduct />} />
+            <Route path="/place-order" element={<PlaceOrder/>} />
           </Route>
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/sign-up" element={<SignUp />} />

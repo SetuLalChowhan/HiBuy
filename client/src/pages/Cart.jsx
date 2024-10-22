@@ -8,21 +8,23 @@ import {
   deleteItem,
   removeQuantity,
 } from "../redux/product/productSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { cart,totalPrice } = useSelector((state) => state.product);
+  const { cart } = useSelector((state) => state.product);
   const { currentUser } = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Function to calculate total price
   const calculateTotalPrice = () => {
-    const total =cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    dispatch(addTotal(total))
-    return total
+    const total = cart.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    // ;
+    return total;
   };
-
-  // Animation variants for the cart items
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
@@ -50,7 +52,7 @@ const Cart = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <span className="text-teal-500">Your</span> Cart
+       <h1 className="text-3xl ">Your <span className="text-teal-500">Cart</span></h1>
       </motion.h2>
 
       {/* Cart Items Section */}
@@ -134,9 +136,9 @@ const Cart = () => {
                   title="Remove item"
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={()=> dispatch(
-                    deleteItem({ id: item.id, size: item.size })
-                  )}
+                  onClick={() =>
+                    dispatch(deleteItem({ id: item.id, size: item.size }))
+                  }
                 >
                   <RiDeleteBinLine size={28} />
                 </motion.button>
@@ -166,7 +168,7 @@ const Cart = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                <span className="text-teal-500">Cart</span> Totals
+                 <h1 className="text-3xl ">Cart <span className="text-teal-500">Totals</span></h1>
               </motion.h2>
               <motion.div
                 className="flex justify-between text-lg text-gray-700"
@@ -193,17 +195,26 @@ const Cart = () => {
                 transition={{ duration: 0.5 }}
               >
                 <span>Total</span>
-                <span>৳{totalPrice}</span>
+                <span>৳{calculateTotalPrice() + 50}</span>
               </motion.div>
-             {currentUser ?(
-               <motion.button
-               className="w-full bg-teal-500 hover:bg-teal-700 text-white text-lg font-semibold py-4 rounded-lg transition duration-300 ease-in-out"
-               whileHover={{ scale: 1.05 }}
-               whileTap={{ scale: 0.95 }}
-             >
-               Proceed to Checkout
-             </motion.button>
-             ):(<p className="md:text-xl">Please <Link className="font-semibold text-blue-500" to={'/login'}>Login</Link> To CheckOut</p>)}
+              {currentUser ? (
+                <motion.button
+                  className="w-full bg-teal-500 hover:bg-teal-700 text-white text-lg font-semibold py-4 rounded-lg transition duration-300 ease-in-out"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/place-order")}
+                >
+                  Proceed to Checkout
+                </motion.button>
+              ) : (
+                <p className="md:text-xl">
+                  Please{" "}
+                  <Link className="font-semibold text-blue-500" to={"/login"}>
+                    Login
+                  </Link>{" "}
+                  To CheckOut
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -62,7 +62,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-28 bg-gray-50">
+    <div className="flex justify-center items-center  bg-gray-50 min-h-screen">
       <div className="bg-gray-200 shadow-2xl rounded-lg p-8 w-full max-w-md border border-gray-400">
         {/* Header Section */}
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">

@@ -213,7 +213,6 @@ const initialState = {
   singleProduct: {},
   allProductsDefault: null,
   totalProducts: 0,
-  totalPrice: null,
   showmore: true,
 };
 
@@ -281,9 +280,7 @@ const productSlice = createSlice({
         );
       }
     },
-    addTotal: (state, action) => {
-      state.totalPrice = action.payload + 70;
-    },
+  
   },
   extraReducers: (builder) => {
     builder.addCase(createProduct.pending, (state) => {

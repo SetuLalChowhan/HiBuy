@@ -10,7 +10,6 @@ import {
   NavbarLink,
   NavbarToggle,
   Button,
-  TextInput,
 } from "flowbite-react";
 import { BsCart4 } from "react-icons/bs";
 import { Link, useLocation } from "react-router-dom";
