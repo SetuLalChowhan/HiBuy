@@ -15,7 +15,7 @@ router.get("/my-orders", authenticate, myOrders); // Get Logged-in User Orders
 router.get("/order/:orderId", authenticate, getSingleOrder); // Get Single Order by ID
 router.get("/allOrders", authenticate,isAdmin, getAllOrders); // Admin: Get All Orders
 router.put("/order/:orderId", authenticate,isAdmin, updateOrderStatus); // Admin: Update Order Status
-router.delete("/admin/order/:orderId", authenticate, isAdmin, deleteOrder);
+router.delete("/order/:orderId", authenticate, isAdmin, deleteOrder);
 
 
 module.exports = router;

@@ -5,16 +5,15 @@ const AppError = require("../error/AppError.js");
 // Create Order Controller (Already Provided)
 const createOrder = async (req, res, next) => {
   const { products, shippingAddress, name, email, paymentInfo } = req.body;
-
   try {
     let totalPrice = 0;
     const orderProducts = [];
 
     for (const item of products) {
-      const product = await Product.findById(item.productId);
+      const product = await Product.findById(item.id);
 
       if (!product) {
-        return next(new AppError(`Product not found: ${item.productId}`, 404));
+        return next(new AppError(`Product not found: ${item.id}`, 404));
       }
 
       const productSize = product.sizes.find((s) => s.size === item.size);
@@ -205,26 +204,25 @@ const deleteOrder = async (req, res, next) => {
       return next(new AppError("Order not found", 404));
     }
 
-    // Restore stock when deleting order
-    if (order.status !== "cancelled") {
-      for (const item of order.products) {
-        const product = await Product.findById(item.productId);
+    console.log(order.products);
 
-        if (product) {
-          const productSize = product.sizes.find((s) => s.size === item.size);
-          if (productSize) {
-            productSize.stock += item.quantity;
-          }
-          product.stock += item.quantity;
-
-          await product.save();
+    for (const item of order.products) {
+      const product = await Product.findById(item.productId);
+      if (product) {
+        const productSize = product.sizes.find((s) => s.size === item.size);
+        if (productSize) {
+          productSize.stock += item.quantity;
         }
+        product.stock += item.quantity;
+
+        await product.save();
       }
     }
 
-    await order.remove();
+    await Order.findByIdAndDelete(req.params.orderId);
     res.status(200).json({ message: "Order deleted successfully" });
   } catch (error) {
+    console.log(error);
     return next(new AppError("Server error", 500));
   }
 };

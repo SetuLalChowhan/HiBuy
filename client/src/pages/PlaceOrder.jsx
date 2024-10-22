@@ -1,13 +1,17 @@
 import { useFormik } from "formik";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { orderValidationSchema } from "../schema";
 import { motion } from "framer-motion";
+import { createOrder } from "../redux/order/orderSlice";
+import toast from "react-hot-toast";
 
 const PlaceOrder = () => {
   const { cart } = useSelector((state) => state.user.user);
   const calculateTotalPrice = () =>
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const dispatch = useDispatch();
 
   const initialValues = {
     name: "",
@@ -28,7 +32,11 @@ const PlaceOrder = () => {
       initialValues,
       validationSchema: orderValidationSchema,
       onSubmit: (values) => {
-        console.log(values);
+        if (!values.paymentMethod) {
+          toast.error("Please Select Payment Method");
+        } else {
+          dispatch(createOrder({ values, toast }));
+        }
       },
     });
 
@@ -267,7 +275,7 @@ const PlaceOrder = () => {
                 </label>
                 <label className="flex items-center space-x-2">
                   <motion.input
-                     type="radio"
+                    type="radio"
                     name="paymentMethod"
                     value="cod"
                     onChange={handleChange}
