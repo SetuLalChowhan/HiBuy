@@ -280,7 +280,6 @@ const productSlice = createSlice({
         );
       }
     },
-  
   },
   extraReducers: (builder) => {
     builder.addCase(createProduct.pending, (state) => {
