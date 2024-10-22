@@ -1,6 +1,7 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./user/userSlice";
 import productSlice from "./product/productSlice";
+import orderSlice from "./order/orderSlice.js";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
@@ -30,6 +31,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   user: userReducer, // User reducer (with specific values excluded)
   product: productSlice, // Non-persistent product state
+  order:orderSlice,
 });
 
 // Create a persisted reducer for user state only
@@ -45,6 +47,7 @@ export const store = configureStore({
   reducer: combineReducers({
     user: persistedUserReducer, // Use the persisted user reducer
     product: productSlice, // Keep productSlice non-persistent
+    order:orderSlice,
   }),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),

@@ -21,6 +21,15 @@ const orderSchema = new mongoose.Schema({
     minlength: 4,
     maxlength: 4,
   },
+  paymentInfo: {
+    type: String,
+    enum: ["cod", "bkash", "credit-card"],
+    default: "cod",
+  },
+  atPaid: {
+    type: Boolean,
+    default: false,
+  },
   products: [
     {
       productId: {
@@ -48,15 +57,14 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "confirmed", "shipped", "cancelled", "completed"],
-    default: "pending",
+    enum: ["order placed", "processing", "shipped", "cancelled", "delivered"],
+    default: "order placed",
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
-
 
 const Order = mongoose.model("Order", orderSchema);
 module.exports = Order;

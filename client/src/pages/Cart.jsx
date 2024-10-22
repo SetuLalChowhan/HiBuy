@@ -6,11 +6,11 @@ import {
   addQuantity,
   deleteItem,
   removeQuantity,
-} from "../redux/product/productSlice";
+} from "../redux/user/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { cart } = useSelector((state) => state.product);
+  const { cart } = useSelector((state) => state.user.user);
   const { currentUser } = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();

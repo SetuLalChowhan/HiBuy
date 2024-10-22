@@ -5,7 +5,7 @@ import { orderValidationSchema } from "../schema";
 import { motion } from "framer-motion";
 
 const PlaceOrder = () => {
-  const { cart } = useSelector((state) => state.product);
+  const { cart } = useSelector((state) => state.user.user);
   const calculateTotalPrice = () =>
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -239,39 +239,43 @@ const PlaceOrder = () => {
               <div className="space-y-3">
                 <label className="flex items-center space-x-2">
                   <motion.input
-                    type="checkbox"
+                    type="radio"
                     name="paymentMethod"
                     value="bkash"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className="h-5 w-5 text-teal-500 border-gray-400 focus:ring-2 focus:ring-teal-300"
+                    className="h-5 w-5 text-gray-400 border-gray-400 focus:ring-2 focus:ring-teal-300"
                     whileHover={{ scale: 1.1 }}
+                    disabled
                   />
-                  <span>Bkash</span>
+                  <span className="text-gray-400">Bkash (Coming Soon)</span>
                 </label>
                 <label className="flex items-center space-x-2">
                   <motion.input
-                    type="checkbox"
+                    type="radio"
                     name="paymentMethod"
                     value="credit-card"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className="h-5 w-5 text-gray-400 border-gray-400 focus:ring-2 focus:ring-teal-300"
+                    whileHover={{ scale: 1.1 }}
+                    disabled
+                  />
+                  <span className="text-gray-400">
+                    Credit Card (Coming Soon)
+                  </span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <motion.input
+                     type="radio"
+                    name="paymentMethod"
+                    value="cod"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="h-5 w-5 text-teal-500 border-gray-400 focus:ring-2 focus:ring-teal-300"
                     whileHover={{ scale: 1.1 }}
                   />
-                  <span>Credit Card</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <motion.input
-                    type="checkbox"
-                    name="paymentMethod"
-                    value="credit-card"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className="h-5 w-5 text-teal-500 border-gray-400 focus:ring-2 focus:ring-teal-300"
-                    whileHover={{ scale: 1.1 }}
-                  />
-                  <span>COD</span>
+                  <span>COD(Cash on Delivery)</span>
                 </label>
               </div>
             </div>

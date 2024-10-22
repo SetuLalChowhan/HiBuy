@@ -4,7 +4,7 @@ const AppError = require("../error/AppError.js");
 
 // Create Order Controller (Already Provided)
 const createOrder = async (req, res, next) => {
-  const { products, shippingAddress, name, email } = req.body;
+  const { products, shippingAddress, name, email, paymentInfo } = req.body;
 
   try {
     let totalPrice = 0;
@@ -56,7 +56,8 @@ const createOrder = async (req, res, next) => {
       orderCode: Math.floor(1000 + Math.random() * 9000).toString(),
       userId: req.user.userId,
       products: orderProducts,
-      totalPrice,
+      totalPrice: totalPrice + 70,
+      paymentInfo,
       shippingAddress,
     });
 
@@ -175,7 +176,17 @@ const updateOrderStatus = async (req, res, next) => {
         }
       }
     }
+    if (req.body.status === "delivered") {
+      for (const item of order.products) {
+        const product = await Product.findById(item.productId);
 
+        if (product) {
+          product.sold += item.quantity;
+          await product.save();
+        }
+      }
+      order.atPaid = true;
+    }
     order.status = req.body.status || order.status;
     const updatedOrder = await order.save();
 

@@ -220,66 +220,7 @@ const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
-    addToCart: (state, action) => {
-      const itemExist = state.cart.find(
-        (item) =>
-          item.id === action.payload.id && item.size === action.payload.size
-      );
-
-      if (itemExist) {
-        state.cart.forEach((item) => {
-          if (
-            item.id === action.payload.id &&
-            item.size === action.payload.size
-          ) {
-            item.quantity += 1;
-          }
-        });
-      } else {
-        state.cart.push(action.payload);
-      }
-    },
-    addQuantity: (state, action) => {
-      const itemExist = state.cart.find(
-        (item) =>
-          item.id === action.payload.id && item.size === action.payload.size
-      );
-      if (itemExist) {
-        state.cart.forEach((item) => {
-          item.id === action.payload.id && item.size === action.payload.size
-            ? (item.quantity += 1)
-            : item;
-        });
-      }
-    },
-    removeQuantity: (state, action) => {
-      const itemExist = state.cart.find(
-        (item) =>
-          item.id === action.payload.id && item.size === action.payload.size
-      );
-      if (itemExist) {
-        state.cart.forEach((item) => {
-          item.id === action.payload.id && item.size === action.payload.size
-            ? item.quantity > 1
-              ? (item.quantity -= 1)
-              : (item.quantity = 1)
-            : item;
-        });
-      }
-    },
-    deleteItem: (state, action) => {
-      const itemExist = state.cart.find(
-        (item) =>
-          item.id === action.payload.id && item.size === action.payload.size
-      );
-      if (itemExist) {
-        state.cart = state.cart.filter((item) =>
-          item.size === action.payload.size
-            ? item.id !== action.payload.id
-            : item
-        );
-      }
-    },
+   
   },
   extraReducers: (builder) => {
     builder.addCase(createProduct.pending, (state) => {
@@ -440,7 +381,7 @@ const productSlice = createSlice({
   },
 });
 
-export const { addToCart, addQuantity, removeQuantity, deleteItem, addTotal } =
+export const { } =
   productSlice.actions;
 
 export default productSlice.reducer;

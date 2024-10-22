@@ -4,14 +4,14 @@ import { Link, useParams } from "react-router-dom";
 import moment from "moment";
 import {
   addReview,
-  addToCart,
   deleteReview,
   editReview,
   getSingleProduct,
 } from "../redux/product/productSlice";
 import { Rating, Spinner } from "flowbite-react";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion"; // Import Framer Motion
+import { motion } from "framer-motion";
+import { addToCart } from "../redux/user/userSlice"; // Import Framer Motion
 
 const SingleProduct = () => {
   const { id } = useParams();

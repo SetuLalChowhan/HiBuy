@@ -258,6 +258,7 @@ const initialState = {
   loading: false,
   loading2: false,
   users: [],
+  cart:[],
   allUsersDefault: null,
   totalUsers: 0,
   showmore: true,
@@ -269,6 +270,66 @@ const userSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    addToCart: (state, action) => {
+      const itemExist = state.cart.find(
+        (item) =>
+          item.id === action.payload.id && item.size === action.payload.size
+      );
+
+      if (itemExist) {
+        state.cart.forEach((item) => {
+          if (
+            item.id === action.payload.id &&
+            item.size === action.payload.size
+          ) {
+            item.quantity += 1;
+          }
+        });
+      } else {
+        state.cart.push(action.payload);
+      }
+    },
+    addQuantity: (state, action) => {
+      const itemExist = state.cart.find(
+        (item) =>
+          item.id === action.payload.id && item.size === action.payload.size
+      );
+      if (itemExist) {
+        state.cart.forEach((item) => {
+          item.id === action.payload.id && item.size === action.payload.size
+            ? (item.quantity += 1)
+            : item;
+        });
+      }
+    },
+    removeQuantity: (state, action) => {
+      const itemExist = state.cart.find(
+        (item) =>
+          item.id === action.payload.id && item.size === action.payload.size
+      );
+      if (itemExist) {
+        state.cart.forEach((item) => {
+          item.id === action.payload.id && item.size === action.payload.size
+            ? item.quantity > 1
+              ? (item.quantity -= 1)
+              : (item.quantity = 1)
+            : item;
+        });
+      }
+    },
+    deleteItem: (state, action) => {
+      const itemExist = state.cart.find(
+        (item) =>
+          item.id === action.payload.id && item.size === action.payload.size
+      );
+      if (itemExist) {
+        state.cart = state.cart.filter((item) =>
+          item.size === action.payload.size
+            ? item.id !== action.payload.id
+            : item
+        );
+      }
     },
   },
   extraReducers: (builder) => {
@@ -457,6 +518,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError, setUser } = userSlice.actions;
+export const { clearError, addToCart, addQuantity, removeQuantity, deleteItem, addTotal } = userSlice.actions;
 
 export default userSlice.reducer;
