@@ -34,7 +34,7 @@ export default function Dashboard() {
       </div>
 
       
-      <div className="container">
+      <div className=" container overflow-x-auto">
         {/* dash*/}
       {tab === "dash" && <AllDash/> }
       {/* profile */}
@@ -44,7 +44,7 @@ export default function Dashboard() {
       {/* products */}
       {tab === "products" && <Products/> }
       {/* order-list*/}
-      {tab === "order-list" && <OrderList/> }
+      {tab === "orders" && <OrderList/> }
       {/* users */}
       {tab === "users" && <Users/> }
       {/* reviews*/}

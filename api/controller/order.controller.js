@@ -8,6 +8,7 @@ const createOrder = async (req, res, next) => {
   try {
     let totalPrice = 0;
     const orderProducts = [];
+    let allProductHave = true;
 
     for (const item of products) {
       const product = await Product.findById(item.id);
@@ -15,30 +16,39 @@ const createOrder = async (req, res, next) => {
       if (!product) {
         return next(new AppError(`Product not found: ${item.id}`, 404));
       }
-
       const productSize = product.sizes.find((s) => s.size === item.size);
 
       if (!productSize || productSize.stock < item.quantity) {
+        allProductHave = false;
         return next(
           new AppError(`Insufficient stock for size: ${item.size}`, 400)
         );
       }
+    }
+    console.log(allProductHave);
 
-      productSize.stock -= item.quantity;
-      product.stock -= item.quantity;
+    if (allProductHave) {
+      for (const item of products) {
+        const product = await Product.findById(item.id);
 
-      await product.save();
+        const productSize = product.sizes.find((s) => s.size === item.size);
 
-      orderProducts.push({
-        productId: product._id,
-        productName: product.name,
-        productImage: product.image,
-        size: item.size,
-        quantity: item.quantity,
-        price: product.price * item.quantity,
-      });
+        productSize.stock -= item.quantity;
+        product.stock -= item.quantity;
 
-      totalPrice += product.price * item.quantity;
+        await product.save();
+
+        orderProducts.push({
+          productId: product._id,
+          productName: product.name,
+          productImage: product.image,
+          size: item.size,
+          quantity: item.quantity,
+          price: product.price * item.quantity,
+        });
+
+        totalPrice += product.price * item.quantity;
+      }
     }
 
     if (!shippingAddress || !shippingAddress.phone) {

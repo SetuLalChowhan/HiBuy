@@ -72,7 +72,7 @@ const DashProfile = () => {
           <img
             src={
               selectedImage ||
-              `http://localhost:3000/${currentUser.avatar}` ||
+              currentUser.avatar ||
               "/default-avatar.png"
             }
             alt="Profile"

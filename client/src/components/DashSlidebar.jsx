@@ -107,7 +107,7 @@ const {  allProductsDefault } = useSelector((state) => state.product);
           )}
 
           {/* Non-admin user-specific item */}
-          {!currentUser.isAdmin && (
+          {/* {!currentUser.isAdmin && (
             <Link to={"/dashboard?tab=order-list"}>
               <Sidebar.Item
                 active={tab === "order-list"}
@@ -118,7 +118,7 @@ const {  allProductsDefault } = useSelector((state) => state.product);
                 <span className="text-sm font-semibold">Order List</span>
               </Sidebar.Item>
             </Link>
-          )}
+          )} */}
 
           {/* Common items */}
           <Link to={"/dashboard?tab=profile"}>

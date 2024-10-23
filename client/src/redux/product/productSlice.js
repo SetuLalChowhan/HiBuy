@@ -213,7 +213,7 @@ const initialState = {
   singleProduct: {},
   allProductsDefault: null,
   totalProducts: 0,
-  showmore: true,
+  showmore: false,
 };
 
 const productSlice = createSlice({

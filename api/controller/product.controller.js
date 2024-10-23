@@ -240,14 +240,12 @@ const addReview = async (req, res, next) => {
 
     // Save the updated product
     await product.save();
-    res
-      .status(201)
-      .json({
-        success: true,
-        rating: product.rating,
-        review: review,
-        message: "Review added",
-      });
+    res.status(201).json({
+      success: true,
+      rating: product.rating,
+      review: review,
+      message: "Review added",
+    });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -282,14 +280,12 @@ const editReview = async (req, res, next) => {
 
     // Save the updated product
     await product.save();
-    res
-      .status(200)
-      .json({
-        success: true,
-        rating: product.rating,
-        review: review,
-        message: "Review added",
-      });
+    res.status(200).json({
+      success: true,
+      rating: product.rating,
+      review: review,
+      message: "Review added",
+    });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
@@ -326,13 +322,11 @@ const deleteReview = async (req, res, next) => {
     }
 
     await product.save();
-    res
-      .status(200)
-      .json({
-        success: true,
-        rating: product.rating,
-        message: "Review deleted successfully",
-      });
+    res.status(200).json({
+      success: true,
+      rating: product.rating,
+      message: "Review deleted successfully",
+    });
   } catch (error) {
     console.error(error);
     next(new AppError("Server error", 500));
