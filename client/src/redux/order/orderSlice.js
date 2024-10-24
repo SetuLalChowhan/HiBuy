@@ -142,6 +142,7 @@ const orderSlice = createSlice({
         state.allOrders = state.orders.length;
         if (state.allOrders % 10 === 0) {
           state.showmore = true;
+        
         } else {
           state.showmore = false;
         }
@@ -149,7 +150,8 @@ const orderSlice = createSlice({
         state.orders = action.payload.orders;
         state.allOrders = state.orders.length;
         if (state.allOrders % 10 === 0) {
-          state.showmore=true
+          console.log("hi")
+         state.allOrders===0? state.showmore=false:state.showmore=true
         } else {
           state.showmore = false;
         }
