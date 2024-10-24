@@ -86,7 +86,7 @@ export default function DashSlidebar() {
                   icon={FaUsers}
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
                   as="div"
-                  label={allUsersDefault == 0 ? "" : allUsersDefault}
+                  label={allUsersDefault}
                 >
                   <span className="text-sm font-semibold">Users</span>
                 </Sidebar.Item>

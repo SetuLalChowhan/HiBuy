@@ -51,6 +51,7 @@ export const fetchOrders = createAsyncThunk(
       return response.data; // Ensure your API returns the data in the expected format
     } catch (err) {
       console.log(err);
+      // toast.error(err.response.data.message);
       console.error(err.response?.data?.message || "Failed to fetch products");
       return rejectWithValue(
         err.response?.data?.message || "An error occurred"
@@ -160,6 +161,7 @@ const orderSlice = createSlice({
     });
     builder.addCase(fetchOrders.rejected, (state, action) => {
       state.loading = false;
+      state.totalOrders = 0
       state.error = action.payload;
     });
     builder.addCase(changeStatus.pending, (state) => {

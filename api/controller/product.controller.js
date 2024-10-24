@@ -178,6 +178,7 @@ const getProducts = async (req, res, next) => {
     }
 
     const totalProducts = await Product.countDocuments(query);
+    console.log(totalProducts)
     const allProducts = await Product.countDocuments();
     const products = await Product.find(query)
       .sort(sortOption)

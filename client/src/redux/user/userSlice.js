@@ -143,7 +143,7 @@ export const getAllUsers = createAsyncThunk(
       );
       return response.data; // Return the fetched data
     } catch (err) {
-      toast.success("User not Found");
+      toast.error(err.response.data.message);
       return rejectWithValue(err.response.data.message); // Handle error
     }
   }
@@ -447,6 +447,7 @@ const userSlice = createSlice({
       })
       .addCase(getAllUsers.rejected, (state, action) => {
         state.loading = false; // Set loading to false on error
+        state.allUsersDefault = 0;
         state.error = action.payload; // Set error message
       });
     builder

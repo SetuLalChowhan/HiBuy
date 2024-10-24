@@ -102,7 +102,7 @@ const OrderList = () => {
       </div>
 
       {error ? (
-        <p>{error}</p>
+        <p className="text-red-500">{error}</p>
       ) : loading ? (
         <div className="flex items-center justify-center ">
           <Spinner className="h-24 w-24" />

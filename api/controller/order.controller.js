@@ -144,6 +144,9 @@ const getAllOrders = async (req, res, next) => {
 
     // Get the total number of matching orders
     const totalOrders = await Order.countDocuments(searchQuery);
+    if(!totalOrders){
+      return next(new AppError("Orders not found", 404));
+    }
     const total = await Order.countDocuments();
     console.log(searchQuery);
 
