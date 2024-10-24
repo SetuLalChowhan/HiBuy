@@ -219,9 +219,7 @@ const initialState = {
 const productSlice = createSlice({
   name: "product",
   initialState,
-  reducers: {
-   
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(createProduct.pending, (state) => {
       state.loading = true;
@@ -308,6 +306,12 @@ const productSlice = createSlice({
       console.log(id);
       state.products = state.products.filter((product) => product._id !== id);
       state.allProductsDefault -= 1;
+      state.totalProducts = state.products.length;
+      if (state.totalProducts % 10 == 0) {
+        state.showmore = true;
+      } else {
+        state.showmore = false;
+      }
       state.error = "";
     });
     builder.addCase(deleteProduct.rejected, (state, action) => {
@@ -381,7 +385,6 @@ const productSlice = createSlice({
   },
 });
 
-export const { } =
-  productSlice.actions;
+export const {} = productSlice.actions;
 
 export default productSlice.reducer;

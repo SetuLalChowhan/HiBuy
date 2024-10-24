@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { resetCart } from "../user/userSlice";
 
 export const createOrder = createAsyncThunk(
   "product/create-order",
-  async ({ values, toast }, { rejectWithValue }) => {
+  async ({ values, toast }, { dispatch, rejectWithValue }) => {
     console.log(values);
     try {
       const response = await axios.post("api/orders/create", values, {
@@ -13,6 +14,7 @@ export const createOrder = createAsyncThunk(
         withCredentials: true,
       });
       toast.success("Order has been Placed Successfully");
+      dispatch(resetCart())
       return response.data;
     } catch (err) {
       toast.error(err.response.data.message);
@@ -26,24 +28,22 @@ export const fetchOrders = createAsyncThunk(
   async ({ values }, { rejectWithValue }) => {
     try {
       const {
-       query="",
-       sort="",
-       status="",
-       startIndex=0,
-       limit,
+        query = "",
+        sort = "",
+        status = "",
+        startIndex = 0,
+        limit,
       } = values;
-
-      console.log(values);
 
       const response = await axios.get(
         `http://localhost:3000/api/orders/allOrders`,
         {
           params: {
-            query:query || "",
-            sort:sort || "",
-            status:status || "",
-            startIndex:startIndex || 0,
-            limit:limit 
+            query: query || "",
+            sort: sort || "",
+            status: status || "",
+            startIndex: startIndex || 0,
+            limit: limit,
           },
           withCredentials: true,
         }
@@ -60,6 +60,41 @@ export const fetchOrders = createAsyncThunk(
   }
 );
 
+export const changeStatus = createAsyncThunk(
+  "product/change-status",
+  async ({ values2, id }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`api/orders/order/${id}`, values2, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (err) {
+      toast.error(err.response.data.message);
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
+export const deleteOrder = createAsyncThunk(
+  "product/delete-order",
+  async ({ id, toast }, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`api/orders/order/${id}`, {
+        withCredentials: true,
+      });
+
+      toast.success("Order Deleted");
+      return response.data;
+    } catch (err) {
+      toast.error(err.response.data.message);
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
 const initialState = {
   orders: [],
   loading: false,
@@ -67,8 +102,8 @@ const initialState = {
   loading2: false,
   singleOrder: {},
   myOrders: [],
-  totalOrders: 0,
-  allOrders:0,
+  totalOrders: null,
+  allOrders: 0,
   showmore: false,
 };
 
@@ -88,41 +123,85 @@ const orderSlice = createSlice({
     builder.addCase(createOrder.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+      
     });
     builder.addCase(fetchOrders.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(fetchOrders.fulfilled, (state, action) => {
       state.loading = false;
+      state.totalOrders = action.payload.totalOrders
       const {
         arg: {
           values: { startIndex },
         },
       } = action.meta;
-      if(startIndex){
-        state.orders =[...state.orders,...action.payload.orders]
-        state.allOrders =state.orders.length
-        if (state.allOrders % 10 === 0) {
-          state.showmore = true;
-        } else {
-          state.showmore = false;
-        }
-        
-      }
-      else{
-        state.orders = action.payload.orders;
+      if (startIndex) {
+        state.orders = [...state.orders, ...action.payload.orders];
         state.allOrders = state.orders.length;
         if (state.allOrders % 10 === 0) {
           state.showmore = true;
         } else {
           state.showmore = false;
         }
-
+      } else {
+        state.orders = action.payload.orders;
+        state.allOrders = state.orders.length;
+        if (state.allOrders % 10 === 0) {
+          state.showmore=true
+        } else {
+          state.showmore = false;
+        }
       }
       state.error = "";
     });
     builder.addCase(fetchOrders.rejected, (state, action) => {
       state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(changeStatus.pending, (state) => {
+      state.loading2 = true;
+    });
+    builder.addCase(changeStatus.fulfilled, (state, action) => {
+      state.loading2 = false;
+      const {
+        arg: { id },
+      } = action.meta;
+
+      state.orders = state.orders.map((order) =>
+        order._id === id ? action.payload : order
+      );
+
+      state.error = "";
+    });
+    builder.addCase(changeStatus.rejected, (state, action) => {
+      state.loading2 = false;
+      state.error = action.payload;
+    });
+    builder.addCase(deleteOrder.pending, (state) => {
+      state.loading2 = true;
+    });
+    builder.addCase(deleteOrder.fulfilled, (state, action) => {
+      state.loading2 = false;
+      const {
+        arg: { id },
+      } = action.meta;
+
+      state.orders = state.orders.filter((order) => order._id !== id);
+      state.allOrders =state.orders.length
+      state.totalOrders -=1
+
+      if(state.allOrders%10==0){
+        state.showmore=true
+      }
+      else{
+        state.showmore=false
+      }
+
+      state.error = "";
+    });
+    builder.addCase(deleteOrder.rejected, (state, action) => {
+      state.loading2 = false;
       state.error = action.payload;
     });
   },

@@ -170,21 +170,21 @@ const updateOrderStatus = async (req, res, next) => {
     }
 
     // If status is cancelled, restore stock
-    if (req.body.status === "cancelled") {
-      for (const item of order.products) {
-        const product = await Product.findById(item.productId);
+    // if (req.body.status === "cancelled") {
+    //   for (const item of order.products) {
+    //     const product = await Product.findById(item.productId);
 
-        if (product) {
-          const productSize = product.sizes.find((s) => s.size === item.size);
-          if (productSize) {
-            productSize.stock += item.quantity;
-          }
-          product.stock += item.quantity;
+    //     if (product) {
+    //       const productSize = product.sizes.find((s) => s.size === item.size);
+    //       if (productSize) {
+    //         productSize.stock += item.quantity;
+    //       }
+    //       product.stock += item.quantity;
 
-          await product.save();
-        }
-      }
-    }
+    //       await product.save();
+    //     }
+    //   }
+    // }
     if (req.body.status === "delivered") {
       for (const item of order.products) {
         const product = await Product.findById(item.productId);

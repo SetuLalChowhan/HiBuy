@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, Spinner, Table } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrders } from "../redux/order/orderSlice";
+import { changeStatus, deleteOrder, fetchOrders } from "../redux/order/orderSlice";
 import { FaTrashAlt } from "react-icons/fa"; // For delete icon
+import toast from "react-hot-toast";
 
 const OrderList = () => {
   const { orders, allOrders, showmore, loading, error } = useSelector(
@@ -12,6 +13,7 @@ const OrderList = () => {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("");
   const [status, setStatus] = useState("");
+  const [singleOrderStatus, setSingleOrderStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [latest, setLatest] = useState(true);
@@ -25,6 +27,7 @@ const OrderList = () => {
   };
 
   useEffect(() => {
+    scrollPositionRef.current = window.scrollY;
     dispatch(fetchOrders({ values }));
   }, [query, sort, status]);
 
@@ -36,6 +39,7 @@ const OrderList = () => {
   };
 
   const handleLatestOrders = () => {
+    scrollPositionRef.current = window.scrollY;
     if (latest) {
       setSort("latest");
       setLatest(!latest);
@@ -55,6 +59,7 @@ const OrderList = () => {
       window.scrollTo(0, scrollPositionRef.current);
     }
   }, [orders]);
+  console.log(singleOrderStatus)
 
   return (
     <div className="shadow-lg rounded-lg  bg-white min-h-screen">
@@ -79,7 +84,6 @@ const OrderList = () => {
             <option value="order placed">Order Placed</option>
             <option value="processing">Processing</option>
             <option value="shipped">Shipped</option>
-            <option value="cancelled">Cancelled</option>
             <option value="delivered">Delivered</option>
           </select>
 
@@ -96,7 +100,7 @@ const OrderList = () => {
       {error ? (
         <p>{error}</p>
       ) : loading ? (
-        <div className="flex items-center justify-center h-48">
+        <div className="flex items-center justify-center ">
           <Spinner className="h-24 w-24" />
         </div>
       ) : (
@@ -168,20 +172,27 @@ const OrderList = () => {
                     ) : (
                       <select
                         value={order?.status}
-                        onChange={(e) => setStatus(e.target.value)}
+                        onChange={(e) => {
+                          const newStatus =e.target.value
+                          const values2 ={
+                            status:newStatus
+                          }
+                          
+                          console.log(newStatus)
+                          dispatch(changeStatus({values2,id:order._id}))
+                        }}
                         className="px-3 py-2 border border-gray-300 rounded-md text-gray-700 focus:ring-2 focus:ring-blue-500 transition duration-200"
                       >
                         <option value="order placed">Order Placed</option>
                         <option value="processing">Processing</option>
                         <option value="shipped">Shipped</option>
-                        <option value="cancelled">Cancelled</option>
                         <option value="delivered">Delivered</option>
                       </select>
                     )}
                   </Table.Cell>
 
                   <Table.Cell className="px-6 py-4">
-                    <button className="text-red-600 hover:text-red-800 transition duration-200">
+                    <button onClick={()=>{dispatch(deleteOrder({id:order._id,toast}))}} className="text-red-600 hover:text-red-800 transition duration-200">
                       <FaTrashAlt />
                     </button>
                   </Table.Cell>

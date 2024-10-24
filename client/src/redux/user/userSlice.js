@@ -331,6 +331,9 @@ const userSlice = createSlice({
         );
       }
     },
+    resetCart: (state) => {
+      state.cart = []; // Reset the cart to an empty array
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(register.pending, (state) => {
@@ -518,6 +521,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError, addToCart, addQuantity, removeQuantity, deleteItem, addTotal } = userSlice.actions;
+export const { clearError, addToCart, addQuantity, removeQuantity, deleteItem, addTotal, resetCart } = userSlice.actions;
 
 export default userSlice.reducer;
