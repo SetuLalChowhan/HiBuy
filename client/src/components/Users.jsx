@@ -7,6 +7,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
 import { Spinner } from "flowbite-react";
+import { FaTrash, FaTrashAlt, FaUserShield } from "react-icons/fa";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,6 @@ const Users = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Restore scroll position after products are loaded
     if (scrollPositionRef.current !== null) {
       window.scrollTo(0, scrollPositionRef.current);
     }
@@ -47,7 +47,7 @@ const Users = () => {
   };
 
   return (
-    <div className="admin-users p-6 max-w-4xl mx-auto bg-gray-50 rounded-lg shadow-md">
+    <div className="admin-users p-6 mx-auto bg-gray-50 rounded-lg shadow-lg">
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
         User Management
       </h1>
@@ -72,7 +72,7 @@ const Users = () => {
         </button>
       </form>
 
-      {/* Users List - One Card per Row */}
+      {/* Users List - Table Format */}
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : loading ? (
@@ -80,27 +80,34 @@ const Users = () => {
           <Spinner className="h-24 w-24" />
         </div>
       ) : (
-        <div className="users-list flex flex-col gap-6">
-          {users?.map((user) => (
-            <div
-              key={user._id}
-              className="user-card bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between transition-transform hover:scale-105"
-            >
-              <div className="flex items-center mb-4 sm:mb-0">
-                <img
-                  src={
-                    `http://localhost:3000/${user.avatar}` ||
-                    "/default-avatar.png"
-                  }
-                  alt={`${user.name}'s profile`}
-                  className="w-20 h-20 rounded-full object-cover border border-gray-300 shadow"
-                />
-                <div className="ml-6">
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    {user.name}
-                  </h2>
-                  <p className="text-gray-600">{user.email}</p>
-                  <div className="admin-status mt-2">
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white shadow-md rounded-lg">
+            <thead>
+              <tr className="bg-gray-200 text-gray-600 text-left">
+                <th className="py-3 px-4">Avatar</th>
+                <th className="py-3 px-4">Name</th>
+                <th className="py-3 px-4">Email</th>
+                <th className="py-3 px-4">Role</th>
+                <th className="py-3 px-4">Verification Status</th>
+                <th className="py-3 px-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users?.map((user) => (
+                <tr key={user._id} className="border-b hover:bg-gray-100">
+                  <td className="py-3 px-4">
+                    <img
+                      src={
+                        `http://localhost:3000/${user.avatar}` ||
+                        "/default-avatar.png"
+                      }
+                      alt={`${user.name}'s profile`}
+                      className="w-12 h-12 rounded-full border border-gray-300 object-cover"
+                    />
+                  </td>
+                  <td className="py-3 px-4">{user.name}</td>
+                  <td className="py-3 px-4">{user.email}</td>
+                  <td className="py-3 px-4">
                     {user.isAdmin ? (
                       <span className="text-green-600 font-semibold">
                         Admin
@@ -108,43 +115,44 @@ const Users = () => {
                     ) : (
                       <span className="text-red-600 font-semibold">User</span>
                     )}
-                  </div>
-                  {/* Verification Status */}
-                  <div className="verification-status mt-2">
+                  </td>
+                  <td className="py-3 px-4">
                     {user.isVerified ? (
                       <span className="text-blue-600 font-semibold">
-                        Verified ✅
+                        Verified
                       </span>
                     ) : (
                       <span className="text-yellow-600 font-semibold">
-                        Not Verified ❌
+                        Not Verified
                       </span>
                     )}
-                  </div>
-                </div>
-              </div>
+                  </td>
+                  <td className="py-3 px-4 flex space-x-2">
+                    <button
+                      onClick={() => handleRoleChange(user._id, user.isAdmin)}
+                      className={`text-white flex items-center px-4 py-2 rounded-lg transition-colors ${
+                        user.isAdmin
+                          ? "bg-yellow-500 hover:bg-yellow-600"
+                          : "bg-green-500 hover:bg-green-600"
+                      }`}
+                    >
+                      <FaUserShield className="mr-2 text-lg" />
+                      {user.isAdmin ? "Revoke Admin" : "Make Admin"}
+                    </button>
 
-              {/* Actions */}
-              <div className="mt-4 sm:mt-0 flex space-x-4">
-                <button
-                  onClick={() => handleRoleChange(user._id, user.isAdmin)}
-                  className={`text-white px-4 py-2 rounded-lg transition-colors ${
-                    user.isAdmin
-                      ? "bg-yellow-500 hover:bg-yellow-600"
-                      : "bg-green-500 hover:bg-green-600"
-                  }`}
-                >
-                  {user.isAdmin ? "Revoke Admin" : "Make Admin"}
-                </button>
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                  onClick={() => handleDelete(user._id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+                    <button
+                      className="text-red-600 px-4 py-2  hover:text-red-800 transition duration-200"
+                      onClick={() => handleDelete(user._id)}
+                    >
+                      
+                    
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -153,7 +161,7 @@ const Users = () => {
         {showmore && (
           <button
             onClick={handleShowmore}
-            className="w-full sm:w-auto  text-teal-500 px-6 py-3 rounded-lg "
+            className="w-full sm:w-auto text-teal-500 px-6 py-3 rounded-lg border border-teal-500 hover:bg-teal-500 hover:text-white transition-colors"
           >
             Show More
           </button>

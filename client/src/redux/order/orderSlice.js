@@ -105,6 +105,7 @@ const initialState = {
   totalOrders: null,
   allOrders: 0,
   showmore: false,
+  fixedTotalOrder:0
 };
 
 const orderSlice = createSlice({
@@ -131,6 +132,7 @@ const orderSlice = createSlice({
     builder.addCase(fetchOrders.fulfilled, (state, action) => {
       state.loading = false;
       state.totalOrders = action.payload.totalOrders
+      state.fixedTotalOrder =action.payload.total
       const {
         arg: {
           values: { startIndex },

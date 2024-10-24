@@ -6,7 +6,7 @@ import CreateProduct from "../components/CreateProduct";
 import Products from "../components/Products";
 import OrderList from "../components/OrderList";
 import Users from "../components/Users";
-import Reviews from "../components/Reviews";
+import BannerImage from "../components/BannerImage";
 import AllDash from "../components/AllDash";
 
 import { useDispatch } from "react-redux";
@@ -48,7 +48,7 @@ export default function Dashboard() {
       {/* users */}
       {tab === "users" && <Users/> }
       {/* reviews*/}
-      {tab === "reviews" && <Reviews/> }
+      {tab === "banner" && <BannerImage/> }
       {tab == ":id" && <Reviews/> }
       </div>
     </div>

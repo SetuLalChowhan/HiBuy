@@ -262,6 +262,7 @@ const initialState = {
   allUsersDefault: null,
   totalUsers: 0,
   showmore: true,
+  fixedTotalUser:0
 };
 
 const userSlice = createSlice({
@@ -417,7 +418,8 @@ const userSlice = createSlice({
       })
       .addCase(getAllUsers.fulfilled, (state, action) => {
         state.loading = false; // Set loading to false on successful fetch
-        state.allUsersDefault = action.payload.total;
+        state.allUsersDefault = action.payload.totalUsers;
+        state.fixedTotalUser =action.payload.total
         const {
           arg: { startIndex },
         } = action.meta;

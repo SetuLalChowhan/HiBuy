@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, Spinner, Table } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
-import { changeStatus, deleteOrder, fetchOrders } from "../redux/order/orderSlice";
+import {
+  changeStatus,
+  deleteOrder,
+  fetchOrders,
+} from "../redux/order/orderSlice";
 import { FaTrashAlt } from "react-icons/fa"; // For delete icon
 import toast from "react-hot-toast";
 
@@ -59,7 +63,7 @@ const OrderList = () => {
       window.scrollTo(0, scrollPositionRef.current);
     }
   }, [orders]);
-  console.log(singleOrderStatus)
+  console.log(singleOrderStatus);
 
   return (
     <div className="shadow-lg rounded-lg  bg-white min-h-screen">
@@ -126,6 +130,9 @@ const OrderList = () => {
                 Status
               </Table.HeadCell>
               <Table.HeadCell className="text-left px-6 py-4 font-semibold text-gray-700">
+                Date
+              </Table.HeadCell>
+              <Table.HeadCell className="text-left px-6 py-4 font-semibold text-gray-700">
                 Delete
               </Table.HeadCell>
             </Table.Head>
@@ -173,13 +180,13 @@ const OrderList = () => {
                       <select
                         value={order?.status}
                         onChange={(e) => {
-                          const newStatus =e.target.value
-                          const values2 ={
-                            status:newStatus
-                          }
-                          
-                          console.log(newStatus)
-                          dispatch(changeStatus({values2,id:order._id}))
+                          const newStatus = e.target.value;
+                          const values2 = {
+                            status: newStatus,
+                          };
+
+                          console.log(newStatus);
+                          dispatch(changeStatus({ values2, id: order._id }));
                         }}
                         className="px-3 py-2 border border-gray-300 rounded-md text-gray-700 focus:ring-2 focus:ring-blue-500 transition duration-200"
                       >
@@ -192,7 +199,20 @@ const OrderList = () => {
                   </Table.Cell>
 
                   <Table.Cell className="px-6 py-4">
-                    <button onClick={()=>{dispatch(deleteOrder({id:order._id,toast}))}} className="text-red-600 hover:text-red-800 transition duration-200">
+                    {new Intl.DateTimeFormat("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "2-digit",
+                    }).format(new Date(order.createdAt))}
+                  </Table.Cell>
+
+                  <Table.Cell className="px-6 py-4">
+                    <button
+                      onClick={() => {
+                        dispatch(deleteOrder({ id: order._id, toast }));
+                      }}
+                      className="text-red-600 hover:text-red-800 transition duration-200"
+                    >
                       <FaTrashAlt />
                     </button>
                   </Table.Cell>
@@ -208,33 +228,36 @@ const OrderList = () => {
         onClose={() => setShowModal(false)}
         size="md"
         popup
-        className="rounded-lg shadow-lg"
+        className="rounded-lg shadow-lg "
       >
         <Modal.Header>
-          <h2 className="text-xl font-semibold text-gray-700">
+          <h2 className="text-xl font-semibold text-gray-800">
             Order Products
           </h2>
         </Modal.Header>
-        <Modal.Body className="p-4 space-y-4">
+        <Modal.Body className="p-6 space-y-4">
           {selectedProducts?.map((product, index) => (
-            <div key={index} className="flex gap-6 items-center">
+            <div
+              key={index}
+              className="flex gap-4 items-center border-b border-gray-200 pb-4"
+            >
               <img
                 src={product.productImage}
-                alt={product.name}
-                className="h-20 w-20 object-contain rounded-md"
+                alt={product.productName}
+                className="h-24 w-24 object-contain rounded-lg shadow-md"
               />
               <div className="flex-grow">
                 <p className="font-semibold text-gray-900">
                   {product.productName}
                 </p>
-                <div className="flex gap-8 text-sm mt-1">
-                  <p className="text-gray-600">
+                <div className="flex gap-6 text-sm mt-1 text-gray-700">
+                  <p>
                     Size:{" "}
                     <span className="font-semibold text-gray-900">
                       {product.size === "default" ? "One Size" : product.size}
                     </span>
                   </p>
-                  <p className="text-gray-600">
+                  <p>
                     Quantity:{" "}
                     <span className="font-semibold text-gray-900">
                       {product.quantity}
@@ -245,7 +268,7 @@ const OrderList = () => {
             </div>
           ))}
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="flex justify-end">
           <button
             onClick={() => setShowModal(false)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200"
@@ -254,6 +277,7 @@ const OrderList = () => {
           </button>
         </Modal.Footer>
       </Modal>
+
       {showmore && (
         <div className="mt-6 text-center">
           <button

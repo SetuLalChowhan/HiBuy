@@ -145,6 +145,7 @@ const getAllOrders = async (req, res, next) => {
 
     // Get the total number of matching orders
     const totalOrders = await Order.countDocuments(searchQuery);
+    const total = await Order.countDocuments();
     console.log(searchQuery);
 
     // Find orders with the search query, populate user details, and apply sorting, pagination
@@ -155,7 +156,7 @@ const getAllOrders = async (req, res, next) => {
       .limit(limit || totalOrders);
 
     // Return the filtered and sorted orders
-    res.status(200).json({ success: true, totalOrders, orders });
+    res.status(200).json({ success: true, totalOrders, orders,total });
   } catch (error) {
     return next(new AppError("Server error", 500));
   }
@@ -168,23 +169,6 @@ const updateOrderStatus = async (req, res, next) => {
     if (!order) {
       return next(new AppError("Order not found", 404));
     }
-
-    // If status is cancelled, restore stock
-    // if (req.body.status === "cancelled") {
-    //   for (const item of order.products) {
-    //     const product = await Product.findById(item.productId);
-
-    //     if (product) {
-    //       const productSize = product.sizes.find((s) => s.size === item.size);
-    //       if (productSize) {
-    //         productSize.stock += item.quantity;
-    //       }
-    //       product.stock += item.quantity;
-
-    //       await product.save();
-    //     }
-    //   }
-    // }
     if (req.body.status === "delivered") {
       for (const item of order.products) {
         const product = await Product.findById(item.productId);

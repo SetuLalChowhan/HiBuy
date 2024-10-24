@@ -214,6 +214,7 @@ const initialState = {
   allProductsDefault: null,
   totalProducts: 0,
   showmore: false,
+  fixedTotal:0
 };
 
 const productSlice = createSlice({
@@ -239,6 +240,7 @@ const productSlice = createSlice({
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
       state.loading = false;
       state.allProductsDefault = action.payload.totalProducts;
+      state.fixedTotal = action.payload.total;
       const {
         arg: {
           values: { startIndex },

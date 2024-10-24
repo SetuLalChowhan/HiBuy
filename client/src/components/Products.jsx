@@ -5,6 +5,7 @@ import { Spinner } from "flowbite-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Modal } from "flowbite-react";
+import { FaTrashAlt } from "react-icons/fa";
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -17,12 +18,20 @@ const Products = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [sortOption, setSortOption] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(null); // State to hold selected product
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const scrollPositionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-   
-  const limit=10;
-  const values = { category, type, search, minPrice, maxPrice, sortOption,limit };
+
+  const limit = 10;
+  const values = {
+    category,
+    type,
+    search,
+    minPrice,
+    maxPrice,
+    sortOption,
+    limit,
+  };
 
   const handleShowmore = () => {
     scrollPositionRef.current = window.scrollY;
@@ -46,16 +55,14 @@ const Products = () => {
   }, [products]);
 
   const handleModal = (product) => {
-    console.log(product);
-    setSelectedProduct(product); // Set the selected product
+    setSelectedProduct(product);
     setShowModal(true);
   };
 
   return (
-    <div className="container mx-auto p-6 ">
+    <div className="container p-6">
       {/* Search & Filters */}
       <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        {/* Search Input */}
         <input
           type="text"
           value={search}
@@ -65,7 +72,6 @@ const Products = () => {
         />
 
         <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
-          {/* Category Filter */}
           <select
             value={category}
             onChange={handleFilterChange(setCategory)}
@@ -77,7 +83,6 @@ const Products = () => {
             <option value="kids">Kids</option>
           </select>
 
-          {/* Type Filter */}
           <select
             value={type}
             onChange={handleFilterChange(setType)}
@@ -89,7 +94,6 @@ const Products = () => {
             <option value="winterwear">Winterwear</option>
           </select>
 
-          {/* Price Filters */}
           <input
             type="number"
             placeholder="Min Price"
@@ -105,7 +109,6 @@ const Products = () => {
             className="border border-gray-300 p-3 rounded-md w-full lg:w-auto transition focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
 
-          {/* Sort Option */}
           <select
             value={sortOption}
             onChange={handleFilterChange(setSortOption)}
@@ -120,7 +123,7 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Products List */}
+      {/* Products Table */}
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : loading ? (
@@ -128,84 +131,100 @@ const Products = () => {
           <Spinner className="h-24 w-24" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 max-w-4xl mx-auto">
-          {products.map((product) => (
-            <div
-              key={product._id}
-              className="user-card bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between transition hover:scale-105 hover:shadow-2xl"
-            >
-              {/* Product Details */}
-              <div className="flex flex-row items-center gap-5 mb-4">
-                {/* Product Image */}
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-28 w-28 object-contain rounded-md"
-                />
-                {/* Product Info */}
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-800 mb-1">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Image
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Product Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Price
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Sold
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Stock
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Availabe Size
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {products.map((product) => (
+                <tr key={product._id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="h-16 w-16 object-contain rounded-md"
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {product.name}
-                  </h2>
-                  <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Price:</span> ৳
-                    {product.price}
-                  </p>
-                  <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Category:</span>{" "}
-                    {product.category}
-                  </p>
-                  <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Stock:</span>{" "}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ৳{product.price}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {product.sold}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {product.stock}
-                  </p>
-                  <p className="text-gray-600 mb-1">
-                    <span className="font-semibold">Sold:</span> {product.sold}
-                  </p>
-                  <button
-                    onClick={() => handleModal(product)} // Pass the product to the modal handler
-                    className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md shadow-lg hover:bg-blue-700 transition-colors duration-300"
-                  >
-                    Available Size
-                  </button>
-                </div>
-              </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      onClick={() => handleModal(product)}
+                      className="text-blue-600 hover:text-blue-900 mr-2"
+                    >
+                      Available Size
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <Link to={`/product-edit/${product._id}`}>
+                      <button className="text-green-600 hover:text-green-900 mr-2">
+                        Edit
+                      </button>
+                    </Link>
+                    <button
+                      onClick={() =>
+                        dispatch(deleteProduct({ id: product._id, toast }))
+                      }
+                      className="text-red-600 px-2 py-2  hover:text-red-800 transition duration-200"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-              {/* Actions */}
-              <div className="mt-4 flex space-x-4">
-                <Link to={`/product-edit/${product._id}`}>
-                  <button className="px-4 py-2 h-10 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                    Edit
-                  </button>
-                </Link>
-                <button
-                  onClick={() =>
-                    dispatch(deleteProduct({ id: product._id, toast }))
-                  }
-                  className="px-4 py-2 h-10 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-
-          <Modal
-            show={showModal}
-            onClose={() => setShowModal(false)}
-            popup
-            size={"md"}
-          >
-            <Modal.Header />
+          {/* Modal for Product Sizes */}
+          <Modal show={showModal} onClose={() => setShowModal(false)} size="md">
+            <Modal.Header className="bg-gray-200 border-b border-gray-300">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Available Sizes
+              </h2>
+            </Modal.Header>
             <Modal.Body>
-              <div className="bg-white shadow-md rounded-lg p-4">
-                <h2 className="text-lg font-semibold mb-2">Available Sizes</h2>
-                <div className="space-y-2">
-                  {/* Show sizes of the selected product */}
+              <div className="bg-white shadow-md rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                  Sizes & Stock
+                </h3>
+                <div className="space-y-3">
                   {selectedProduct?.sizes?.map((size) => (
                     <div
                       key={size.size}
-                      className="flex justify-between items-center border-b py-2"
+                      className="flex justify-between items-center border-b border-gray-300 py-2"
                     >
                       <p className="text-gray-700 font-medium">{size.size}</p>
                       <p className="text-gray-900 font-semibold">
@@ -216,6 +235,14 @@ const Products = () => {
                 </div>
               </div>
             </Modal.Body>
+            <Modal.Footer className="flex justify-end">
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Close
+              </button>
+            </Modal.Footer>
           </Modal>
 
           {showmore && (

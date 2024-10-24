@@ -94,14 +94,14 @@ const {  totalOrders } = useSelector((state) => state.order);
                 </Sidebar.Item>
               </Link>
 
-              <Link to={"/dashboard?tab=reviews"}>
+              <Link to={"/dashboard?tab=banner"}>
                 <Sidebar.Item
-                  active={tab === "reviews"}
+                  active={tab === "banner"}
                   icon={MdOutlineReviews}
                   className="hover:bg-gray-600 transition-colors rounded-lg mb-3"
                    as='div'
                 >
-                  <span className="text-sm font-semibold">Reviews</span>
+                  <span className="text-sm font-semibold">Banner</span>
                 </Sidebar.Item>
               </Link>
             </>
