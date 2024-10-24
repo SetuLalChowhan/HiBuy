@@ -66,7 +66,7 @@ const Users = () => {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition-colors"
         >
           Search
         </button>
@@ -161,9 +161,9 @@ const Users = () => {
         {showmore && (
           <button
             onClick={handleShowmore}
-            className="w-full sm:w-auto text-teal-500 px-6 py-3 rounded-lg border border-teal-500 hover:bg-teal-500 hover:text-white transition-colors"
+            className="bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600 transitions"
           >
-            Show More
+           Load More
           </button>
         )}
       </div>

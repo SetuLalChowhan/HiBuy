@@ -6,10 +6,11 @@ import CreateProduct from "../components/CreateProduct";
 import Products from "../components/Products";
 import OrderList from "../components/OrderList";
 import Users from "../components/Users";
-import BannerImage from "../components/BannerImage";
+
 import AllDash from "../components/AllDash";
 
 import { useDispatch } from "react-redux";
+import MyOrderList from "../components/MyOrderList";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -45,11 +46,10 @@ export default function Dashboard() {
       {tab === "products" && <Products/> }
       {/* order-list*/}
       {tab === "orders" && <OrderList/> }
+      {tab === "my-orders" && <MyOrderList/> }
       {/* users */}
       {tab === "users" && <Users/> }
-      {/* reviews*/}
-      {tab === "banner" && <BannerImage/> }
-      {tab == ":id" && <Reviews/> }
+   
       </div>
     </div>
   );

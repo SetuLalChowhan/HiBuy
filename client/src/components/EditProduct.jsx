@@ -345,7 +345,7 @@ const EditProduct = () => {
           <div className="flex justify-between items-center mt-6">
             <button
               type="submit"
-              className="w-full px-6 py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-200"
+              className="w-full px-6 py-3 bg-teal-500 text-white font-semibold rounded-md hover:bg-teal-600 transition duration-200"
               disabled={loading}
             >
               {loading ? "Updating..." : "Update Product"}

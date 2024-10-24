@@ -66,7 +66,7 @@ const OrderList = () => {
   console.log(singleOrderStatus);
 
   return (
-    <div className="shadow-lg rounded-lg  bg-white min-h-screen">
+    <div className="shadow-lg rounded-lg  bg-white min-h-screen mt-7">
       {/* Search and Filter Bar */}
       <div className="mb-6 flex flex-col md:flex-row justify-between items-center">
         <input
@@ -94,7 +94,7 @@ const OrderList = () => {
           {/* Latest Orders Button */}
           <button
             onClick={handleLatestOrders}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200"
+            className="px-4 py-2 bg-teal-500 text-white rounded-lg shadow hover:bg-teal-600 transition duration-200"
           >
             {latest ? "Latest Orders" : "All Orders"}
           </button>
@@ -161,6 +161,7 @@ const OrderList = () => {
                       {order?.name}
                     </div>
                     <div className="text-gray-500 text-sm">{order?.email}</div>
+                    <div className="text-gray-500 ">0{order?.shippingAddress?.phone}</div>
                   </Table.Cell>
 
                   <Table.Cell className="px-6 py-4 text-gray-700">
@@ -168,7 +169,8 @@ const OrderList = () => {
                   </Table.Cell>
 
                   <Table.Cell className="px-6 py-4 text-gray-700">
-                    {order?.shippingAddress?.address}
+                    {order?.shippingAddress?.address}, 
+                    {order?.shippingAddress?.city}
                   </Table.Cell>
 
                   <Table.Cell className="px-6 py-4">
@@ -282,7 +284,7 @@ const OrderList = () => {
         <div className="mt-6 text-center">
           <button
             onClick={handleShowmore}
-            className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition"
+            className="bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600 transition"
           >
             Load More
           </button>

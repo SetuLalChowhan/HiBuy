@@ -247,6 +247,7 @@ export const passwordChange = createAsyncThunk(
       return response.data; // Return the fetched data
     } catch (err) {
       console.log(err);
+      toast.error(err.response.data.message);
 
       return rejectWithValue(err.response.data.message); // Handle error
     }
@@ -389,27 +390,27 @@ const userSlice = createSlice({
       state.error = action.payload;
     });
     builder.addCase(forgotPassword.pending, (state) => {
-      state.loading = true;
+      state.loading2 = true;
     });
     builder.addCase(forgotPassword.fulfilled, (state, action) => {
-      state.loading = false;
+      state.loading2 = false;
       state.error = "";
     });
     builder.addCase(forgotPassword.rejected, (state, action) => {
-      state.loading = false;
+      state.loading2 = false;
       state.error = action.payload;
     });
     builder.addCase(resetPassword.pending, (state) => {
-      state.loading = true;
+      state.loading2 = true;
     });
     builder.addCase(resetPassword.fulfilled, (state, action) => {
-      state.loading = false;
+      state.loading2 = false;
 
       state.currentUser = action.payload.rest;
       state.error = "";
     });
     builder.addCase(resetPassword.rejected, (state, action) => {
-      state.loading = false;
+      state.loading2 = false;
       state.error = action.payload;
     });
     builder
@@ -510,14 +511,14 @@ const userSlice = createSlice({
       state.error = action.payload;
     });
     builder.addCase(passwordChange.pending, (state) => {
-      state.loading = true;
+      state.loading2 = true;
     });
     builder.addCase(passwordChange.fulfilled, (state, action) => {
-      state.loading = false;
+      state.loading2 = false;
       state.error = "";
     });
     builder.addCase(passwordChange.rejected, (state, action) => {
-      state.loading = false;
+      state.loading2 = false;
       state.error = action.payload;
     });
   },

@@ -21,11 +21,10 @@ const createOrder = async (req, res, next) => {
       if (!productSize || productSize.stock < item.quantity) {
         allProductHave = false;
         return next(
-          new AppError(`Insufficient stock for size: ${item.size}`, 400)
+          new AppError(`Insufficient stock availabe for the size: ${item.size} of the product ${item.name}`, 400)
         );
       }
     }
-    console.log(allProductHave);
 
     if (allProductHave) {
       for (const item of products) {

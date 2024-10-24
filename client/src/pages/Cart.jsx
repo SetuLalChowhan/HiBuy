@@ -174,14 +174,20 @@ const Cart = () => {
                 <span>৳{calculateTotalPrice() + 70}</span>
               </motion.div>
               {currentUser ? (
-                <motion.button
-                  className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 rounded-lg transition duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate("/place-order")}
-                >
-                  Proceed to Checkout
-                </motion.button>
+                currentUser.isVerified ? (
+                  <motion.button
+                    className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 rounded-lg transition duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate("/place-order")}
+                  >
+                    Proceed to Checkout
+                  </motion.button>
+                ) : (
+                  <p className="text lg font-semibold text-red-500">
+                    Please Verify Your Account To CheckOut
+                  </p>
+                )
               ) : (
                 <p className="text-lg">
                   Please{" "}

@@ -249,7 +249,7 @@ const Products = () => {
             <div className="mt-6 text-center">
               <button
                 onClick={handleShowmore}
-                className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition"
+                className="bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600 transition"
               >
                 Load More
               </button>

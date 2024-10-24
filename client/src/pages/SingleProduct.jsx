@@ -199,8 +199,8 @@ const SingleProduct = () => {
             whileTap={{ scale: 0.95 }}
             className={`px-6 py-3 rounded-md text-white transition duration-200 ease-in-out ${
               activeSize
-                ? "bg-black hover:opacity-75"
-                : "bg-gray-700 cursor-not-allowed"
+                ? "bg-teal-500 hover:opacity-75"
+                : "bg-teal-700 cursor-not-allowed"
             }`}
           >
             {activeSize ? "Add to Cart" : "Select a Size"}
@@ -256,7 +256,7 @@ const SingleProduct = () => {
 
             <button
               type="submit"
-              className="px-6 py-3 bg-black text-white rounded-md hover:opacity-75 transition-all"
+              className="px-6 py-3 bg-teal-500 text-white rounded-md hover:opacity-75 transition-all"
             >
               {editingReviewId ? "Update Review" : "Submit Review"}
             </button>

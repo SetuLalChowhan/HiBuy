@@ -274,7 +274,7 @@ const CreateProduct = () => {
           <div>
             <button
               type="submit"
-              className="w-full px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+              className="w-full px-4 py-3 bg-teal-500 text-white rounded-md hover:bg-teal-600 focus:ring-2 focus:ring-blue-600 focus:outline-none"
               disabled={loading}
             >
               {loading ? (

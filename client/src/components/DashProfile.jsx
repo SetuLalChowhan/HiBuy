@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import { passwordChangeSchema, editSchema } from "../schema";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-hot-toast";
+
 import { Button, Modal, Spinner } from "flowbite-react";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
 import { editProfile, passwordChange } from "../redux/user/userSlice";
+import toast from 'react-hot-toast'
 
 const DashProfile = () => {
   const dispatch = useDispatch();
-  const { currentUser, loading, error } = useSelector((state) => state.user.user);
+  const { currentUser, loading,loading2, error } = useSelector((state) => state.user.user);
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
@@ -170,7 +171,7 @@ const DashProfile = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
+          className="w-full bg-teal-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-teal-600 transition duration-300"
         >
           {loading ? (
             <Spinner color="success" aria-label="Profile update spinner" />
@@ -181,8 +182,8 @@ const DashProfile = () => {
       </form>
 
       {/* Change Password Button */}
-      <div className="mt-8 text-center">
-        <Button onClick={() => setShowModal(true)} color="blue">
+      <div className="mt-8 text-center ">
+        <Button onClick={() => setShowModal(true)} className="bg-teal-500">
           Change Password
         </Button>
       </div>
@@ -297,9 +298,9 @@ const DashProfile = () => {
             {/* Submit Button for Password Change */}
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
+              className="w-full bg-teal-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-teal-600 transition duration-300"
             >
-              {loading ? (
+              {loading2 ? (
                 <Spinner color="success" aria-label="Password change spinner" />
               ) : (
                 "Change Password"

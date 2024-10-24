@@ -74,7 +74,7 @@ export default function Header() {
               </span>
             </DropdownHeader>
             <DropdownItem>
-              <Link to={"/dashboard"}>Dashboard</Link>
+              <Link to={currentUser.isAdmin?`/dashboard?tab=dash`:`/dashboard?tab=profile`}>Dashboard</Link>
             </DropdownItem>
             <DropdownDivider />
             <DropdownItem onClick={handleSignOut}>Sign out</DropdownItem>

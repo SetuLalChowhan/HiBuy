@@ -15,7 +15,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { loading, error } = useSelector((state) => state.user.user);
+  const { loading,loading2, error } = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -200,7 +200,7 @@ const SignIn = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             type="submit"
-            className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
+            className="w-full bg-teal-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-teal-600 transition duration-300"
           >
             {loading ? (
               <Spinner color="success" aria-label="Success spinner example" />
@@ -274,7 +274,7 @@ const SignIn = () => {
                 </div>
               </div>
               <Button type="submit" disabled={loading} className="w-full">
-                {loading ? (
+                {loading2 ? (
                   <Spinner aria-label="Loading spinner" />
                 ) : (
                   "Send Reset Link"

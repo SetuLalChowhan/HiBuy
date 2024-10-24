@@ -1,16 +1,19 @@
 import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearError, verifyUser } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Spinner } from 'flowbite-react';
-import {toast} from 'react-hot-toast'
+import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
+ // Example SVG import
 
 const VerifyPage = () => {
-  const dispatch =useDispatch()
-  const navigate =useNavigate()
-  const {currentUser,loading,error} =useSelector((state)=>state.user.user)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { currentUser, loading, error } = useSelector((state) => state.user.user);
+  
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -24,33 +27,59 @@ const VerifyPage = () => {
         .required('Code is required'),
     }),
     onSubmit: (values) => {
-      
-      dispatch(verifyUser({values,navigate,toast}))
-      
+      dispatch(verifyUser({ values, navigate, toast }));
     },
   });
+
   useEffect(() => {
-    
     return () => {
       dispatch(clearError());
     };
-  }, [dispatch])
+  }, [dispatch]);
 
   return (
-    <div className="flex justify-center items-center mt-24 bg-gray-200">
-      <div className="bg-gray-200 shadow-lg rounded-lg p-8 w-full max-w-md border border-gray-400">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        Thank you for completing your registration. Please verify your account to enjoy our services.
-        </h1>
+    <div className="flex justify-center items-center bg-gradient-to-r from-blue-400 to-purple-500 min-h-screen relative overflow-hidden">
+      <svg
+        className="absolute top-0 left-0 h-full w-full"
+        viewBox="0 0 1440 320"
+      >
+        <path
+          fill="rgba(255, 255, 255, 0.1)"
+          d="M0,256L30,245.3C60,235,120,213,180,202.7C240,192,300,192,360,170.7C420,149,480,107,540,90.7C600,75,660,85,720,101.3C780,117,840,139,900,160C960,181,1020,203,1080,202.7C1140,203,1200,181,1260,170.7C1320,160,1380,160,1410,160L1440,160L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z"
+        ></path>
+      </svg>
+      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md border border-gray-300">
+        {/* Framer Motion animation for entry */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-6"
+        >
+          {/* SVG illustration for a more professional look */}
+         
+          <h1 className="text-2xl font-bold text-gray-800">
+            Thank you for completing your registration!
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Please verify your account to enjoy our services.
+          </p>
+        </motion.div>
 
-        <form onSubmit={formik.handleSubmit} className="space-y-6">
+        <motion.form
+          onSubmit={formik.handleSubmit}
+          className="space-y-6"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
           {/* Email Input */}
           <div className="space-y-2">
             <label htmlFor="email" className="block text-lg font-semibold text-gray-700">
               Email Address
             </label>
             <input
-            required
+              required
               type="email"
               id="email"
               name="email"
@@ -73,7 +102,7 @@ const VerifyPage = () => {
               6-Digit Verification Code
             </label>
             <input
-            required
+              required
               type="text"
               id="code"
               name="code"
@@ -89,22 +118,28 @@ const VerifyPage = () => {
               <p className="text-red-500 text-sm mt-1">{formik.errors.code}</p>
             )}
           </div>
-          {error ? (
-            <div className="flex justify-center items-center text-2xl">
+
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="flex justify-center items-center text-2xl"
+            >
               <Alert color="failure">
                 <span className="text-lg font-semibold">{error}</span>
               </Alert>
-            </div>
-          ) : null}
+            </motion.div>
+          )}
 
           {/* Verify Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-300"
+            className="w-full bg-teal-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-teal-600 transition duration-300"
           >
-            {loading ? (<Spinner color="success" aria-label="Success spinner example" />):"Verify"}
+            {loading ? <Spinner color="success" aria-label="Success spinner example" /> : 'Verify'}
           </button>
-        </form>
+        </motion.form>
       </div>
     </div>
   );
