@@ -14,7 +14,7 @@ export const createOrder = createAsyncThunk(
         withCredentials: true,
       });
       toast.success("Order has been Placed Successfully");
-      dispatch(resetCart())
+      dispatch(resetCart());
       return response.data;
     } catch (err) {
       toast.error(err.response.data.message);
@@ -95,6 +95,28 @@ export const deleteOrder = createAsyncThunk(
     }
   }
 );
+export const myOrderList = createAsyncThunk(
+  "product/my-orders",
+  async ({ values }, { rejectWithValue }) => {
+    const { startIndex = 0, limit } = values;
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/orders/my-orders`,
+        {
+          params: {
+            startIndex: startIndex || 0,
+            limit: limit,
+          },
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (err) {
+      console.log(err.response.data.message);
+      return rejectWithValue(err.response.data.message);
+    }
+  }
+);
 const initialState = {
   orders: [],
   loading: false,
@@ -105,7 +127,8 @@ const initialState = {
   totalOrders: null,
   allOrders: 0,
   showmore: false,
-  fixedTotalOrder:0
+  fixedTotalOrder: 0,
+  myOrders: [],
 };
 
 const orderSlice = createSlice({
@@ -124,15 +147,14 @@ const orderSlice = createSlice({
     builder.addCase(createOrder.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
-      
     });
     builder.addCase(fetchOrders.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(fetchOrders.fulfilled, (state, action) => {
       state.loading = false;
-      state.totalOrders = action.payload.totalOrders
-      state.fixedTotalOrder =action.payload.total
+      state.totalOrders = action.payload.totalOrders;
+      state.fixedTotalOrder = action.payload.total;
       const {
         arg: {
           values: { startIndex },
@@ -143,7 +165,6 @@ const orderSlice = createSlice({
         state.allOrders = state.orders.length;
         if (state.allOrders % 10 === 0) {
           state.showmore = true;
-        
         } else {
           state.showmore = false;
         }
@@ -151,8 +172,10 @@ const orderSlice = createSlice({
         state.orders = action.payload.orders;
         state.allOrders = state.orders.length;
         if (state.allOrders % 10 === 0) {
-          console.log("hi")
-         state.allOrders===0? state.showmore=false:state.showmore=true
+          console.log("hi");
+          state.allOrders === 0
+            ? (state.showmore = false)
+            : (state.showmore = true);
         } else {
           state.showmore = false;
         }
@@ -161,7 +184,7 @@ const orderSlice = createSlice({
     });
     builder.addCase(fetchOrders.rejected, (state, action) => {
       state.loading = false;
-      state.totalOrders = 0
+      state.totalOrders = 0;
       state.error = action.payload;
     });
     builder.addCase(changeStatus.pending, (state) => {
@@ -193,20 +216,54 @@ const orderSlice = createSlice({
       } = action.meta;
 
       state.orders = state.orders.filter((order) => order._id !== id);
-      state.allOrders =state.orders.length
-      state.totalOrders -=1
+      state.allOrders = state.orders.length;
+      state.totalOrders -= 1;
 
-      if(state.allOrders%10==0){
-        state.showmore=true
-      }
-      else{
-        state.showmore=false
+      if (state.allOrders % 10 == 0) {
+        state.showmore = true;
+      } else {
+        state.showmore = false;
       }
 
       state.error = "";
     });
     builder.addCase(deleteOrder.rejected, (state, action) => {
       state.loading2 = false;
+      state.error = action.payload;
+    });
+    builder.addCase(myOrderList.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(myOrderList.fulfilled, (state, action) => {
+      state.loading = false;
+      const {
+        arg: {
+          values: { startIndex },
+        },
+      } = action.meta;
+      if (startIndex) {
+        state.myOrders = [...state.myOrders, ...action.payload];
+        state.allOrders = state.orders.length;
+        if (state.allOrders % 10 === 0) {
+          state.showmore = true;
+        } else {
+          state.showmore = false;
+        }
+      } else {
+        state.myOrders = action.payload;
+        state.allOrders = state.orders.length;
+        if (state.allOrders % 10 === 0) {
+          state.allOrders === 0
+            ? (state.showmore = false)
+            : (state.showmore = true);
+        } else {
+          state.showmore = false;
+        }
+      }
+      state.error = "";
+    });
+    builder.addCase(myOrderList.rejected, (state, action) => {
+      state.loading = false;
       state.error = action.payload;
     });
   },

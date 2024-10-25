@@ -165,7 +165,7 @@ const OrderList = () => {
                   </Table.Cell>
 
                   <Table.Cell className="px-6 py-4 text-gray-700">
-                    ${order?.totalPrice?.toFixed(2)}
+                  ৳{order?.totalPrice?.toFixed(2)}
                   </Table.Cell>
 
                   <Table.Cell className="px-6 py-4 text-gray-700">

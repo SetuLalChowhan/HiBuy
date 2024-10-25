@@ -21,7 +21,10 @@ const createOrder = async (req, res, next) => {
       if (!productSize || productSize.stock < item.quantity) {
         allProductHave = false;
         return next(
-          new AppError(`Insufficient stock availabe for the size: ${item.size} of the product ${item.name}`, 400)
+          new AppError(
+            `Insufficient stock availabe for the size: ${item.size} of the product ${item.name}`,
+            400
+          )
         );
       }
     }
@@ -96,7 +99,15 @@ const getSingleOrder = async (req, res, next) => {
 // Get All Orders for Logged-in User
 const myOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ userId: req.user.userId });
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = startIndex;
+    const orders = await Order.find({ userId: req.user.userId })
+      .skip(skip)
+      .limit(limit).sort({ createdAt: -1 });
+    if (orders.length===0) {
+      return next(new AppError("Orders not Found", 404));
+    }
     res.status(200).json(orders);
   } catch (error) {
     return next(new AppError("Server error", 500));
@@ -144,7 +155,7 @@ const getAllOrders = async (req, res, next) => {
 
     // Get the total number of matching orders
     const totalOrders = await Order.countDocuments(searchQuery);
-    if(!totalOrders){
+    if (!totalOrders) {
       return next(new AppError("Orders not found", 404));
     }
     const total = await Order.countDocuments();
@@ -158,7 +169,7 @@ const getAllOrders = async (req, res, next) => {
       .limit(limit || totalOrders);
 
     // Return the filtered and sorted orders
-    res.status(200).json({ success: true, totalOrders, orders,total });
+    res.status(200).json({ success: true, totalOrders, orders, total });
   } catch (error) {
     return next(new AppError("Server error", 500));
   }

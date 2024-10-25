@@ -77,7 +77,7 @@ const DashProfile = () => {
               "/default-avatar.png"
             }
             alt="Profile"
-            className="w-48 h-48 rounded-full object-cover border-4 border-blue-500 cursor-pointer"
+            className="w-48 h-48 rounded-full object-contain border-4 border-blue-500 cursor-pointer"
             onClick={() => document.getElementById("avatarInput").click()}
           />
           {imageLoading && (
@@ -162,12 +162,6 @@ const DashProfile = () => {
             )}
           </div>
         </div>
-
-        {/* Total Orders */}
-        <div className="text-lg font-semibold text-gray-700">
-          Total Orders: {currentUser?.totalOrders || 0}
-        </div>
-
         {/* Submit Button */}
         <button
           type="submit"

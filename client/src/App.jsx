@@ -29,7 +29,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/product-edit/:id" element={<EditProduct />} />
-            <Route path="/place-order" element={<PlaceOrder/>} />
+            <Route path="/place-order" element={<PlaceOrder />} />
           </Route>
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/sign-up" element={<SignUp />} />

@@ -5,11 +5,15 @@ import { FaUsers } from "react-icons/fa";
 import { MdOutlineReviews } from "react-icons/md";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/user/userSlice";
+import toast from 'react-hot-toast'
 
 export default function DashSlidebar() {
   const location = useLocation();
+  const dispatch =useDispatch()
+  const navigate =useNavigate()
   const [tab, setTab] = useState("");
 
   const { currentUser, allUsersDefault } = useSelector(
@@ -26,6 +30,9 @@ export default function DashSlidebar() {
       setTab(tabFromUrl);
     }
   }, [location.search]);
+  const handleSignOut = () => {
+    dispatch(logout({ toast, navigate }));
+  };
 
   return (
     <Sidebar aria-label="Dashboard Sidebar" className="bg-gray-800 text-white ">
@@ -122,14 +129,17 @@ export default function DashSlidebar() {
             </Sidebar.Item>
           </Link>
 
+          <div onClick={handleSignOut}>
           <Sidebar.Item
             href="#"
             icon={RiLogoutBoxRLine}
-            className="hover:bg-gray-600 transition-colors rounded-lg mt-6"
+            className="hover:bg-gray-600 transition-colors rounded-lg mt-6 cursor-pointer"
             as="div"
+            
           >
             <span className="text-sm font-semibold">Sign Out</span>
           </Sidebar.Item>
+          </div>
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
