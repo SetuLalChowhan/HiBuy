@@ -98,7 +98,7 @@ const Users = () => {
                   <td className="py-3 px-4">
                     <img
                       src={
-                        `http://localhost:3000/${user.avatar}` ||
+                        `https://hibuy.onrender.com/${user.avatar}` ||
                         "/default-avatar.png"
                       }
                       alt={`${user.name}'s profile`}

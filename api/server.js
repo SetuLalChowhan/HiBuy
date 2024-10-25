@@ -18,7 +18,6 @@ const app = express();
 
 app.use(express.json());
 app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
-mul = path.join(__dirname, "uploads");
 app.use(cookieParser());
 app.use(
   cors({
