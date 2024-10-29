@@ -320,29 +320,61 @@ const EditProduct = () => {
               <div className="space-y-4">
                 {sizeStockPairs.map((pair, index) => (
                   <div key={index} className="flex items-center space-x-4">
-                    <select
-                      value={pair.size}
-                      onChange={(e) =>
-                        handleSizeStockChange(index, "size", e.target.value)
-                      }
-                      className="w-1/2 px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Size</option>
-                      <option value="S">Small</option>
-                      <option value="M">Medium</option>
-                      <option value="L">Large</option>
-                      <option value="XL">X-Large</option>
-                      <option value="XXL">XX-Large</option>
-                    </select>
-                    <input
-                      type="number"
-                      value={pair.stock}
-                      placeholder="Stock"
-                      onChange={(e) =>
-                        handleSizeStockChange(index, "stock", e.target.value)
-                      }
-                      className="w-1/2 px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                    />
+                    {/* Size Field */}
+                    <div className="w-1/2">
+                      <select
+                        value={pair.size}
+                        onChange={(e) =>
+                          handleSizeStockChange(index, "size", e.target.value)
+                        }
+                        onBlur={formik.handleBlur}
+                        className={`w-full px-3 py-2 border rounded-md ${
+                          formik.touched.sizes?.[index]?.size &&
+                          formik.errors.sizes?.[index]?.size
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } focus:ring-2 focus:ring-blue-500`}
+                      >
+                        <option value="">Size</option>
+                        <option value="S">Small</option>
+                        <option value="M">Medium</option>
+                        <option value="L">Large</option>
+                        <option value="XL">X-Large</option>
+                        <option value="XXL">XX-Large</option>
+                      </select>
+                      {formik.touched.sizes?.[index]?.size &&
+                        formik.errors.sizes?.[index]?.size && (
+                          <p className="text-xs text-red-500 mt-1">
+                            {formik.errors.sizes[index].size}
+                          </p>
+                        )}
+                    </div>
+
+                    {/* Stock Field */}
+                    <div className="w-1/2">
+                      <input
+                        type="number"
+                        value={pair.stock}
+                        placeholder="Stock"
+                        onChange={(e) =>
+                          handleSizeStockChange(index, "stock", e.target.value)
+                        }
+                        onBlur={formik.handleBlur}
+                        className={`w-full px-3 py-2 border rounded-md ${
+                          formik.touched.sizes?.[index]?.stock &&
+                          formik.errors.sizes?.[index]?.stock
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } focus:ring-2 focus:ring-blue-500`}
+                      />
+                      {formik.touched.sizes?.[index]?.stock &&
+                        formik.errors.sizes?.[index]?.stock && (
+                          <p className="text-xs text-red-500 mt-1">
+                            {formik.errors.sizes[index].stock}
+                          </p>
+                        )}
+                    </div>
+
                     <button
                       type="button"
                       onClick={() => handleRemoveSizeStock(index)}
@@ -361,6 +393,7 @@ const EditProduct = () => {
                 Add Size/Stock
               </button>
             </div>
+            
           </div>
 
           {/* Image Upload */}
