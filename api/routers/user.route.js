@@ -9,7 +9,7 @@ const {
   verifyEmail,
   passwordChange,
 } = require("../controller/auth.controller.js");
-const upload = require("../uploads/multerConfig.js");
+;
 const {authenticate, isAdmin} = require("../middleware/authMiddleware.js");
 const { updateUserRole, deleteUser, searchUsers, getAllUsers } = require("../controller/user.controller.js");
 const router = express.Router();

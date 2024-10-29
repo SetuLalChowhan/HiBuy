@@ -15,9 +15,7 @@ connectDB();
 const app = express();
 
 // Middleware
-
 app.use(express.json());
-app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cookieParser());
 app.use(
   cors({

@@ -9,7 +9,6 @@ const {
   editReview,
   deleteReview,
 } = require("../controller/product.controller.js");
-const upload = require("../uploads/multerConfig.js");
 const { authenticate, isAdmin,authOrAdmin } = require("../middleware/authMiddleware.js");
 
 const router = express.Router();
