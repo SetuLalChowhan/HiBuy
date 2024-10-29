@@ -98,11 +98,11 @@ const Users = () => {
                   <td className="py-3 px-4">
                     <img
                       src={
-                        `https://hibuy.onrender.com/${user.avatar}` ||
-                        ""
+                        user?.avatar
+                      
                       }
                       alt={`${user.name}'s profile`}
-                      className="w-12 h-12 rounded-full border border-gray-300 object-cover"
+                      className="w-12 h-12 rounded-full border border-gray-300 object-contain"
                     />
                   </td>
                   <td className="py-3 px-4">{user.name}</td>

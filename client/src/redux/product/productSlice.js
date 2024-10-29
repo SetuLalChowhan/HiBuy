@@ -8,7 +8,7 @@ export const createProduct = createAsyncThunk(
     try {
       const response = await axios.post("api/products/create-product", values, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
         withCredentials: true,
       });
@@ -95,7 +95,7 @@ export const editProduct = createAsyncThunk(
         values,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
 
           withCredentials: true,

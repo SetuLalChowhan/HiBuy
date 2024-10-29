@@ -15,9 +15,9 @@ const { updateUserRole, deleteUser, searchUsers, getAllUsers } = require("../con
 const router = express.Router();
 
 //register
-router.post("/register", upload.single("avatar"), registerUser);
+router.post("/register",  registerUser);
 //edit-profile
-router.put("/edit-profile", authenticate, upload.single("avatar"), editProfile);
+router.put("/edit-profile", authenticate, editProfile);
 //login
 router.post("/login", loginUser);
 //logout

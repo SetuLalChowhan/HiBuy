@@ -4,12 +4,7 @@ const Product = require("../model/product.model.js");
 const User = require("../model/user.model.js");
 
 const createProduct = async (req, res, next) => {
-  if (req.fileValidationError) {
-    return next(new AppError(req.fileValidationError, 400));
-  }
-
-  const { name, price, description, category, type, sizes } = req.body; // Get sizes from the request body
-  const image = req.file ? req.file.path : null;
+  const { name, price, description, category, type, sizes, image } = req.body; // Get sizes from the request body
 
   // Ensure sizes is an array and each size has a corresponding stock value
   const formattedSizes = Array.isArray(sizes)
@@ -65,8 +60,7 @@ const updateProduct = async (req, res, next) => {
       return next(new AppError("Product not found", 404));
     }
 
-    const { name, price, description, category, type, sizes } = req.body; // Get sizes from the request body
-    const image = req.file ? req.file.path : null;
+    const { name, price, description, category, type, sizes, image } = req.body; // Get sizes from the request body
 
     // Check if sizes are provided
     if (Array.isArray(sizes)) {
@@ -178,7 +172,7 @@ const getProducts = async (req, res, next) => {
     }
 
     const totalProducts = await Product.countDocuments(query);
-    console.log(totalProducts)
+
     const allProducts = await Product.countDocuments();
     const products = await Product.find(query)
       .sort(sortOption)

@@ -8,12 +8,10 @@ const sendEmail = require("../utils/sendMail.js");
 // Register User
 const registerUser = async (req, res, next) => {
   // Check for file upload errors
-  if (req.fileValidationError) {
-    return next(new AppError(req.fileValidationError, 400));
-  }
 
-  const { name, email, password, confirm_password } = req.body;
-  const avatar = req.file ? req.file.path : null;
+  const { name, email, password, confirm_password, avatar } = req.body;
+  console.log(req.body);
+
   try {
     // Check if the user already exists
     let user = await User.findOne({ email });
@@ -111,11 +109,9 @@ const verifyEmail = async (req, res, next) => {
 };
 //edit-profile
 const editProfile = async (req, res, next) => {
-  const { name, email } = req.body;
-  const avatar = req.file ? req.file.path : null;
-  const userId = req.user.userId;
+  const { name, email, avatar } = req.body;
 
-  console.log(avatar);
+  const userId = req.user.userId;
 
   // Assuming you're using JWT to authenticate users
   try {

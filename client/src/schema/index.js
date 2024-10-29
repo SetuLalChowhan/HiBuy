@@ -26,20 +26,7 @@ export const signUpSchema = Yup.object({
     .required("Please confirm your password")
     .oneOf([Yup.ref("password"), null], "Passwords must match"),
 
-  avatar: Yup.mixed()
-    .required("An image file is required")
-    .test("fileSize", "File size is too large (Max: 2MB)", (value) => {
-      return value && value.size <= 2 * 1024 * 1024; // 2 MB limit
-    })
-    .test(
-      "fileType",
-      "Unsupported file format (Allowed: jpeg, png)",
-      (value) => {
-        return (
-          value && ["image/jpeg", "image/png"].includes(value.type) // Only JPEG and PNG allowed
-        );
-      }
-    ),
+ 
 });
 
 export const signInSchema = Yup.object({
@@ -69,26 +56,7 @@ export const editSchema = Yup.object({
 
   email: Yup.string().email("Invalid email address"),
 
-  avatar: Yup.mixed()
-    .nullable() // Allows the field to be null
-    .test("fileSize", "File size must be 2MB or less", function (value) {
-      // Only validate file size if a file is selected
-      if (value) {
-        return value.size <= 2 * 1024 * 1024; // 2MB limit
-      }
-      return true; // Skip validation if no file is selected
-    })
-    .test(
-      "fileType",
-      "Only JPEG or PNG formats are supported",
-      function (value) {
-        // Only validate file type if a file is selected
-        if (value) {
-          return ["image/jpeg", "image/png"].includes(value.type);
-        }
-        return true; // Skip validation if no file is selected
-      }
-    ),
+
 });
 
 export const createProductSchema = Yup.object({
@@ -118,20 +86,6 @@ export const createProductSchema = Yup.object({
       "Please select a valid type"
     )
     .required("Please select a type"),
-
-  image: Yup.mixed()
-    .required("An image file is required")
-    .test("fileSize", "File size is too large (Max: 2MB)", (value) => {
-      return value && value.size <= 2 * 1024 * 1024; // 2 MB limit
-    })
-    .test(
-      "fileType",
-      "Unsupported file format (Allowed: jpeg, png)",
-      (value) => {
-        return value && ["image/jpeg", "image/png"].includes(value.type); // Only JPEG and PNG allowed
-      }
-    ),
-
   sizes: Yup.array()
     .of(
       Yup.object().shape({
@@ -170,24 +124,7 @@ export const editProdcutSchema = Yup.object({
     ["topwear", "bottomwear", "winterwear"],
     "Please select a valid type"
   ),
-  image: Yup.mixed()
-    .nullable() // Allow image to be null (especially during editing)
-    .test("fileSize", "File size is too large (Max: 2MB)", (value) => {
-      // Only validate if the value is a File (not a URL or undefined)
-      return !value || (value instanceof File && value.size <= 2 * 1024 * 1024);
-    })
-    .test(
-      "fileType",
-      "Unsupported file format (Allowed: jpeg, png)",
-      (value) => {
-        // Only validate if the value is a File (not a URL or undefined)
-        return (
-          !value ||
-          (value instanceof File &&
-            ["image/jpeg", "image/png"].includes(value.type))
-        );
-      }
-    ),
+
   sizes: Yup.array()
     .of(
       Yup.object().shape({

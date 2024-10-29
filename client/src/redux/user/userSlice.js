@@ -4,10 +4,11 @@ import axios from "axios";
 export const register = createAsyncThunk(
   "auth/register",
   async ({ values, navigate, toast }, { rejectWithValue }) => {
+    console.log(values)
     try {
       const response = await axios.post("api/users/register", values, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
         withCredentials: true,
       });
@@ -209,7 +210,7 @@ export const editProfile = createAsyncThunk(
 
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
 
           withCredentials: true,

@@ -1,18 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { Spinner, Alert } from "flowbite-react";
 import { createProductSchema } from "../schema";
 import { createProduct } from "../redux/product/productSlice";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase.js";
 
 const CreateProduct = () => {
   const { loading, error } = useSelector((state) => state.product);
   const dispatch = useDispatch();
+  const [imageFile, setImageFile] = useState(null);
+  const [imageFileUploadError, setImageFileUploadError] = useState(null);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   const [sizeStockPairs, setSizeStockPairs] = useState([
     { size: "", stock: "" },
   ]);
+
+  
 
   const formik = useFormik({
     initialValues: {
@@ -31,9 +43,12 @@ const CreateProduct = () => {
         stock: pair.stock || 0, // Set stock to 0 if not provided
       }));
       values.sizes = formattedSizes;
-      dispatch(createProduct({ values, toast }));
+      if (!imageFileUploadError) {
+        dispatch(createProduct({ values, toast }));
+      }
     },
   });
+
 
   const handleAddSizeStock = () => {
     setSizeStockPairs([...sizeStockPairs, { size: "", stock: "" }]);
@@ -53,14 +68,65 @@ const CreateProduct = () => {
     formik.setFieldValue("sizes", updatedPairs);
   };
 
+  useEffect(() => {
+  
+      uploadImage();
+    
+  }, [imageFile]);
+
+  const handleFileChange = (event) => {
+    const file = event.currentTarget.files[0];
+    console.log(file);
+    if (file) {
+      if (
+        file.size < 2 * 1024 * 1024 &&
+        (file.type === "image/jpeg" || file.type === "image/png")
+      ) {
+        setImageFile(file);
+      } else {
+        setImageFileUploadError("File must be a JPEG or PNG and less than 2MB");
+      }
+    }
+  };
+
+  const uploadImage = async () => {
+    if (!imageFile) return;
+
+    setImageFileUploadError(null);
+    setIsImageUploading(true); // Set uploading state to true
+
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + imageFile.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // Optional: You can track progress here if needed
+      },
+      (error) => {
+        setImageFileUploadError(
+          "Could not upload image (File must be less than 2MB)"
+        );
+        setIsImageUploading(false); // Reset uploading state on error
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
+          formik.setFieldValue("image", downloadUrl);
+          setIsImageUploading(false); // Reset uploading state after success
+        });
+      }
+    );
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-5 h-screen mb-6">
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-2xl border border-gray-200">
         <h1 className="text-2xl font-semibold text-gray-800 mb-6">
           Create New Product
         </h1>
-
-        
 
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* Product Name */}
@@ -82,9 +148,7 @@ const CreateProduct = () => {
               } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             />
             {formik.touched.name && formik.errors.name && (
-              <p className="text-xs text-red-500 mt-1">
-                {formik.errors.name}
-              </p>
+              <p className="text-xs text-red-500 mt-1">{formik.errors.name}</p>
             )}
           </div>
 
@@ -107,9 +171,7 @@ const CreateProduct = () => {
               } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             />
             {formik.touched.price && formik.errors.price && (
-              <p className="text-xs text-red-500 mt-1">
-                {formik.errors.price}
-              </p>
+              <p className="text-xs text-red-500 mt-1">{formik.errors.price}</p>
             )}
           </div>
 
@@ -187,9 +249,7 @@ const CreateProduct = () => {
               <option value="winterwear">Winterwear</option>
             </select>
             {formik.touched.type && formik.errors.type && (
-              <p className="text-xs text-red-500 mt-1">
-                {formik.errors.type}
-              </p>
+              <p className="text-xs text-red-500 mt-1">{formik.errors.type}</p>
             )}
           </div>
 
@@ -254,19 +314,11 @@ const CreateProduct = () => {
               type="file"
               name="image"
               accept="image/*"
-              onChange={(e) =>
-                formik.setFieldValue("image", e.target.files[0])
-              }
-              className={`w-full px-4 py-3 border rounded-md ${
-                formik.touched.image && formik.errors.image
-                  ? "border-red-500"
-                  : "border-gray-300"
-              } focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+              onChange={handleFileChange}
+              className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
             />
-            {formik.touched.image && formik.errors.image && (
-              <p className="text-xs text-red-500 mt-1">
-                {formik.errors.image}
-              </p>
+            {imageFileUploadError && (
+              <Alert color={"failure"}>{imageFileUploadError}</Alert>
             )}
           </div>
 
@@ -274,14 +326,14 @@ const CreateProduct = () => {
           <div>
             <button
               type="submit"
-              className="w-full px-4 py-3 bg-teal-500 text-white rounded-md hover:bg-teal-600 focus:ring-2 focus:ring-blue-600 focus:outline-none"
-              disabled={loading}
+              className={`w-full py-3 bg-teal-500 text-white rounded-lg font-semibold transition duration-300 hover:bg-teal-600 ${
+                loading || isImageUploading
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={loading || isImageUploading}
             >
-              {loading ? (
-                <Spinner color="white" size="sm" />
-              ) : (
-                "Create Product"
-              )}
+              {loading ? <Spinner color="white" size="sm" /> : "Create Product"}
             </button>
           </div>
         </form>

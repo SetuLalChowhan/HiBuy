@@ -60,9 +60,9 @@ export default function Header() {
             inline
             label={
               <Avatar
-                className="w-12 h-12 rounded-full object-cover"
+                className="w-12 h-12 rounded-full object-contain"
                 alt="User settings"
-                img={`https://hibuy.onrender.com/${currentUser.avatar}`}
+                img={currentUser?.avatar}
                 rounded
               />
             }

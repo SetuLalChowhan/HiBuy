@@ -6,6 +6,15 @@ import { useParams } from "react-router-dom";
 import { editProduct, getSingleProduct } from "../redux/product/productSlice";
 import { editProdcutSchema } from "../schema";
 
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase.js";
+import { Alert } from "flowbite-react";
+
 const EditProduct = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -16,6 +25,9 @@ const EditProduct = () => {
   const [sizeStockPairs, setSizeStockPairs] = useState([
     { size: "", stock: "" },
   ]);
+  const [imageFile, setImageFile] = useState(null);
+  const [imageFileUploadError, setImageFileUploadError] = useState(null);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   useEffect(() => {
     dispatch(getSingleProduct(id));
@@ -54,7 +66,9 @@ const EditProduct = () => {
       values.sizes = formattedSizes;
 
       if (hasChanges) {
+       if(!imageFileUploadError){
         dispatch(editProduct({ values, toast, id }));
+       }
       } else {
         toast.error("No changes detected.");
       }
@@ -80,12 +94,54 @@ const EditProduct = () => {
   };
 
   const handleImageChange = (event) => {
-    const file = event.currentTarget.files[0];
-    formik.setFieldValue("image", file);
-
+    const file = event.target.files[0];
     if (file) {
-      setImagePreview(URL.createObjectURL(file));
+      if (
+        file.size < 2 * 1024 * 1024 &&
+        (file.type === "image/jpeg" || file.type === "image/png")
+      ) {
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+      } else {
+        setImageFileUploadError("File must be a JPEG or PNG and less than 2MB");
+      }
     }
+  };
+
+  useEffect(() => {
+    uploadImage();
+  }, [imageFile]);
+
+  const uploadImage = async () => {
+    if (!imageFile) return;
+
+    setImageFileUploadError(null);
+    setIsImageUploading(true); // Set uploading state to true
+
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + imageFile.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // Optional: You can track progress here if needed
+      },
+      (error) => {
+        setImageFileUploadError(
+          "Could not upload image (File must be less than 2MB)"
+        );
+        setIsImageUploading(false); // Reset uploading state on error
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
+          formik.setFieldValue("image", downloadUrl);
+          setIsImageUploading(false); // Reset uploading state after success
+        });
+      }
+    );
   };
 
   return (
@@ -321,23 +377,17 @@ const EditProduct = () => {
               name="image"
               accept="image/*"
               onChange={handleImageChange}
-              className={`w-full px-4 py-3 border ${
-                formik.errors.image && formik.touched.image
-                  ? "border-red-500"
-                  : "border-gray-300"
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200`}
+              className={`w-full px-4 py-3 border  rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200`}
             />
             <div className="mt-4">
               <img
-                src={
-                  imagePreview || `http://localhost:3000/${singleProduct.image}`
-                }
+                src={imagePreview || singleProduct?.image}
                 alt="Product Preview"
                 className="w-48 h-48 object-cover mt-2 border border-gray-300 rounded-md"
               />
             </div>
-            {formik.errors.image && formik.touched.image && (
-              <p className="text-red-500 text-sm mt-1">{formik.errors.image}</p>
+            {imageFileUploadError && (
+              <Alert color={"failure"}>{imageFileUploadError}</Alert>
             )}
           </div>
 
@@ -345,8 +395,12 @@ const EditProduct = () => {
           <div className="flex justify-between items-center mt-6">
             <button
               type="submit"
-              className="w-full px-6 py-3 bg-teal-500 text-white font-semibold rounded-md hover:bg-teal-600 transition duration-200"
-              disabled={loading}
+              className={`w-full py-3 bg-teal-500 text-white rounded-lg font-semibold transition duration-300 hover:bg-teal-600 ${
+                loading || isImageUploading
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={loading || isImageUploading}
             >
               {loading ? "Updating..." : "Update Product"}
             </button>
