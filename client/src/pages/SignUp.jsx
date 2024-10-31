@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearError, register } from "../redux/user/userSlice";
 import { toast } from "react-hot-toast";
-import { motion } from "framer-motion"; // Import Framer Motion
 import {
   getDownloadURL,
   getStorage,
@@ -53,17 +52,23 @@ const SignUp = () => {
   useEffect(() => {
     uploadImage();
   }, [imageFile]);
+
   const handleFileChange = (event) => {
     const file = event.currentTarget.files[0];
     if (file) {
-      if (file.size < 2 * 1024 * 1024 && 
-          (file.type === 'image/jpeg' || file.type === 'image/png')) {
+      if (
+        file.size < 2 * 1024 * 1024 &&
+        (file.type === "image/jpeg" || file.type === "image/png")
+      ) {
         setImageFile(file);
       } else {
-        setImageFileUploadError("File must be a JPEG or PNG and less than 2MB");
+        setImageFileUploadError(
+          "File must be a JPEG or PNG and less than 2MB"
+        );
       }
     }
   };
+
   const uploadImage = async () => {
     if (!imageFile) return;
 
@@ -96,7 +101,6 @@ const SignUp = () => {
     );
   };
 
-
   return (
     <div className="flex justify-center items-center bg-gradient-to-r from-blue-400 to-purple-500 min-h-screen relative overflow-hidden">
       {/* Background SVG */}
@@ -110,12 +114,7 @@ const SignUp = () => {
         ></path>
       </svg>
 
-      <motion.div
-        className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md border border-gray-400 z-10"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md border border-gray-400 z-10">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Create Your Account
         </h1>
@@ -254,8 +253,7 @@ const SignUp = () => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 className={`w-full pl-12 text-lg rounded-lg border focus:ring focus:ring-blue-200 transition ${
-                  formik.errors.confirm_password &&
-                  formik.touched.confirm_password
+                  formik.errors.confirm_password && formik.touched.confirm_password
                     ? "border-red-500"
                     : "border-gray-300"
                 }`}
@@ -270,34 +268,34 @@ const SignUp = () => {
                   <RiEyeLine size={24} />
                 )}
               </div>
-              {formik.errors.confirm_password &&
-                formik.touched.confirm_password && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formik.errors.confirm_password}
-                  </p>
-                )}
+              {formik.errors.confirm_password && formik.touched.confirm_password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {formik.errors.confirm_password}
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Image Input */}
+          {/* Avatar Input */}
           <div className="space-y-2">
             <label
               htmlFor="avatar"
               className="block text-lg font-semibold text-gray-700"
             >
-              Upload Image
+              Upload Avatar
             </label>
             <input
               type="file"
               id="avatar"
               name="avatar"
-              accept="image/*"
+              accept="image/png, image/jpeg"
               onChange={handleFileChange}
-              className="w-full text-lg rounded-lg border focus:ring focus:ring-blue-200 transition"
+              className="text-lg border rounded-lg"
             />
             {imageFileUploadError && (
-              <Alert color={"failure"}>{imageFileUploadError}</Alert>
+              <p className="text-red-500 text-sm mt-1">{imageFileUploadError}</p>
             )}
+            {isImageUploading && <Spinner />}
           </div>
 
           {/* Submit Button */}
@@ -310,26 +308,25 @@ const SignUp = () => {
           >
             {loading ? <Spinner size="sm" color="white" /> : "Sign Up"}
           </button>
+
+          {/* Error Alert */}
+          {error && (
+            <Alert color="failure" className="mt-4">
+              {error}
+            </Alert>
+          )}
         </form>
 
-        {/* Error Alert */}
-        {error && (
-          <Alert color="failure" className="mt-4">
-            <span>{error}</span>
-          </Alert>
-        )}
-
-        {/* Redirect to Login */}
         <p className="mt-4 text-center">
           Already have an account?{" "}
           <span
-            className="text-blue-500 cursor-pointer"
+            className="text-blue-600 cursor-pointer"
             onClick={() => navigate("/login")}
           >
-            Login
+            Log In
           </span>
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 };

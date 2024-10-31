@@ -6,8 +6,6 @@ import { clearError, verifyUser } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Spinner } from 'flowbite-react';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
- // Example SVG import
 
 const VerifyPage = () => {
   const dispatch = useDispatch();
@@ -49,30 +47,16 @@ const VerifyPage = () => {
         ></path>
       </svg>
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md border border-gray-300">
-        {/* Framer Motion animation for entry */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-6"
-        >
-          {/* SVG illustration for a more professional look */}
-         
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
             Thank you for completing your registration!
           </h1>
           <p className="text-gray-600 mt-2">
             Please verify your account to enjoy our services.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.form
-          onSubmit={formik.handleSubmit}
-          className="space-y-6"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-        >
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* Email Input */}
           <div className="space-y-2">
             <label htmlFor="email" className="block text-lg font-semibold text-gray-700">
@@ -120,16 +104,11 @@ const VerifyPage = () => {
           </div>
 
           {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-              className="flex justify-center items-center text-2xl"
-            >
+            <div className="flex justify-center items-center text-2xl">
               <Alert color="failure">
                 <span className="text-lg font-semibold">{error}</span>
               </Alert>
-            </motion.div>
+            </div>
           )}
 
           {/* Verify Button */}
@@ -139,7 +118,7 @@ const VerifyPage = () => {
           >
             {loading ? <Spinner color="success" aria-label="Success spinner example" /> : 'Verify'}
           </button>
-        </motion.form>
+        </form>
       </div>
     </div>
   );

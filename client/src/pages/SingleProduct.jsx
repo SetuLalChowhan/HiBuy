@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react"; // Import useRef
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import moment from "moment";
@@ -10,8 +10,7 @@ import {
 } from "../redux/product/productSlice";
 import { Rating, Spinner } from "flowbite-react";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion";
-import { addToCart } from "../redux/user/userSlice"; // Import Framer Motion
+import { addToCart } from "../redux/user/userSlice";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -21,7 +20,7 @@ const SingleProduct = () => {
   const [review, setReview] = useState({ comment: "", rating: 0 });
   const [editingReviewId, setEditingReviewId] = useState(null);
   const { currentUser } = useSelector((state) => state.user.user);
-  const { singleProduct, loading,cart } = useSelector((state) => state.product);
+  const { singleProduct, loading, cart } = useSelector((state) => state.product);
 
   const handleChangeSize = (size) => setActiveSize(size);
 
@@ -56,13 +55,9 @@ const SingleProduct = () => {
   };
 
   const handleAddToCart = (value) => {
-    dispatch(addToCart(value))
+    dispatch(addToCart(value));
     toast.success("Item successfully added to your cart!");
-
-
   };
-
-  console.log(cart)
 
   useEffect(() => {
     dispatch(getSingleProduct(id));
@@ -76,55 +71,20 @@ const SingleProduct = () => {
     );
   }
 
-  // Animation Variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
-  };
-
-  const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.6 } },
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.3 },
-    },
-  };
-
   return (
-    <motion.div
-      className="min-h-screen container mx-auto p-4 md:p-6 lg:p-8 space-y-24"
-      initial="hidden"
-      animate="visible"
-      variants={staggerContainer}
-    >
-      <motion.div
-        className="flex flex-col md:flex-row gap-10 w-full"
-        variants={fadeInUp}
-      >
+    <div className="min-h-screen container mx-auto p-4 md:p-6 lg:p-8 space-y-24">
+      <div className="flex flex-col md:flex-row gap-10 w-full">
         {/* Product Image */}
-        <motion.div
-          className="flex justify-center items-center w-full md:w-1/2"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-        >
+        <div className="flex justify-center items-center w-full md:w-1/2">
           <img
-            src={`http://localhost:3000/${singleProduct?.image}`}
+            src={singleProduct?.image}
             alt={singleProduct?.name}
             className="max-h-[500px] w-full object-contain lg:max-h-[700px] rounded-md"
           />
-        </motion.div>
+        </div>
 
         {/* Product Details */}
-        <motion.div
-          className="flex flex-col gap-6 px-2 w-full md:w-1/2"
-          variants={fadeInUp}
-        >
+        <div className="flex flex-col gap-6 px-2 w-full md:w-1/2">
           <h1 className="font-semibold text-2xl md:text-3xl">
             {singleProduct?.name}
           </h1>
@@ -156,7 +116,7 @@ const SingleProduct = () => {
 
           {/* Select Size */}
           {singleProduct?.stock > 0 ? (
-            <motion.div className="space-y-4" variants={fadeIn}>
+            <div className="space-y-4">
               <p className="md:text-lg font-medium">Select Size</p>
               <div className="flex flex-wrap gap-2">
                 {singleProduct?.sizes?.map((size, index) =>
@@ -175,28 +135,25 @@ const SingleProduct = () => {
                   ) : null
                 )}
               </div>
-            </motion.div>
+            </div>
           ) : (
             <p className="text-red-500 font-bold">Out of Stock</p>
           )}
 
           {/* Add to Cart Button */}
-          <motion.button
-            onClick={() =>{
-              if (!activeSize) return; 
+          <button
+            onClick={() => {
+              if (!activeSize) return;
 
               handleAddToCart({
-                  id: singleProduct?._id,
-                  name:singleProduct?.name,
-                  image: singleProduct?.image,
-                  price: singleProduct?.price,
-                  size: activeSize,
-                  quantity: 1,
-                })
-            }
-            }
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+                id: singleProduct?._id,
+                name: singleProduct?.name,
+                image: singleProduct?.image,
+                price: singleProduct?.price,
+                size: activeSize,
+                quantity: 1,
+              });
+            }}
             className={`px-6 py-3 rounded-md text-white transition duration-200 ease-in-out ${
               activeSize
                 ? "bg-teal-500 hover:opacity-75"
@@ -204,7 +161,7 @@ const SingleProduct = () => {
             }`}
           >
             {activeSize ? "Add to Cart" : "Select a Size"}
-          </motion.button>
+          </button>
 
           {/* Additional Info */}
           <div className="flex flex-col space-y-2 text-gray-500 md:text-md">
@@ -212,20 +169,19 @@ const SingleProduct = () => {
             <p>Cash on delivery is available on this product.</p>
             <p>Easy return and exchange policy within 7 days.</p>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Review Section */}
-      <motion.div className="flex flex-col items-start" variants={fadeInUp}>
+      <div className="flex flex-col items-start">
         <h2 className="font-bold md:text-3xl mb-6">Customer Reviews</h2>
 
         {/* Review Form */}
         {currentUser ? (
-          <motion.form
+          <form
             onSubmit={handleReviewSubmit}
             ref={reviewFormRef}
             className="w-full bg-gray-50 p-4 rounded-md shadow-md space-y-4"
-            variants={fadeIn}
           >
             <div className="flex flex-col gap-2">
               <label className="font-medium">Rating</label>
@@ -260,20 +216,15 @@ const SingleProduct = () => {
             >
               {editingReviewId ? "Update Review" : "Submit Review"}
             </button>
-          </motion.form>
+          </form>
         ) : (
           <p className="text-lg">Please log in to leave a review.</p>
         )}
 
         {/* Reviews List */}
-        <motion.div className="mt-8 space-y-4" variants={staggerContainer}>
+        <div className="mt-8 space-y-4">
           {singleProduct?.reviews?.map((review) => (
-            <motion.div
-              key={review._id}
-              className=" p-4 rounded-md"
-              animate="visible"
-              variants={fadeInUp}
-            >
+            <div key={review._id} className="p-4 rounded-md">
               <div className="flex gap-2 mb-2">
                 <p className="font-bold">{review?.name}</p>
                 <Rating>
@@ -315,11 +266,11 @@ const SingleProduct = () => {
                   </button>
                 </div>
               )}
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
-      </motion.div>
-    </motion.div>
+        </div>
+      </div>
+    </div>
   );
 };
 

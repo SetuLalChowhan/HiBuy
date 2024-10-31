@@ -9,13 +9,12 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { clearError, login, forgotPassword } from "../redux/user/userSlice";
 import { toast } from "react-hot-toast";
-import { motion } from "framer-motion";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { loading,loading2, error } = useSelector((state) => state.user.user);
+  const { loading, loading2, error } = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -74,12 +73,7 @@ const SignIn = () => {
         ></path>
       </svg>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white shadow-lg rounded-lg p-10 w-full max-w-md border border-gray-200 z-10"
-      >
+      <div className="bg-white shadow-lg rounded-lg p-10 w-full max-w-md border border-gray-200 z-10">
         {/* Header Section */}
         <h1 className="text-3xl font-bold text-center text-gray-900 mb-4">
           Welcome Back
@@ -185,20 +179,13 @@ const SignIn = () => {
 
           {/* Error Alert */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center"
-            >
-              <Alert color="failure">
-                <span className="text-lg font-semibold">{error}</span>
-              </Alert>
-            </motion.div>
+            <Alert color="failure">
+              <span className="text-lg font-semibold">{error}</span>
+            </Alert>
           )}
 
           {/* Login Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
+          <button
             type="submit"
             className="w-full bg-teal-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-teal-600 transition duration-300"
           >
@@ -207,7 +194,7 @@ const SignIn = () => {
             ) : (
               "Login"
             )}
-          </motion.button>
+          </button>
         </form>
 
         {/* Sign Up Option */}
@@ -220,7 +207,7 @@ const SignIn = () => {
             Sign Up
           </button>
         </p>
-      </motion.div>
+      </div>
 
       {/* Modal for Forgot Password */}
       <Modal
@@ -231,11 +218,7 @@ const SignIn = () => {
       >
         <Modal.Header />
         <Modal.Body>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-          >
+          <div>
             <h3 className="mb-5 text-lg font-semibold text-gray-800 dark:text-gray-400">
               Reset Your Password
             </h3>
@@ -269,19 +252,28 @@ const SignIn = () => {
                     onBlur={handleBlur1}
                   />
                   {errors1.email && touched1.email && (
-                    <p className="text-red-500 text-sm mt-1">{errors1.email}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors1.email}
+                    </p>
                   )}
                 </div>
               </div>
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading2 ? (
-                  <Spinner aria-label="Loading spinner" />
-                ) : (
-                  "Send Reset Link"
-                )}
-              </Button>
+
+              <div className="flex justify-end">
+                <Button
+                  color="blue"
+                  type="submit"
+                  className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  {loading2 ? (
+                    <Spinner color="success" aria-label="Success spinner example" />
+                  ) : (
+                    "Send Reset Link"
+                  )}
+                </Button>
+              </div>
             </form>
-          </motion.div>
+          </div>
         </Modal.Body>
       </Modal>
     </div>

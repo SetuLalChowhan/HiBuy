@@ -1,17 +1,20 @@
 import { useFormik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { orderValidationSchema } from "../schema";
-import { motion } from "framer-motion";
 import { createOrder } from "../redux/order/orderSlice";
 import toast from "react-hot-toast";
+import { Spinner } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
   const { cart } = useSelector((state) => state.user.user);
+  const {loading} =useSelector((state)=>state.order)
   const calculateTotalPrice = () =>
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const dispatch = useDispatch();
+  const navigate =useNavigate()
 
   const initialValues = {
     name: "",
@@ -33,25 +36,21 @@ const PlaceOrder = () => {
       validationSchema: orderValidationSchema,
       onSubmit: (values) => {
         if (!values.paymentMethod) {
-        return  toast.error("Please Select Payment Method");
-        } 
-        if (values.products.length===0) {
-         return toast.error("Please add products to your cart before placing an order.");
+          return toast.error("Please Select Payment Method");
         }
-        else {
-          dispatch(createOrder({ values, toast }));
+        if (values.products.length === 0) {
+          return toast.error(
+            "Please add products to your cart before placing an order."
+          );
+        } else {
+          dispatch(createOrder({ values, toast,navigate }));
         }
       },
     });
 
   return (
     <div className="container mx-auto px-4 py-10 min-h-screen">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="shadow-lg bg-white rounded-lg p-8"
-      >
+      <div className="shadow-lg bg-white rounded-lg p-8">
         <form
           onSubmit={handleSubmit}
           className="lg:px-5 lg:py-10 flex flex-col md:flex-row md:justify-between gap-10"
@@ -66,7 +65,7 @@ const PlaceOrder = () => {
 
             {/* Name */}
             <div>
-              <motion.input
+              <input
                 name="name"
                 value={values.name}
                 onChange={handleChange}
@@ -79,7 +78,6 @@ const PlaceOrder = () => {
                     : "border-gray-300"
                 } focus:ring-2 focus:ring-teal-300 transition`}
                 placeholder="Name"
-                whileFocus={{ scale: 1.02 }}
               />
               {errors.name && touched.name && (
                 <p className="text-red-500 text-sm mt-1">{errors.name}</p>
@@ -88,7 +86,7 @@ const PlaceOrder = () => {
 
             {/* Email */}
             <div>
-              <motion.input
+              <input
                 type="email"
                 name="email"
                 required
@@ -101,7 +99,6 @@ const PlaceOrder = () => {
                     : "border-gray-300"
                 } focus:ring-2 focus:ring-teal-300 transition`}
                 placeholder="Email"
-                whileFocus={{ scale: 1.02 }}
               />
               {errors.email && touched.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -110,7 +107,7 @@ const PlaceOrder = () => {
 
             {/* Address Fields */}
             <div className="space-y-4">
-              <motion.input
+              <input
                 type="text"
                 name="shippingAddress.address"
                 required
@@ -124,7 +121,6 @@ const PlaceOrder = () => {
                     : "border-gray-300"
                 } focus:ring-2 focus:ring-teal-300 transition`}
                 placeholder="Address"
-                whileFocus={{ scale: 1.02 }}
               />
               {errors?.shippingAddress?.address &&
                 touched?.shippingAddress?.address && (
@@ -133,7 +129,7 @@ const PlaceOrder = () => {
                   </p>
                 )}
               <div className="flex flex-col md:flex-row gap-4">
-                <motion.input
+                <input
                   type="text"
                   name="shippingAddress.city"
                   required
@@ -147,7 +143,6 @@ const PlaceOrder = () => {
                       ? "border-red-500"
                       : "border-gray-300"
                   } focus:ring-2 focus:ring-teal-300 transition`}
-                  whileFocus={{ scale: 1.02 }}
                 />
                 {errors?.shippingAddress?.city &&
                   touched?.shippingAddress?.city && (
@@ -155,7 +150,7 @@ const PlaceOrder = () => {
                       {errors.shippingAddress.city}
                     </p>
                   )}
-                <motion.input
+                <input
                   type="number"
                   name="shippingAddress.postalCode"
                   required
@@ -169,12 +164,11 @@ const PlaceOrder = () => {
                       ? "border-red-500"
                       : "border-gray-300"
                   } focus:ring-2 focus:ring-teal-300 transition`}
-                  whileFocus={{ scale: 1.02 }}
                 />
               </div>
             </div>
             <div>
-              <motion.input
+              <input
                 type="text"
                 name="shippingAddress.country"
                 required
@@ -188,7 +182,6 @@ const PlaceOrder = () => {
                     ? "border-red-500"
                     : "border-gray-300"
                 } focus:ring-2 focus:ring-teal-300 transition`}
-                whileFocus={{ scale: 1.02 }}
               />
               {errors?.shippingAddress?.country &&
                 touched?.shippingAddress?.country && (
@@ -200,7 +193,7 @@ const PlaceOrder = () => {
 
             {/* Phone */}
             <div>
-              <motion.input
+              <input
                 type="number"
                 name="shippingAddress.phone"
                 required
@@ -214,7 +207,6 @@ const PlaceOrder = () => {
                     ? "border-red-500"
                     : "border-gray-300"
                 } focus:ring-2 focus:ring-teal-300 transition`}
-                whileFocus={{ scale: 1.02 }}
               />
               {errors?.shippingAddress?.phone &&
                 touched?.shippingAddress?.phone && (
@@ -250,61 +242,55 @@ const PlaceOrder = () => {
               <p className="text-lg font-medium mb-4">Payment Methods</p>
               <div className="space-y-3">
                 <label className="flex items-center space-x-2">
-                  <motion.input
+                  <input
                     type="radio"
                     name="paymentMethod"
                     value="bkash"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="h-5 w-5 text-gray-400 border-gray-400 focus:ring-2 focus:ring-teal-300"
-                    whileHover={{ scale: 1.1 }}
                     disabled
                   />
                   <span className="text-gray-400">Bkash (Coming Soon)</span>
                 </label>
                 <label className="flex items-center space-x-2">
-                  <motion.input
+                  <input
                     type="radio"
                     name="paymentMethod"
                     value="credit-card"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="h-5 w-5 text-gray-400 border-gray-400 focus:ring-2 focus:ring-teal-300"
-                    whileHover={{ scale: 1.1 }}
                     disabled
                   />
-                  <span className="text-gray-400">
-                    Credit Card (Coming Soon)
-                  </span>
+                  <span className="text-gray-400">Credit Card (Coming Soon)</span>
                 </label>
                 <label className="flex items-center space-x-2">
-                  <motion.input
+                  <input
                     type="radio"
                     name="paymentMethod"
                     value="cod"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className="h-5 w-5 text-teal-500 border-gray-400 focus:ring-2 focus:ring-teal-300"
-                    whileHover={{ scale: 1.1 }}
                   />
-                  <span>COD(Cash on Delivery)</span>
+                  <span className="text-gray-900">Cash on Delivery</span>
                 </label>
               </div>
             </div>
 
-            {/* Submit Order Button */}
+            {/* Place Order Button */}
             <div className="mt-6">
-              <motion.button
+              <button
                 type="submit"
-                className="w-full bg-teal-500 text-white p-4 rounded-lg hover:bg-teal-600 transition font-semibold"
-                whileHover={{ scale: 1.05 }}
+                className="w-full bg-teal-500 text-white py-3 rounded-lg text-lg font-medium hover:bg-teal-600 transition"
               >
-                Place Order
-              </motion.button>
+                {loading ?<Spinner size="sm" color="white" />:"Place Order"}
+              </button>
             </div>
           </div>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 };

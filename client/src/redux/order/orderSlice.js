@@ -4,7 +4,7 @@ import { resetCart } from "../user/userSlice";
 
 export const createOrder = createAsyncThunk(
   "product/create-order",
-  async ({ values, toast }, { dispatch, rejectWithValue }) => {
+  async ({ values, toast,navigate }, { dispatch, rejectWithValue }) => {
     console.log(values);
     try {
       const response = await axios.post("api/orders/create", values, {
@@ -14,6 +14,7 @@ export const createOrder = createAsyncThunk(
         withCredentials: true,
       });
       toast.success("Order has been Placed Successfully");
+      navigate("/")
       dispatch(resetCart());
       return response.data;
     } catch (err) {
